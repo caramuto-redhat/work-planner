@@ -180,8 +180,33 @@ ai_prompts:
     Format as HTML for email rendering, narrative style.
 
 email_settings:
-  smtp_server: "smtp.gmail.com"
-  smtp_port: 587
-  use_tls: true
-  # Set these via environment variables:
+  # Default: use local sendmail (common in Linux/corporate environments)
+  smtp_server: "localhost"
+  smtp_port: 25
+  use_tls: false
+  from_email: "jira-reports@localhost"
+  
+  # Alternative configurations:
+  
+  # For Gmail (requires app password):
+  # smtp_server: "smtp.gmail.com"
+  # smtp_port: 587
+  # use_tls: true
+  # username: "your_email@gmail.com"
+  # password: "your_app_password"
+  # from_email: "your_email@gmail.com"
+  
+  # For corporate Exchange/Office365:
+  # smtp_server: "smtp.office365.com"
+  # smtp_port: 587
+  # use_tls: true
+  
+  # For SendGrid API:
+  # smtp_server: "smtp.sendgrid.net"
+  # smtp_port: 587
+  # use_tls: true
+  # username: "apikey"
+  # password: "your_sendgrid_api_key"
+  
+  # Environment variables override config file:
   # EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_FROM 

@@ -34,7 +34,7 @@ which provides another way to access Red Hat Jira data.
    * Edit the `.rh-jira-mcp-features-master.env` file in your home directory and paste in the token
 
 To confirm it's working, run Cursor, go to Settings and click on "Tools &
-Integrations". Under MCP Tools you should see "jiraMcp" with 26 tools enabled.
+Integrations". Under MCP Tools you should see "jiraMcp" with 27 tools enabled.
 
 ## Available Tools
 
@@ -75,6 +75,7 @@ This MCP server provides the following tools:
 - `get_team_issues` - Get issues for a specific team with enhanced data
 - `generate_team_report` - Generate comprehensive team reports with AI analysis
 - `send_team_report_email` - Send team reports via email
+- `test_email_configuration` - Test email configuration by sending a test message
 
 ## Team Reporting Features
 
@@ -122,17 +123,40 @@ OPENAI_API_KEY=your_openai_api_key
 
 ### Email Configuration
 
-To enable automated email reports:
+The system supports multiple email authentication methods:
 
+**Option 1: Local sendmail (Default - No authentication required)**
+```bash
+# No configuration needed - uses localhost sendmail
+# Common in Linux/corporate environments
+```
+
+**Option 2: Gmail (requires app password)**
 ```bash
 EMAIL_USERNAME=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
 EMAIL_FROM=your_email@gmail.com
 ```
 
+**Option 3: SendGrid/External API**
+```bash
+EMAIL_USERNAME=apikey
+EMAIL_PASSWORD=your_sendgrid_api_key
+EMAIL_FROM=noreply@yourdomain.com
+```
+
+**Option 4: Corporate email server**
+```bash
+# Often only requires FROM address
+EMAIL_FROM=reports@yourcompany.com
+```
+
 ### Usage Examples
 
 ```bash
+# Test email configuration first
+test_email_configuration("your-email@company.com")
+
 # List all configured teams
 list_teams()
 

@@ -153,15 +153,13 @@ def filter_comments(issue: Any, exclude_authors: List[str]) -> List[Dict[str, An
     return filtered_comments
 
 def send_email(to_emails: List[str], subject: str, html_content: str, text_content: str = "") -> bool:
-    """Send email via SMTP."""
-    if not all([EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_FROM]):
-        print("Email credentials not configured")
-        return False
+    """Send email via SMTP with flexible authentication options."""
+    smtp_settings = team_config.get("email_settings", {})
     
     try:
         msg = MimeMultipart('alternative')
         msg['Subject'] = subject
-        msg['From'] = EMAIL_FROM
+        msg['From'] = EMAIL_FROM or smtp_settings.get("from_email", "noreply@localhost")
         msg['To'] = ', '.join(to_emails)
         
         if text_content:
@@ -171,23 +169,32 @@ def send_email(to_emails: List[str], subject: str, html_content: str, text_conte
         html_part = MimeText(html_content, 'html')
         msg.attach(html_part)
         
-        # Send email
-        smtp_settings = team_config.get("email_settings", {})
-        server = smtplib.SMTP(
-            smtp_settings.get("smtp_server", "smtp.gmail.com"),
-            smtp_settings.get("smtp_port", 587)
-        )
+        # Configure SMTP server
+        smtp_host = smtp_settings.get("smtp_server", "localhost")
+        smtp_port = smtp_settings.get("smtp_port", 25)
         
-        if smtp_settings.get("use_tls", True):
+        server = smtplib.SMTP(smtp_host, smtp_port)
+        
+        # Optional TLS
+        if smtp_settings.get("use_tls", False):
             server.starttls()
         
-        server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
+        # Optional authentication - many systems don't require it
+        if EMAIL_USERNAME and EMAIL_PASSWORD:
+            server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
+        elif smtp_settings.get("username") and smtp_settings.get("password"):
+            server.login(smtp_settings["username"], smtp_settings["password"])
+        # If no credentials provided, try sending without authentication (common for local/corporate servers)
+        
         server.send_message(msg)
         server.quit()
         
+        print(f"Email sent successfully to {', '.join(to_emails)}")
         return True
+        
     except Exception as e:
         print(f"Failed to send email: {e}")
+        # In case of email failure, still return the report content
         return False
 
 # ─── 5. Instantiate the MCP server ─────────────────────────────────────────────
@@ -633,6 +640,44 @@ def generate_team_report(team_id: str, include_ai_summary: bool = True, send_ema
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate team report: {e}")
+
+@mcp.tool()
+def test_email_configuration(test_recipient: str = "test@example.com") -> str:
+    """Test email configuration by sending a simple test message."""
+    try:
+        html_content = """
+        <html>
+        <body>
+            <h2>Jira MCP Email Configuration Test</h2>
+            <p>This is a test email to verify your email configuration is working correctly.</p>
+            <p><strong>Timestamp:</strong> {timestamp}</p>
+            <p>If you received this email, your email configuration is working properly!</p>
+        </body>
+        </html>
+        """.format(timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        success = send_email(
+            [test_recipient],
+            "Jira MCP Email Configuration Test",
+            html_content,
+            "This is a test email from Jira MCP. If you received this, your email configuration is working!"
+        )
+        
+        if success:
+            return f"✅ Test email sent successfully to {test_recipient}"
+        else:
+            smtp_settings = team_config.get("email_settings", {})
+            return f"""❌ Failed to send test email. Current configuration:
+- SMTP Server: {smtp_settings.get('smtp_server', 'localhost')}
+- SMTP Port: {smtp_settings.get('smtp_port', 25)}
+- TLS: {smtp_settings.get('use_tls', False)}
+- From: {EMAIL_FROM or smtp_settings.get('from_email', 'noreply@localhost')}
+- Auth: {'Yes' if EMAIL_USERNAME else 'No'}
+
+Try checking your email configuration in jira-config.yaml or environment variables."""
+        
+    except Exception as e:
+        return f"❌ Email test failed: {e}"
 
 @mcp.tool()
 def send_team_report_email(team_id: str, report_data: str) -> str:
