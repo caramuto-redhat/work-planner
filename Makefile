@@ -3,8 +3,8 @@ _default: run
 
 SHELL := /bin/bash
 SCRIPT_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-IMG := localhost/jira-mcp:latest
-ENV_FILE := $(HOME)/.rh-jira-mcp.env
+IMG := localhost/jira-mcp-features-master:latest
+ENV_FILE := $(HOME)/.rh-jira-mcp-features-master.env
 
 .PHONY: build run clean test cursor-config setup
 

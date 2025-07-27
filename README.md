@@ -1,4 +1,4 @@
-# redhat-ai-tools/jira-mcp
+# redhat-ai-tools/jira-mcp-features-master
 
 A containerized Python MCP server for Cursor to provide access to Jira.
 
@@ -20,18 +20,18 @@ which provides another way to access Red Hat Jira data.
 
 1. **Get the code**
   ```bash
-  git clone git@github.com:redhat-ai-tools/jira-mcp.git
-  cd jira-mcp
+  git clone git@github.com:caramuto-redhat/slack-mcp-features-master.git
+  cd jira-mcp-features-master
   ```
 2. **Build the image & configure Cursor**<br>
-  This also creates a `~/.rh-jira-mcp.env` file like [this](example.env).
+  This also creates a `~/.rh-jira-mcp-features-master.env` file like [this](example.env).
   ```bash
   make setup
   ```
 
 3. **Prepare a Jira token**
    * Go to [Red Hat Jira Personal Access Tokens](https://issues.redhat.com/secure/ViewProfile.jspa?selectedTab=com.atlassian.pats.pats-plugin:jira-user-personal-access-tokens) and create a token
-   * Edit the `.rh-jira-mcp.env` file in your home directory and paste in the token
+   * Edit the `.rh-jira-mcp-features-master.env` file in your home directory and paste in the token
 
 To confirm it's working, run Cursor, go to Settings and click on "Tools &
 Integrations". Under MCP Tools you should see "jiraMcp" with 20 tools enabled.
@@ -74,14 +74,14 @@ This MCP server provides the following tools:
 - `make run` - Run the container
 - `make clean` - Clean up the built image
 - `make cursor-config` - Modify `~/.cursor/mcp.json` to install this MCP Server
-- `make setup` - Builds the image, configures Cursor, and creates `~/.rh-jira-mcp.env` if it doesn't exist
+- `make setup` - Builds the image, configures Cursor, and creates `~/.rh-jira-mcp-features-master.env` if it doesn't exist
 
 ## Troubleshooting
 
 ### Server Not Starting
 - Confirm that `make run` works
 - Check that the JIRA_API_TOKEN is correct
-- Verify the image was built successfully with `podman images jira-mcp`
+- Verify the image was built successfully with `podman images jira-mcp-features-master`
 - Go to the "Output" tab in Cursor's bottom pane, choose "MCP Logs" from the drop-down select and examine the logs there
 
 ### Connection Issues
