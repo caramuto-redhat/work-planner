@@ -37,8 +37,9 @@ JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN")
 # Optional AI and Email environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-EMAIL_USERNAME = os.getenv("EMAIL_USERNAME")
+EMAIL_USERNAME = os.getenv("EMAIL_USERNAME") or os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_TOKEN = os.getenv("EMAIL_TOKEN")  # Preferred: API token instead of password
 EMAIL_FROM = os.getenv("EMAIL_FROM")
 
 if not all([JIRA_URL, JIRA_API_TOKEN]):
@@ -180,8 +181,13 @@ def send_email(to_emails: List[str], subject: str, html_content: str, text_conte
             server.starttls()
         
         # Optional authentication - many systems don't require it
-        if EMAIL_USERNAME and EMAIL_PASSWORD:
+        # Prefer email tokens over passwords (more secure)
+        if EMAIL_USERNAME and EMAIL_TOKEN:
+            server.login(EMAIL_USERNAME, EMAIL_TOKEN)
+        elif EMAIL_USERNAME and EMAIL_PASSWORD:
             server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
+        elif smtp_settings.get("username") and smtp_settings.get("token"):
+            server.login(smtp_settings["username"], smtp_settings["token"])
         elif smtp_settings.get("username") and smtp_settings.get("password"):
             server.login(smtp_settings["username"], smtp_settings["password"])
         # If no credentials provided, try sending without authentication (common for local/corporate servers)
@@ -667,12 +673,22 @@ def test_email_configuration(test_recipient: str = "test@example.com") -> str:
             return f"✅ Test email sent successfully to {test_recipient}"
         else:
             smtp_settings = team_config.get("email_settings", {})
+            auth_status = "None"
+            if EMAIL_USERNAME and EMAIL_TOKEN:
+                auth_status = "Token"
+            elif EMAIL_USERNAME and EMAIL_PASSWORD:
+                auth_status = "Password"
+            elif smtp_settings.get("username") and smtp_settings.get("token"):
+                auth_status = "Config Token"
+            elif smtp_settings.get("username") and smtp_settings.get("password"):
+                auth_status = "Config Password"
+            
             return f"""❌ Failed to send test email. Current configuration:
 - SMTP Server: {smtp_settings.get('smtp_server', 'localhost')}
 - SMTP Port: {smtp_settings.get('smtp_port', 25)}
 - TLS: {smtp_settings.get('use_tls', False)}
 - From: {EMAIL_FROM or smtp_settings.get('from_email', 'noreply@localhost')}
-- Auth: {'Yes' if EMAIL_USERNAME else 'No'}
+- Auth Type: {auth_status}
 
 Try checking your email configuration in jira-config.yaml or environment variables."""
         

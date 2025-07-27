@@ -188,12 +188,12 @@ email_settings:
   
   # Alternative configurations:
   
-  # For Gmail (requires app password):
+  # For Gmail (requires app password/token):
   # smtp_server: "smtp.gmail.com"
   # smtp_port: 587
   # use_tls: true
   # username: "your_email@gmail.com"
-  # password: "your_app_password"
+  # token: "your_gmail_app_password"
   # from_email: "your_email@gmail.com"
   
   # For corporate Exchange/Office365:

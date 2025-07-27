@@ -131,25 +131,35 @@ The system supports multiple email authentication methods:
 # Common in Linux/corporate environments
 ```
 
-**Option 2: Gmail (requires app password)**
+**Option 2: Email Tokens (Recommended - More secure)**
 ```bash
-EMAIL_USERNAME=your_email@gmail.com
-EMAIL_PASSWORD=your_app_password
+# Use EMAIL_TOKEN instead of EMAIL_PASSWORD for better security
+EMAIL_USER=your_email@gmail.com
+EMAIL_TOKEN=your_app_password_or_api_token
 EMAIL_FROM=your_email@gmail.com
 ```
 
-**Option 3: SendGrid/External API**
+**Option 3: Gmail with App Password**
 ```bash
-EMAIL_USERNAME=apikey
-EMAIL_PASSWORD=your_sendgrid_api_key
+EMAIL_USERNAME=your_email@gmail.com
+EMAIL_TOKEN=your_gmail_app_password
+EMAIL_FROM=your_email@gmail.com
+```
+
+**Option 4: SendGrid/External API**
+```bash
+EMAIL_USER=apikey
+EMAIL_TOKEN=your_sendgrid_api_key
 EMAIL_FROM=noreply@yourdomain.com
 ```
 
-**Option 4: Corporate email server**
+**Option 5: Corporate email server**
 ```bash
 # Often only requires FROM address
 EMAIL_FROM=reports@yourcompany.com
 ```
+
+> **Note**: Modern email providers (Google, Microsoft) require app passwords/tokens instead of regular passwords for security.
 
 ### Usage Examples
 
