@@ -2,13 +2,9 @@
 
 import os
 import yaml
-import smtplib
 import json
 from datetime import datetime, timedelta
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
 from typing import Dict, List, Optional, Any
-from jinja2 import Template
 
 from dotenv import load_dotenv
 from jira import JIRA
@@ -157,10 +153,22 @@ def send_email(to_emails: List[str], subject: str, html_content: str, text_conte
     """Send email via SMTP with flexible authentication options."""
     smtp_settings = team_config.get("email_settings", {})
     
+    # Import email libraries with absolute imports and better error handling
+    try:
+        import smtplib
+        import email.mime.text
+        import email.mime.multipart
+        MimeText = email.mime.text.MimeText
+        MimeMultipart = email.mime.multipart.MimeMultipart
+    except (ImportError, AttributeError) as e:
+        print(f"Email libraries not available: {e}")
+        print("Email functionality disabled - reports will be generated without email delivery")
+        return False
+    
     try:
         msg = MimeMultipart('alternative')
         msg['Subject'] = subject
-        msg['From'] = EMAIL_FROM or smtp_settings.get("from_email", "noreply@localhost")
+        msg['From'] = EMAIL_FROM or EMAIL_USERNAME or smtp_settings.get("from_email", "noreply@localhost")
         msg['To'] = ', '.join(to_emails)
         
         if text_content:
@@ -170,27 +178,28 @@ def send_email(to_emails: List[str], subject: str, html_content: str, text_conte
         html_part = MimeText(html_content, 'html')
         msg.attach(html_part)
         
-        # Configure SMTP server
-        smtp_host = smtp_settings.get("smtp_server", "localhost")
-        smtp_port = smtp_settings.get("smtp_port", 25)
+        # Configure SMTP server - prioritize environment variables like working jira-report project
+        smtp_host = smtp_settings.get("smtp_server", "smtp.gmail.com")
+        smtp_port = smtp_settings.get("smtp_port", 587)
         
         server = smtplib.SMTP(smtp_host, smtp_port)
         
-        # Optional TLS
-        if smtp_settings.get("use_tls", False):
+        # Enable TLS by default for Gmail (like working jira-report project)
+        if smtp_settings.get("use_tls", True):  # Default to True for Gmail
             server.starttls()
         
-        # Optional authentication - many systems don't require it
-        # Prefer email tokens over passwords (more secure)
-        if EMAIL_USERNAME and EMAIL_TOKEN:
-            server.login(EMAIL_USERNAME, EMAIL_TOKEN)
-        elif EMAIL_USERNAME and EMAIL_PASSWORD:
-            server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
-        elif smtp_settings.get("username") and smtp_settings.get("token"):
-            server.login(smtp_settings["username"], smtp_settings["token"])
-        elif smtp_settings.get("username") and smtp_settings.get("password"):
-            server.login(smtp_settings["username"], smtp_settings["password"])
-        # If no credentials provided, try sending without authentication (common for local/corporate servers)
+        # Authentication - prioritize environment variables
+        username = EMAIL_USERNAME or smtp_settings.get("username")
+        token = EMAIL_TOKEN or smtp_settings.get("token") 
+        password = EMAIL_PASSWORD or smtp_settings.get("password")
+        
+        if username and token:
+            # Prefer token authentication (app passwords)
+            server.login(username, token)
+        elif username and password:
+            # Fallback to password authentication
+            server.login(username, password)
+        # If no credentials, try without auth (corporate servers only)
         
         server.send_message(msg)
         server.quit()
@@ -578,6 +587,7 @@ def generate_team_report(team_id: str, include_ai_summary: bool = True, send_ema
             report_data["ai_summary"] = ai_summary
         
         # Generate HTML report
+        from jinja2 import Template
         html_template = Template("""
         <html>
         <head><title>{{ team_name }} {{ period }} Status Report</title></head>

@@ -180,21 +180,18 @@ ai_prompts:
     Format as HTML for email rendering, narrative style.
 
 email_settings:
-  # Default: use local sendmail (common in Linux/corporate environments)
-  smtp_server: "localhost"
-  smtp_port: 25
-  use_tls: false
-  from_email: "jira-reports@localhost"
+  # Gmail SMTP (default - matches working jira-report project)
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  use_tls: true
+  # Username and token should come from environment variables
+  # EMAIL_USER and EMAIL_TOKEN will override these settings
   
-  # Alternative configurations:
-  
-  # For Gmail (requires app password/token):
-  # smtp_server: "smtp.gmail.com"
-  # smtp_port: 587
-  # use_tls: true
-  # username: "your_email@gmail.com"
-  # token: "your_gmail_app_password"
-  # from_email: "your_email@gmail.com"
+  # Alternative: Local sendmail (for corporate environments)
+  # smtp_server: "localhost"
+  # smtp_port: 25
+  # use_tls: false
+  # from_email: "jira-reports@localhost"
   
   # For corporate Exchange/Office365:
   # smtp_server: "smtp.office365.com"
