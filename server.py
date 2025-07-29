@@ -20,14 +20,27 @@ if not all([JIRA_URL, JIRA_API_TOKEN]):
     raise RuntimeError("Missing JIRA_URL or JIRA_API_TOKEN environment variables")
 
 # ─── 2. Jira Client ─────────────────────────────────────────────────
-jira_client = JIRA(server=JIRA_URL, token_auth=JIRA_API_TOKEN)
+try:
+    jira_client = JIRA(server=JIRA_URL, token_auth=JIRA_API_TOKEN)
+    # Test connection
+    jira_client.projects()
+except Exception as e:
+    raise RuntimeError(f"Failed to connect to Jira: {str(e)}")
 
-# ─── 3. Simple Configuration ────────────────────────────────────────
+# ─── 3. Configuration Loading ────────────────────────────────────────
 def load_config() -> Dict[str, Any]:
-    """Load simplified configuration."""
+    """Load simplified configuration with error handling."""
     try:
         with open("jira-config.yaml", 'r') as file:
-            return yaml.safe_load(file)
+            config = yaml.safe_load(file)
+            
+        # Validate required sections
+        required_sections = ['teams', 'organizations']
+        for section in required_sections:
+            if section not in config:
+                raise ValueError(f"Missing required section: {section}")
+                
+        return config
     except FileNotFoundError:
         return {
             "teams": {
@@ -42,6 +55,8 @@ def load_config() -> Dict[str, Any]:
                 "SP": ["rhn-support-skalgudi", "rhn-support-ounsal", "mabanas@redhat.com"]
             }
         }
+    except Exception as e:
+        raise RuntimeError(f"Failed to load configuration: {str(e)}")
 
 config = load_config()
 
@@ -67,6 +82,9 @@ def build_jql(project: str, status: str = "In Progress", assignees: List[str] = 
 
 def resolve_display_name_to_username(display_name: str) -> str:
     """Resolve display name to username using reverse mapping."""
+    if not display_name:
+        return ""
+        
     if "user_display_names" in config:
         # Create reverse mapping: display_name -> username
         reverse_mapping = {v: k for k, v in config["user_display_names"].items()}
@@ -78,57 +96,92 @@ def resolve_display_name_to_username(display_name: str) -> str:
 
 def get_display_name(username: str, jira_display_name: str) -> str:
     """Get custom display name from config or fall back to Jira's display name."""
+    if not username:
+        return "Unassigned"
+        
     if "user_display_names" in config and username in config["user_display_names"]:
         return config["user_display_names"][username]
     return jira_display_name
 
 def get_issues(jql: str, max_results: int = 20) -> List[Dict]:
-    """Get issues with consistent formatting."""
-    issues = jira_client.search_issues(jql, maxResults=max_results)
-    
-    result = []
-    for issue in issues:
-        # Get the original Jira display name
-        jira_display_name = issue.fields.assignee.displayName if issue.fields.assignee else "Unassigned"
+    """Get issues with consistent formatting and error handling."""
+    try:
+        issues = jira_client.search_issues(jql, maxResults=max_results)
         
-        # Use custom display name if available, otherwise use Jira's
-        if issue.fields.assignee:
-            display_name = get_display_name(issue.fields.assignee.name, jira_display_name)
-        else:
-            display_name = "Unassigned"
+        result = []
+        for issue in issues:
+            # Get the original Jira display name
+            jira_display_name = issue.fields.assignee.displayName if issue.fields.assignee else "Unassigned"
+            
+            # Use custom display name if available, otherwise use Jira's
+            if issue.fields.assignee:
+                display_name = get_display_name(issue.fields.assignee.name, jira_display_name)
+            else:
+                display_name = "Unassigned"
+            
+            result.append({
+                "key": issue.key,
+                "summary": issue.fields.summary,
+                "status": issue.fields.status.name,
+                "assignee": display_name,
+                "assignee_username": issue.fields.assignee.name if issue.fields.assignee else None,
+                "created": issue.fields.created,
+                "updated": issue.fields.updated,
+                "issue_type": issue.fields.issuetype.name,
+                "priority": issue.fields.priority.name if issue.fields.priority else "Undefined"
+            })
         
-        result.append({
-            "key": issue.key,
-            "summary": issue.fields.summary,
-            "status": issue.fields.status.name,
-            "assignee": display_name,
-            "assignee_username": issue.fields.assignee.name if issue.fields.assignee else None,
-            "created": issue.fields.created,
-            "updated": issue.fields.updated,
-            "issue_type": issue.fields.issuetype.name,
-            "priority": issue.fields.priority.name if issue.fields.priority else "Undefined"
-        })
-    
-    return result
+        return result
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch issues: {str(e)}")
 
 # ─── 5. MCP Server ─────────────────────────────────────────────────
 mcp = FastMCP()
+
+def create_error_response(error_msg: str, details: str = None) -> str:
+    """Create consistent error responses."""
+    response = {"error": error_msg}
+    if details:
+        response["details"] = details
+    return json.dumps(response, indent=2)
+
+def create_success_response(data: Dict, message: str = None) -> str:
+    """Create consistent success responses."""
+    response = data.copy()
+    if message:
+        response["message"] = message
+    return json.dumps(response, indent=2)
 
 @mcp.tool()
 def search_issues(jql: str, max_results: int = 20) -> str:
     """Search Jira issues using JQL query."""
     try:
+        # Input validation
+        if not jql or not jql.strip():
+            return create_error_response("JQL query cannot be empty")
+        
+        if max_results < 1 or max_results > 100:
+            return create_error_response("max_results must be between 1 and 100")
+        
         issues = get_issues(jql, max_results)
-        return json.dumps({"issues": issues, "count": len(issues)}, indent=2)
+        return create_success_response({
+            "issues": issues,
+            "count": len(issues),
+            "jql": jql
+        })
     except Exception as e:
-        return json.dumps({"error": str(e)}, indent=2)
+        return create_error_response("Failed to search issues", str(e))
 
 @mcp.tool()
 def get_team_issues(team: str, status: str = "In Progress", organization: str = None) -> str:
     """Get issues for a specific team with optional organization filtering."""
     try:
+        # Input validation
+        if not team:
+            return create_error_response("Team name cannot be empty")
+        
         if team not in config["teams"]:
-            return json.dumps({"error": f"Team '{team}' not found"}, indent=2)
+            return create_error_response(f"Team '{team}' not found")
         
         team_config = config["teams"][team]
         project = team_config["project"]
@@ -137,10 +190,9 @@ def get_team_issues(team: str, status: str = "In Progress", organization: str = 
         # Determine assignees based on organization
         assignees = None
         if organization:
-            if organization in config["organizations"]:
-                assignees = config["organizations"][organization]
-            else:
-                return json.dumps({"error": f"Organization '{organization}' not found"}, indent=2)
+            if organization not in config["organizations"]:
+                return create_error_response(f"Organization '{organization}' not found")
+            assignees = config["organizations"][organization]
         
         # Build JQL
         jql = build_jql(project, status, assignees, assigned_team)
@@ -148,76 +200,88 @@ def get_team_issues(team: str, status: str = "In Progress", organization: str = 
         # Get issues
         issues = get_issues(jql)
         
-        return json.dumps({
+        return create_success_response({
             "team": team,
             "status": status,
             "organization": organization,
             "jql": jql,
             "issues": issues,
             "count": len(issues)
-        }, indent=2)
+        })
         
     except Exception as e:
-        return json.dumps({"error": str(e)}, indent=2)
+        return create_error_response("Failed to get team issues", str(e))
 
 @mcp.tool()
 def get_project_info(project_key: str) -> str:
     """Get basic project information."""
     try:
+        if not project_key:
+            return create_error_response("Project key cannot be empty")
+            
         project = jira_client.project(project_key)
-        return json.dumps({
+        return create_success_response({
             "key": project.key,
             "name": project.name,
             "description": project.description,
             "lead": project.lead.displayName if project.lead else None
-        }, indent=2)
+        })
     except Exception as e:
-        return json.dumps({"error": str(e)}, indent=2)
+        return create_error_response("Failed to get project info", str(e))
 
 @mcp.tool()
 def get_user_info(username: str) -> str:
     """Get user information."""
     try:
+        if not username:
+            return create_error_response("Username cannot be empty")
+            
         user = jira_client.user(username)
         
         # Use custom display name if available, otherwise use Jira's
         display_name = get_display_name(user.name, user.displayName)
         
-        return json.dumps({
+        return create_success_response({
             "username": user.name,
             "display_name": display_name,
             "jira_display_name": user.displayName,
             "email": user.emailAddress,
             "active": user.active
-        }, indent=2)
+        })
     except Exception as e:
-        return json.dumps({"error": str(e)}, indent=2)
+        return create_error_response("Failed to get user info", str(e))
 
 @mcp.tool()
 def list_teams() -> str:
     """List all configured teams."""
-    teams = []
-    for key, team in config["teams"].items():
-        teams.append({
-            "id": key,
-            "name": team["name"],
-            "project": team["project"],
-            "member_count": len(team["members"])
-        })
-    
-    return json.dumps({"teams": teams}, indent=2)
+    try:
+        teams = []
+        for key, team in config["teams"].items():
+            teams.append({
+                "id": key,
+                "name": team["name"],
+                "project": team["project"],
+                "member_count": len(team["members"])
+            })
+        
+        return create_success_response({"teams": teams})
+    except Exception as e:
+        return create_error_response("Failed to list teams", str(e))
 
 @mcp.tool()
 def list_organizations() -> str:
     """List all configured organizations."""
-    orgs = []
-    for key, members in config["organizations"].items():
-        orgs.append({
-            "name": key,
-            "member_count": len(members)
-        })
-    
-    return json.dumps({"organizations": orgs}, indent=2)
+    try:
+        orgs = []
+        for key, members in config["organizations"].items():
+            orgs.append({
+                "name": key,
+                "member_count": len(members)
+            })
+        
+        return create_success_response({"organizations": orgs})
+    except Exception as e:
+        return create_error_response("Failed to list organizations", str(e))
 
 if __name__ == "__main__":
     mcp.run() 
