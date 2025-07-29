@@ -1,209 +1,54 @@
-team_configs:
-  user_group_1:
+# Simplified Jira MCP Configuration
+# This replaces the complex 266-line config with a clean, minimal structure
+
+teams:
+  toolchain:
     name: "ToolChain Team"
-    assignees:
-      - "rhn-support-skalgudi"
-      - "rhn-support-ounsal"
-      - "mabanas@redhat.com"
-    focus: "Development tools and infrastructure"
-    email:
-      subject: "ToolChain Team {period_title} Status Report - {date}"
-      message: "{period_description} for ToolChain team development"
-      recipients:
-        - "pacaramu@redhat.com"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-ft-auto-toolchain"
+    members:
+      - "Sameera Kalgudi"
+      - "Ozan Unsal"
+      - "Marcel Banas"
 
-  user_group_2:
+  assessment:
     name: "Assessment Team"
-    assignees:
-      - "rhn-support-josimmon"
-    focus: "Assessment and evaluation"
-    email:
-      subject: "Assessment Team {period_title} Status Report - {date}"
-      message: "{period_description} for Assessment team development"
-      recipients:
-        - "pacaramu@redhat.com"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-ft-auto-assessment"
+    members:
+      - "Joe Simmons-Talbott"
 
-  user_group_3:
+  foa:
     name: "FoA Team"
-    assignees:
-      - "rhn-support-nsaini"
-      - "rsmit106"
-    focus: "Testing automotive features"
-    email:
-      subject: "FoA Team {period_title} Status Report - {date}"
-      message: "{period_description} for FoA team testing"
-      recipients:
-        - "pacaramu@redhat.com"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-ft-auto-foa"
+    members:
+      - "Nisha Saini"
+      - "Ryan Smith"
 
-  user_group_4:
+  boa:
     name: "BoA Team"
-    assignees:
-      - "jonderka@redhat.com"
-    focus: "Backend development"
-    email:
-      subject: "BoA Team {period_title} Status Report - {date}"
-      message: "{period_description} for BoA team development"
-      recipients:
-        - "pacaramu@redhat.com"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-ft-auto-boa"
+    members:
+      - "Jan Onderka"
 
-jira_users:
-  rhn-support-nsaini:
-    display_name: "Nisha Saini"
-    email: "nsaini@redhat.com"
-    team: "FoA"
-    role: "Developer"
+organizations:
+  SP:
+    - "Sameera Kalgudi"
+    - "Ozan Unsal"
+    - "Marcel Banas"
+    - "Nisha Saini"
+    - "Ryan Smith"
+    - "Jan Onderka"
+    - "Joe Simmons-Talbott"
 
-  rsmit106:
-    display_name: "Ryan Smith"
-    email: "rsmit@redhat.com"
-    team: "FoA"
-    role: "Developer"
-
-  "jonderka@redhat.com":
-    display_name: "Jan Onderka"
-    email: "jonderka@redhat.com"
-    team: "BoA"
-    role: "Developer"
-
-  rhn-support-josimmon:
-    display_name: "Joe Simmons-Talbott"
-    email: "josimmon@redhat.com"
-    team: "Assessment"
-    role: "Developer"
-
-  rhn-support-skalgudi:
-    display_name: "Sameera Kalgudi"
-    email: "skalgudi@redhat.com"
-    team: "ToolChain"
-    role: "Developer"
-
-  rhn-support-ounsal:
-    display_name: "Ozan Unsal"
-    email: "ounsal@redhat.com"
-    team: "ToolChain"
-    role: "Developer"
-
-  "mabanas@redhat.com":
-    display_name: "Marcel Banas"
-    email: "mabanas@redhat.com"
-    team: "ToolChain"
-    role: "Developer"
-
-settings:
-  project_name: "Automotive Feature Teams"
-  jira_server: "https://issues.redhat.com"
-  update_grace_days: 10
-  exclude_comment_authors:
-    - "bot"
-    - "automation"
-    - "jenkins"
-  current_period: "weekly"  # weekly, monthly, quarterly
-  ai_provider: "gemini"  # gemini, openai
-  enable_ai_summary: true
-  enable_assignee_summary_email: true
-  max_results_per_query: 100
-
-period_configs:
-  weekly:
-    title: "Weekly"
-    description: "Weekly status update"
-    days: 7
-  monthly:
-    title: "Monthly"
-    description: "Monthly status update"
-    days: 30
-  quarterly:
-    title: "Quarterly"
-    description: "Quarterly status update"
-    days: 90
-
-jql_templates:
-  base_query: |
-    project = "{project_name}" 
-    AND assignee in ({team_assignees}) 
-    AND (
-      statusCategory = "{status}" 
-      OR (statusCategory = "Done" AND resolutiondate >= -{period_days}d)
-    ) 
-    ORDER BY issuetype DESC, updatedDate DESC, createdDate DESC
-  
-  in_progress: |
-    project = "{project_name}" 
-    AND assignee in ({team_assignees}) 
-    AND statusCategory = "In Progress"
-    ORDER BY issuetype DESC, updatedDate DESC, createdDate DESC
-  
-  todo: |
-    project = "{project_name}" 
-    AND assignee in ({team_assignees}) 
-    AND statusCategory = "To Do"
-    ORDER BY issuetype DESC, updatedDate DESC, createdDate DESC
-  
-  recently_closed: |
-    project = "{project_name}" 
-    AND assignee in ({team_assignees}) 
-    AND statusCategory = "Done" 
-    AND resolutiondate >= -{period_days}d
-    ORDER BY resolutiondate DESC, issuetype DESC
-
-ai_prompts:
-  ticket_summary: |
-    Summarize the following Jira ticket in a narrative format. Focus on:
-    1. What work was actually accomplished (from comments)
-    2. What the original objective was (from description)
-    3. Current status and any blockers
-    
-    Ticket: {ticket_key}
-    Description: {description}
-    Comments: {comments}
-    Status: {status}
-  
-  team_report: |
-    Generate a comprehensive team status report with the following sections:
-    1. Priority Attention Needed (stale/unassigned epics older than {grace_days} days)
-    2. Current Work (grouped by owner, narrative format)
-    3. Recently Closed Issues (outcomes and impact)
-    4. Productivity Suggestions (specific, actionable recommendations)
-    
-    Team: {team_name}
-    Period: {period}
-    Data: {team_data}
-  
-  assignee_summary: |
-    Create an assignee-specific summary comparing planned vs actual work:
-    
-    For {assignee_name}:
-    - Assigned Work (In Progress): {in_progress_work}
-    - Actual Work Accomplished: {completed_work}
-    - Planned Work (To-Do): {todo_work}
-    
-    Format as HTML for email rendering, narrative style.
-
-email_settings:
-  # Gmail SMTP (default - matches working jira-report project)
-  smtp_server: "smtp.gmail.com"
-  smtp_port: 587
-  use_tls: true
-  # Username and token should come from environment variables
-  # EMAIL_USER and EMAIL_TOKEN will override these settings
-  
-  # Alternative: Local sendmail (for corporate environments)
-  # smtp_server: "localhost"
-  # smtp_port: 25
-  # use_tls: false
-  # from_email: "jira-reports@localhost"
-  
-  # For corporate Exchange/Office365:
-  # smtp_server: "smtp.office365.com"
-  # smtp_port: 587
-  # use_tls: true
-  
-  # For SendGrid API:
-  # smtp_server: "smtp.sendgrid.net"
-  # smtp_port: 587
-  # use_tls: true
-  # username: "apikey"
-  # password: "your_sendgrid_api_key"
-  
-  # Environment variables override config file:
-  # EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_FROM 
+# Optional: User display names for better readability
+user_display_names:
+  rhn-support-skalgudi: "Sameera Kalgudi"
+  rhn-support-ounsal: "Ozan Unsal"
+  mabanas@redhat.com: "Marcel Banas"
+  rhn-support-nsaini: "Nisha Saini"
+  rsmit106: "Ryan Smith"
+  jonderka@redhat.com: "Jan Onderka"
+  rhn-support-josimmon: "Joe Simmons-Talbott" 

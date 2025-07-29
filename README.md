@@ -1,206 +1,324 @@
-# redhat-ai-tools/jira-mcp-features-master
+# Jira MCP Server
 
-A containerized Python MCP server for Cursor to provide access to Jira.
+A streamlined Model Context Protocol (MCP) server for Jira integration that provides 6 essential tools for querying and managing Jira issues directly from Cursor.
 
-> [!IMPORTANT]
-> This project is experimental and was initially created as a learning exercise.
-> Be aware there are more capable and mature Jira MCP solutions available,
-> such as [sooperset/mcp-atlassian](https://github.com/sooperset/mcp-atlassian),
-> and Atlassian's own [MCP Server](https://www.atlassian.com/platform/remote-mcp-server).
+## 🏗️ Architecture
 
-See also [redhat-ai-tools/jira-mcp-snowflake](https://github.com/redhat-ai-tools/jira-mcp-snowflake)
-which provides another way to access Red Hat Jira data.
+```mermaid
+graph TB
+    subgraph "Cursor IDE"
+        A[Cursor MCP Client]
+    end
+    
+    subgraph "MCP Configuration"
+        B[mcp.json]
+        C[~/.rh-jira-mcp-features-master.env]
+    end
+    
+    subgraph "Container Runtime"
+        D[Podman Container]
+        E[jira-mcp-features-master:latest]
+    end
+    
+    subgraph "Jira Integration"
+        F[Jira REST API]
+        G[Automotive Feature Teams Project]
+    end
+    
+    A -->|MCP Protocol| B
+    B -->|Container Config| D
+    D -->|Runs| E
+    E -->|HTTP Requests| F
+    F -->|Returns Data| G
+    G -->|Issue Data| F
+    F -->|JSON Response| E
+    E -->|MCP Response| A
+    
+    style A fill:#4CAF50
+    style B fill:#2196F3
+    style D fill:#FF9800
+    style F fill:#9C27B0
+```
 
-## Prerequisites
+## 🛠️ Tools & Connections
 
-- **podman** - Install with `sudo dnf install podman` (Fedora/RHEL) or `brew install podman` (macOS)
-- **make** - Usually pre-installed on most systems
+```mermaid
+graph LR
+    subgraph "Cursor IDE"
+        A[Cursor Editor]
+        B[MCP Client]
+    end
+    
+    subgraph "MCP Server"
+        C[FastMCP Framework]
+        D[6 Jira Tools]
+    end
+    
+    subgraph "Jira API"
+        E[Jira REST API]
+        F[Project Data]
+        G[User Data]
+        H[Team Data]
+    end
+    
+    subgraph "Configuration"
+        I[jira-config.yaml]
+        J[Environment Variables]
+    end
+    
+    A -->|User Input| B
+    B -->|MCP Protocol| C
+    C -->|Tool Calls| D
+    
+    D -->|search_issues| E
+    D -->|get_team_issues| F
+    D -->|get_project_info| F
+    D -->|get_user_info| G
+    D -->|list_teams| H
+    D -->|list_organizations| H
+    
+    I -->|Team Config| D
+    J -->|Auth & URL| E
+    
+    style A fill:#4CAF50
+    style D fill:#2196F3
+    style E fill:#9C27B0
+    style I fill:#FF9800
+```
 
-## Quick Start
+## 🚀 Quick Start
 
-1. **Get the code**
-  ```bash
-  git clone git@github.com:caramuto-redhat/slack-mcp-features-master.git
-  cd jira-mcp-features-master
-  ```
-2. **Build the image & configure Cursor**<br>
-  This also creates a `~/.rh-jira-mcp-features-master.env` file like [this](example.env).
-  ```bash
-  make setup
-  ```
+### Prerequisites
+- Podman installed and running
+- Jira API access token
+- Cursor IDE with MCP support
 
-3. **Prepare a Jira token**
-   * Go to [Red Hat Jira Personal Access Tokens](https://issues.redhat.com/secure/ViewProfile.jspa?selectedTab=com.atlassian.pats.pats-plugin:jira-user-personal-access-tokens) and create a token
-   * Edit the `.rh-jira-mcp-features-master.env` file in your home directory and paste in the token
+### 1. Build the Container
+```bash
+make build
+```
 
-To confirm it's working, run Cursor, go to Settings and click on "Tools &
-Integrations". Under MCP Tools you should see "jiraMcp" with 27 tools enabled.
+### 2. Configure Environment
+Create `~/.rh-jira-mcp-features-master.env`:
+```bash
+JIRA_URL=https://your-jira-instance.com
+JIRA_API_TOKEN=your-api-token
+```
 
-## Available Tools
+### 3. Configure Cursor MCP
+Add to your `~/.cursor/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "jiraMcp": {
+      "command": "podman",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--env-file",
+        "~/.rh-jira-mcp-features-master.env",
+        "localhost/jira-mcp-features-master:latest"
+      ],
+      "description": "A containerized MCP server to query Jira issues"
+    }
+  }
+}
+```
 
-This MCP server provides the following tools:
+## 📋 Available Tools
 
-### Issue Search
-- `get_jira` - Get details for a specific Jira issue by key.
-- `search_issues` - Search issues using JQL
+### 1. `search_issues(jql, max_results)`
+Search Jira issues using any JQL query.
 
-### Project Management
-- `list_projects` - List all projects
-- `get_project` - Get project details by key
-- `get_project_components` - Get components for a project
-- `get_project_versions` - Get versions for a project
-- `get_project_roles` - Get roles for a project
-- `get_project_permission_scheme` - Get permission scheme for a project
-- `get_project_issue_types` - Get issue types for a project
+**Parameters:**
+- `jql` (string): JQL query string
+- `max_results` (int, optional): Maximum number of results (default: 20)
 
-### Board & Sprint Management
-- `list_boards` - List all boards
-- `get_board` - Get board details by ID
-- `list_sprints` - List sprints for a board
-- `get_sprint` - Get sprint details by ID
-- `get_issues_for_board` - Get issues for a board
-- `get_issues_for_sprint` - Get issues for a sprint
+**Example:**
+```python
+search_issues('project = "Automotive Feature Teams" AND priority = "Critical"')
+```
 
-### User Management
-- `search_users` - Search users by query
-- `get_user` - Get user details by account ID
-- `get_current_user` - Get current user info
-- `get_assignable_users_for_project` - Get assignable users for a project
-- `get_assignable_users_for_issue` - Get assignable users for an issue
+### 2. `get_team_issues(team, status, organization)`
+Get issues for a specific team with optional organization filtering.
 
-### Team Reporting & Analytics
-- `get_team_config` - Get the current team configuration
-- `list_teams` - List all configured teams
-- `generate_team_jql` - Generate JQL query for a specific team and query type
-- `get_team_issues` - Get issues for a specific team with enhanced data
-- `generate_team_report` - Generate comprehensive team reports with AI analysis
-- `send_team_report_email` - Send team reports via email
-- `test_email_configuration` - Test email configuration by sending a test message
+**Parameters:**
+- `team` (string): Team name (e.g., "toolchain", "assessment")
+- `status` (string, optional): Issue status (default: "In Progress")
+- `organization` (string, optional): Organization filter (e.g., "SP")
 
-## Team Reporting Features
+**Examples:**
+```python
+# All toolchain tickets
+get_team_issues("toolchain", "In Progress")
 
-This MCP server includes advanced team reporting capabilities that can generate automated weekly/monthly status reports with AI-powered analysis.
+# SP toolchain tickets only
+get_team_issues("toolchain", "In Progress", "SP")
+```
 
-### Key Features
+### 3. `get_project_info(project_key)`
+Get basic project information.
 
-- **Multi-Team Support**: Configure multiple teams with different assignees and focus areas
-- **AI-Powered Analysis**: Uses Gemini or OpenAI to summarize work and provide insights
-- **Automated Email Reports**: Send HTML reports directly to stakeholders
-- **Dynamic JQL Generation**: Automatically creates queries based on team configuration
-- **Comprehensive Analytics**: Track in-progress, todo, and recently completed work
+**Parameters:**
+- `project_key` (string): Project key (e.g., "VROOM")
 
-### Team Configuration
+### 4. `get_user_info(username)`
+Get user information.
 
-Teams are configured in `jira-config.yaml`. Example configuration:
+**Parameters:**
+- `username` (string): Jira username
+
+### 5. `list_teams()`
+List all configured teams.
+
+### 6. `list_organizations()`
+List all configured organizations.
+
+## ⚙️ Configuration
+
+### Teams Configuration (`jira-config.yaml`)
+```yaml
+teams:
+  toolchain:
+    name: "ToolChain Team"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-ft-auto-toolchain"
+    members:
+      - "Sameera Kalgudi"    # Display names work!
+      - "Ozan Unsal"
+      - "Marcel Banas"
+
+  assessment:
+    name: "Assessment Team"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-ft-auto-assessment"
+    members:
+      - "Joe Simmons-Talbott"
+```
+
+### Organizations Configuration
+```yaml
+organizations:
+  SP:
+    - "Sameera Kalgudi"      # Display names work!
+    - "Ozan Unsal"
+    - "Marcel Banas"
+```
+
+### Custom Display Names
+The `user_display_names` section allows you to override Jira's display names with custom ones:
 
 ```yaml
-team_configs:
-  user_group_1:
-    name: "ToolChain Team"
-    assignees:
-      - "rhn-support-skalgudi"
-      - "rhn-support-ounsal"
-      - "mabanas@redhat.com"
-    focus: "Development tools and infrastructure"
-    email:
-      subject: "ToolChain Team {period_title} Status Report - {date}"
-      message: "{period_description} for ToolChain team development"
-      recipients:
-        - "manager@company.com"
+user_display_names:
+  rhn-support-skalgudi: "Sameera Kalgudi"
+  rhn-support-ounsal: "Ozan Unsal"
+  mabanas@redhat.com: "Marcel Banas"
+  rhn-support-nsaini: "Nisha Saini"
+  rsmit106: "Ryan Smith"
+  jonderka@redhat.com: "Jan Onderka"
+  rhn-support-josimmon: "Joe Simmons-Talbott"
 ```
 
-### AI Configuration
+**Benefits:**
+- **Consistent Formatting**: Use preferred name formats
+- **Privacy**: Mask real names with aliases if needed
+- **Localization**: Provide localized name versions
+- **Fallback**: If no custom name is defined, uses Jira's display name
+- **Flexible Configuration**: Use display names in `members` sections - automatically resolves to usernames
 
-To enable AI-powered summaries, add API keys to your environment:
+## 🔧 Development
 
+### Local Development
 ```bash
-# For Google Gemini (recommended)
-GEMINI_API_KEY=your_gemini_api_key
+# Install dependencies
+pip install -r requirements.txt
 
-# For OpenAI (alternative)
-OPENAI_API_KEY=your_openai_api_key
+# Run locally
+python server.py
 ```
 
-### Email Configuration
-
-The system supports multiple email authentication methods:
-
-**Option 1: Local sendmail (Default - No authentication required)**
+### Container Development
 ```bash
-# No configuration needed - uses localhost sendmail
-# Common in Linux/corporate environments
+# Build container
+make build
+
+# Run container
+make run
+
+# Clean up
+make clean
 ```
 
-**Option 2: Email Tokens (Recommended - More secure)**
+## 📊 Usage Examples
+
+### Get Critical Issues
+```python
+search_issues('project = "Automotive Feature Teams" AND priority = "Critical"')
+```
+
+### Get Team Backlog
+```python
+get_team_issues("toolchain", "To Do")
+```
+
+### Get Organization Issues
+```python
+get_team_issues("toolchain", "In Progress", "SP")
+```
+
+### Search by Assignee
+```python
+search_issues('assignee = "mabanas@redhat.com" AND statusCategory = "In Progress"')
+```
+
+## 🏆 Key Benefits
+
+- **Simplified**: 6 core tools instead of 38
+- **Fast**: Minimal overhead, optimized queries
+- **Flexible**: Supports both team and organization filtering
+- **Maintainable**: Clean code structure, easy to extend
+- **Containerized**: Consistent deployment across environments
+- **Secure**: Environment-based configuration
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **Container not found**
+   ```bash
+   make build
+   ```
+
+2. **Authentication failed**
+   - Check `~/.rh-jira-mcp-features-master.env`
+   - Verify JIRA_URL and JIRA_API_TOKEN
+
+3. **Tools not available**
+   - Restart Cursor after MCP configuration changes
+   - Check MCP server status in Cursor settings
+
+### Debug Mode
 ```bash
-# Use EMAIL_TOKEN instead of EMAIL_PASSWORD for better security
-EMAIL_USER=your_email@gmail.com
-EMAIL_TOKEN=your_app_password_or_api_token
-EMAIL_FROM=your_email@gmail.com
+# Run with debug logging
+python server.py --debug
 ```
 
-**Option 3: Gmail with App Password**
-```bash
-EMAIL_USERNAME=your_email@gmail.com
-EMAIL_TOKEN=your_gmail_app_password
-EMAIL_FROM=your_email@gmail.com
-```
+## 📝 License
 
-**Option 4: SendGrid/External API**
-```bash
-EMAIL_USER=apikey
-EMAIL_TOKEN=your_sendgrid_api_key
-EMAIL_FROM=noreply@yourdomain.com
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-**Option 5: Corporate email server**
-```bash
-# Often only requires FROM address
-EMAIL_FROM=reports@yourcompany.com
-```
+## 🤝 Contributing
 
-> **Note**: Modern email providers (Google, Microsoft) require app passwords/tokens instead of regular passwords for security.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-### Usage Examples
+## 📞 Support
 
-```bash
-# Test email configuration first
-test_email_configuration("your-email@company.com")
-
-# List all configured teams
-list_teams()
-
-# Generate a report for the FoA team
-generate_team_report("user_group_3", include_ai_summary=True, send_email=False)
-
-# Get current issues for ToolChain team
-get_team_issues("user_group_1", query_type="in_progress", include_comments=True)
-
-# Send a report via email
-send_team_report_email("user_group_3", report_data)
-```
-
-## Development Commands
-
-- `make build` - Build the image
-- `make run` - Run the container
-- `make clean` - Clean up the built image
-- `make cursor-config` - Modify `~/.cursor/mcp.json` to install this MCP Server
-- `make setup` - Builds the image, configures Cursor, and creates `~/.rh-jira-mcp-features-master.env` if it doesn't exist
-
-## Troubleshooting
-
-### Server Not Starting
-- Confirm that `make run` works
-- Check that the JIRA_API_TOKEN is correct
-- Verify the image was built successfully with `podman images jira-mcp-features-master`
-- Go to the "Output" tab in Cursor's bottom pane, choose "MCP Logs" from the drop-down select and examine the logs there
-
-### Connection Issues
-- Restart Cursor after configuration changes
-- Check Cursor's developer console for error messages
-- Verify the Jira URL is accessible from your network
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+For issues and questions:
+- Check the troubleshooting section
+- Review the configuration examples
+- Open an issue on GitHub 
