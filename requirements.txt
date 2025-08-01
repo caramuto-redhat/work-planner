@@ -15,3 +15,6 @@ urllib3==2.4.0
 
 # Type hints and validation
 typing_extensions==4.14.0
+
+# Performance monitoring (optional)
+# rich==14.1.0  # For better console output

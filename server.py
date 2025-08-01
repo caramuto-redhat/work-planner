@@ -5,19 +5,22 @@ import yaml
 import json
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
+from pathlib import Path
 
 from dotenv import load_dotenv
 from jira import JIRA
 from fastmcp import FastMCP
 
 # ─── 1. Environment Setup ─────────────────────────────────────────────
-load_dotenv()
+# Load environment variables from multiple sources
+load_dotenv()  # Load from .env file
+load_dotenv(Path.home() / ".rh-jira-mcp-features-master.env")  # Load from home directory
 
 JIRA_URL = os.getenv("JIRA_URL")
 JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN")
 
 if not all([JIRA_URL, JIRA_API_TOKEN]):
-    raise RuntimeError("Missing JIRA_URL or JIRA_API_TOKEN environment variables")
+    raise RuntimeError("Missing JIRA_URL or JIRA_API_TOKEN environment variables. Please check your .env file or ~/.rh-jira-mcp-features-master.env")
 
 # ─── 2. Jira Client ─────────────────────────────────────────────────
 try:
@@ -26,6 +29,9 @@ try:
     jira_client.projects()
 except Exception as e:
     raise RuntimeError(f"Failed to connect to Jira: {str(e)}")
+
+# Cache for user display names to reduce API calls
+_user_display_cache = {}
 
 # ─── 3. Configuration Loading ────────────────────────────────────────
 def load_config() -> Dict[str, Any]:
@@ -98,10 +104,19 @@ def get_display_name(username: str, jira_display_name: str) -> str:
     """Get custom display name from config or fall back to Jira's display name."""
     if not username:
         return "Unassigned"
+    
+    # Check cache first
+    if username in _user_display_cache:
+        return _user_display_cache[username]
         
     if "user_display_names" in config and username in config["user_display_names"]:
-        return config["user_display_names"][username]
-    return jira_display_name
+        display_name = config["user_display_names"][username]
+    else:
+        display_name = jira_display_name
+    
+    # Cache the result
+    _user_display_cache[username] = display_name
+    return display_name
 
 def get_issues(jql: str, max_results: int = 20) -> List[Dict]:
     """Get issues with consistent formatting and error handling."""
@@ -110,26 +125,31 @@ def get_issues(jql: str, max_results: int = 20) -> List[Dict]:
         
         result = []
         for issue in issues:
-            # Get the original Jira display name
-            jira_display_name = issue.fields.assignee.displayName if issue.fields.assignee else "Unassigned"
-            
-            # Use custom display name if available, otherwise use Jira's
-            if issue.fields.assignee:
-                display_name = get_display_name(issue.fields.assignee.name, jira_display_name)
-            else:
-                display_name = "Unassigned"
-            
-            result.append({
-                "key": issue.key,
-                "summary": issue.fields.summary,
-                "status": issue.fields.status.name,
-                "assignee": display_name,
-                "assignee_username": issue.fields.assignee.name if issue.fields.assignee else None,
-                "created": issue.fields.created,
-                "updated": issue.fields.updated,
-                "issue_type": issue.fields.issuetype.name,
-                "priority": issue.fields.priority.name if issue.fields.priority else "Undefined"
-            })
+            try:
+                # Get the original Jira display name
+                jira_display_name = issue.fields.assignee.displayName if issue.fields.assignee else "Unassigned"
+                
+                # Use custom display name if available, otherwise use Jira's
+                if issue.fields.assignee:
+                    display_name = get_display_name(issue.fields.assignee.name, jira_display_name)
+                else:
+                    display_name = "Unassigned"
+                
+                result.append({
+                    "key": issue.key,
+                    "summary": issue.fields.summary,
+                    "status": issue.fields.status.name,
+                    "assignee": display_name,
+                    "assignee_username": issue.fields.assignee.name if issue.fields.assignee else None,
+                    "created": issue.fields.created,
+                    "updated": issue.fields.updated,
+                    "issue_type": issue.fields.issuetype.name,
+                    "priority": issue.fields.priority.name if issue.fields.priority else "Undefined"
+                })
+            except Exception as e:
+                # Log individual issue processing errors but continue
+                print(f"Warning: Failed to process issue {issue.key}: {str(e)}")
+                continue
         
         return result
     except Exception as e:

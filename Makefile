@@ -1,40 +1,57 @@
+# Jira MCP Server Makefile
+# Clean, minimal version for production MCP server only
+# All queries go through MCP tools - no direct scripts
 
-_default: run
+.PHONY: build run clean cursor-config setup help
 
-SHELL := /bin/bash
-SCRIPT_DIR := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-IMG := localhost/jira-mcp-features-master:latest
-ENV_FILE := $(HOME)/.rh-jira-mcp-features-master.env
+# Environment file path
+ENV_FILE = ~/.rh-jira-mcp-features-master.env
 
-.PHONY: build run clean test cursor-config setup
-
+# Build the container
 build:
-	@echo "🛠️ Building image"
-	podman build -t $(IMG) .
+	@echo "🔨 Building Jira MCP Server container..."
+	@podman build -t localhost/jira-mcp-features-master:latest .
 
-# Notes:
-# - $(ENV_FILE) is expected to define JIRA_URL & JIRA_API_TOKEN.
-# - The --tty option is used here since we might run this in a
-#   terminal, but for the mcp.json version we don't use --tty.
-# - You can use Ctrl-D to quit nicely.
+# Run the container
 run:
-	@podman run -i --tty --rm --env-file $(ENV_FILE) $(IMG)
+	@echo "🚀 Running Jira MCP Server container..."
+	@podman run -i --rm --env-file $(ENV_FILE) localhost/jira-mcp-features-master:latest
 
+# Clean up
 clean:
-	podman rmi -i $(IMG)
+	@echo "🧹 Cleaning up..."
+	@podman rmi localhost/jira-mcp-features-master:latest 2>/dev/null || true
+	@rm -rf __pycache__
+	@rm -f *.pyc
+	@rm -rf venv
 
-# For easier onboarding (and convenient hacking and testing), use this to
-# configure Cursor by adding or updating an entry in the ~/.cursor/mcp.json
-# file. Beware it might overwrite your customizations.
-MCP_JSON=$(HOME)/.cursor/mcp.json
+# Setup cursor configuration
 cursor-config:
-	@echo "🛠️ Modifying $(MCP_JSON)"
-	@yq -ojson '. *= load("example.mcp.json")' -i $(MCP_JSON)
-	@yq -ojson $(MCP_JSON)
+	@echo "📝 Setting up Cursor MCP configuration..."
+	@cp example.mcp.json ~/.cursor/mcp.json
+	@echo "✅ Cursor MCP configuration copied to ~/.cursor/mcp.json"
+	@echo "🔄 Restart Cursor to load the MCP server"
 
-# Copy the example .env file only if it doesn't exist already
-$(ENV_FILE):
-	@cp example.env $@
-	@echo "🛠️ Env file created. Edit $@ to add your Jira token"
+# Setup environment
+setup:
+	@echo "🔧 Setting up environment..."
+	@if [ ! -f $(ENV_FILE) ]; then \
+		echo "📝 Creating environment file at $(ENV_FILE)"; \
+		cp example.env $(ENV_FILE); \
+		echo "⚠️  Please edit $(ENV_FILE) with your Jira credentials"; \
+	else \
+		echo "✅ Environment file already exists at $(ENV_FILE)"; \
+	fi
 
-setup: build cursor-config $(ENV_FILE)
+# Help
+help:
+	@echo "Available commands:"
+	@echo "  build        - Build the container"
+	@echo "  run          - Run the container"
+	@echo "  clean        - Clean up container and cache"
+	@echo "  cursor-config - Setup Cursor MCP configuration"
+	@echo "  setup        - Setup environment file"
+	@echo "  help         - Show this help"
+	@echo ""
+	@echo "🎯 This project works ONLY through MCP tools in Cursor"
+	@echo "   No direct scripts or manual queries needed"
