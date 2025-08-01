@@ -212,7 +212,13 @@ def get_team_issues(team: str, status: str = "In Progress", organization: str = 
         if organization:
             if organization not in config["organizations"]:
                 return create_error_response(f"Organization '{organization}' not found")
-            assignees = config["organizations"][organization]
+            # Get organization members
+            org_members = config["organizations"][organization]
+            # Get team members
+            team_members = team_config.get("members", [])
+            # Filter team members to only include those in the organization
+            assignees = [member for member in team_members if member in org_members]
+        # If no organization specified, don't filter by assignee (show all team tickets)
         
         # Build JQL
         jql = build_jql(project, status, assignees, assigned_team)

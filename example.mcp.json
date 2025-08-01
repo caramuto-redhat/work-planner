@@ -8,7 +8,7 @@
         "--rm",
         "--env-file",
             "~/.rh-jira-mcp-features-master-web.env",
-    "localhost/jira-mcp-features-master-web:latest"
+    "docker.io/library/jira-mcp-features-master-web:latest"
       ],
       "description": "A containerized MCP server to query Jira issues"
     }

@@ -11,11 +11,17 @@ ENV_FILE = ~/.rh-jira-mcp-features-master-web.env
 build:
 	@echo "🔨 Building Jira MCP Server container..."
 	@podman build -t localhost/jira-mcp-features-master-web:latest .
+	@echo "💡 Using local build. Docker Hub image available: docker.io/library/jira-mcp-features-master-web:latest"
 
 # Run the container
 run:
 	@echo "🚀 Running Jira MCP Server container..."
 	@podman run -i --rm --env-file $(ENV_FILE) localhost/jira-mcp-features-master-web:latest
+
+# Run using Docker Hub image
+run-dockerhub:
+	@echo "🚀 Running Jira MCP Server from Docker Hub..."
+	@podman run -i --rm --env-file $(ENV_FILE) docker.io/library/jira-mcp-features-master-web:latest
 
 # Clean up
 clean:
@@ -48,6 +54,7 @@ help:
 	@echo "Available commands:"
 	@echo "  build        - Build the container"
 	@echo "  run          - Run the container"
+	@echo "  run-dockerhub - Run using Docker Hub image"
 	@echo "  clean        - Clean up container and cache"
 	@echo "  cursor-config - Setup Cursor MCP configuration"
 	@echo "  setup        - Setup environment file"

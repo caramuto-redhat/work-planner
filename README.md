@@ -37,6 +37,13 @@ make build
 make cursor-config
 ```
 
+**⚠️ Warning**: The `make cursor-config` command will **overwrite** your existing `~/.cursor/mcp.json` file. This means:
+- Any existing MCP server configurations will be **replaced**
+- You'll get the default configuration from `example.mcp.json`
+- If you have custom MCP server configurations, they will be lost
+
+**💡 Note**: If you already have a working MCP configuration (like `jiraMCP2`), you may not need to run this command unless you want to reset to the default configuration.
+
 ### 4. Use in Cursor
 
 The MCP server will be available in Cursor as `jiraMcp`. You can now ask the AI assistant to:
@@ -94,9 +101,13 @@ make run
 ```bash
 # Build
 podman build -t localhost/jira-mcp-features-master-web:latest .
+# Or use the Docker Hub image:
+# docker.io/library/jira-mcp-features-master-web:latest
 
 # Run
 podman run -i --rm --env-file ~/.rh-jira-mcp-features-master-web.env localhost/jira-mcp-features-master-web:latest
+# Or use the Docker Hub image:
+# podman run -i --rm --env-file ~/.rh-jira-mcp-features-master-web.env docker.io/library/jira-mcp-features-master-web:latest
 ```
 
 ## 🛠️ Development
