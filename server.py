@@ -14,13 +14,13 @@ from fastmcp import FastMCP
 # ─── 1. Environment Setup ─────────────────────────────────────────────
 # Load environment variables from multiple sources
 load_dotenv()  # Load from .env file
-load_dotenv(Path.home() / ".rh-jira-mcp-features-master.env")  # Load from home directory
+load_dotenv(Path.home() / ".rh-jira-mcp-features-master-web.env")  # Load from home directory
 
 JIRA_URL = os.getenv("JIRA_URL")
 JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN")
 
 if not all([JIRA_URL, JIRA_API_TOKEN]):
-    raise RuntimeError("Missing JIRA_URL or JIRA_API_TOKEN environment variables. Please check your .env file or ~/.rh-jira-mcp-features-master.env")
+    raise RuntimeError("Missing JIRA_URL or JIRA_API_TOKEN environment variables. Please check your .env file or ~/.rh-jira-mcp-features-master-web.env")
 
 # ─── 2. Jira Client ─────────────────────────────────────────────────
 try:

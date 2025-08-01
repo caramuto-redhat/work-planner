@@ -22,7 +22,7 @@ A clean, minimal Model Context Protocol (MCP) server for querying Jira issues. T
 ```bash
 # Create environment file with your Jira credentials
 make setup
-# Edit ~/.rh-jira-mcp-features-master.env with your Jira URL and API token
+# Edit ~/.rh-jira-mcp-features-master-web.env with your Jira URL and API token
 ```
 
 ### 2. Build Container
@@ -51,7 +51,7 @@ The MCP server will be available in Cursor as `jiraMcp`. You can now ask the AI 
 ## 📁 Project Structure
 
 ```
-jira-mcp-features-master/
+jira-mcp-features-master-web/
 ├── server.py              # Main MCP server with 6 tools
 ├── jira-config.yaml       # Team and organization configurations
 ├── requirements.txt        # Python dependencies
@@ -93,10 +93,10 @@ make run
 
 ```bash
 # Build
-podman build -t localhost/jira-mcp-features-master:latest .
+podman build -t localhost/jira-mcp-features-master-web:latest .
 
 # Run
-podman run -i --rm --env-file ~/.rh-jira-mcp-features-master.env localhost/jira-mcp-features-master:latest
+podman run -i --rm --env-file ~/.rh-jira-mcp-features-master-web.env localhost/jira-mcp-features-master-web:latest
 ```
 
 ## 🛠️ Development
@@ -122,7 +122,7 @@ make help           # Show available commands
 
 ## 📋 Environment Variables
 
-Create `~/.rh-jira-mcp-features-master.env` with:
+Create `~/.rh-jira-mcp-features-master-web.env` with:
 
 ```bash
 JIRA_URL=https://your-jira-instance.atlassian.net

@@ -5,22 +5,22 @@
 .PHONY: build run clean cursor-config setup help
 
 # Environment file path
-ENV_FILE = ~/.rh-jira-mcp-features-master.env
+ENV_FILE = ~/.rh-jira-mcp-features-master-web.env
 
 # Build the container
 build:
 	@echo "🔨 Building Jira MCP Server container..."
-	@podman build -t localhost/jira-mcp-features-master:latest .
+	@podman build -t localhost/jira-mcp-features-master-web:latest .
 
 # Run the container
 run:
 	@echo "🚀 Running Jira MCP Server container..."
-	@podman run -i --rm --env-file $(ENV_FILE) localhost/jira-mcp-features-master:latest
+	@podman run -i --rm --env-file $(ENV_FILE) localhost/jira-mcp-features-master-web:latest
 
 # Clean up
 clean:
 	@echo "🧹 Cleaning up..."
-	@podman rmi localhost/jira-mcp-features-master:latest 2>/dev/null || true
+	@podman rmi localhost/jira-mcp-features-master-web:latest 2>/dev/null || true
 	@rm -rf __pycache__
 	@rm -f *.pyc
 	@rm -rf venv
