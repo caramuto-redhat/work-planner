@@ -43,9 +43,7 @@ deploy_notification:
   image: alpine:latest
   script:
     - echo "Work Planner MCP Server deployed!"
-    - echo "Container: $CI_REGISTRY_IMAGE:latest"
-    - echo "Registry: $CI_REGISTRY"
-    - echo "Ready for use in Cursor MCP configuration"
+    - echo "Container ready for use"
   only:
     - main
     - tags
