@@ -1,4 +1,12 @@
 .env
 .venv
 __pycache__
-*.pyc 
+*.pyc
+slack_dumps_parsed/
+.github/
+*.md
+.git/
+.gitignore
+.cursorrules
+local.mcp.json
+cleanup-containers.sh 
