@@ -1,8 +1,9 @@
 # Slack Channel Dump
 # Channel ID: C05BYR06B0V
-# Generated: 2025-09-24T23:37:11.159344
+# Generated: 2025-09-27T21:54:16.597890
 # Total Messages: 100
 
+[2025-09-25T08:30:39.372929] U02DXVBD5CP: one more review here pls <https://gitlab.cee.redhat.com/automotive/services/supply-chain-webserver/-/merge_requests/51>
 [2025-09-23T14:06:48.934179] U0171SJF00H: as for the bucket failure, I'll address that now
 [2025-09-23T14:06:02.107479] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/649/diffs> Should fix the one of the changes in the plan
 [2025-09-23T14:05:20.295729] U0171SJF00H: <@U02DXVBD5CP> I see you're having some unrelated pipeline failures in: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/653>
@@ -180,4 +181,3 @@ This one cleans up orphaned directories (ones that don't exist in s3 anymore) so
 [2025-07-31T15:00:55.243319] U020YLADEKA: I know you are busy with many other incoming requests as well and thank you both Eitan and Hubert for all your hard work so far :pray:
 [2025-07-31T14:59:48.594219] U020YLADEKA: <@U04MGT65NQJ> <@U0171SJF00H> can we drop all the rest of the work and give the RHIVOS webserver attention and priority so it's fixed for good ?
 All the rest can wait until this is resolved.
-[2025-07-31T14:49:55.445389] U04JRTQ4LHK: <@U020YLADEKA> FYI

@@ -76,12 +76,57 @@ def check_and_dump_if_needed(client, config, channel_id: str, max_age_hours: int
                     
                     f.write(f"[{timestamp.isoformat()}] {user}: {text}\n")
             
+            # Also create parsed version
+            parsed_dir = config.get("data_collection", {}).get("parsed_directory", "slack_dumps_parsed")
+            os.makedirs(parsed_dir, exist_ok=True)
+            
+            parsed_filename = f"{channel_id}_slack_dump_parsed.txt"
+            parsed_filepath = os.path.join(parsed_dir, parsed_filename)
+            
+            # Get channel name from config if available
+            slack_channels = config.get("slack_channels", {})
+            channel_name = "Unknown"
+            for ch_id, team_id in slack_channels.items():
+                if ch_id == channel_id:
+                    # Try to get channel name from team mapping or use team as name
+                    channel_name = f"#{team_id}-channel" if team_id else "Unknown"
+                    break
+            
+            # Write parsed messages to file with enhanced formatting
+            with open(parsed_filepath, 'w', encoding='utf-8') as f:
+                f.write(f"# Slack Channel Dump\n")
+                f.write(f"# Channel ID: {channel_id}\n")
+                f.write(f"# Channel Name: {channel_name}\n")
+                f.write(f"# Generated: {datetime.now().isoformat()}\n")
+                f.write(f"# Total Messages: {len(messages)}\n\n")
+                
+                for message in messages:
+                    timestamp = datetime.fromtimestamp(float(message['ts']))
+                    user = message.get('user', 'Unknown')
+                    text = message.get('text', '')
+                    
+                    # Enhanced parsing: clean up Slack formatting
+                    parsed_text = text
+                    # Remove Slack user mentions and replace with readable format
+                    import re
+                    parsed_text = re.sub(r'<@([A-Z0-9]+)>', r'@\1', parsed_text)
+                    # Remove Slack channel links and replace with readable format
+                    parsed_text = re.sub(r'<#([A-Z0-9]+)\|([^>]+)>', r'#\2', parsed_text)
+                    # Remove general links but keep the URL
+                    parsed_text = re.sub(r'<([^|>]+)\|([^>]+)>', r'\2 (\1)', parsed_text)
+                    parsed_text = re.sub(r'<([^>]+)>', r'\1', parsed_text)
+                    
+                    f.write(f"[{timestamp.isoformat()}] {user}: {parsed_text}\n")
+            
             return create_success_response({
                 "action": "dumped",
                 "channel_id": channel_id,
                 "messages_count": len(messages),
                 "file_path": filepath,
-                "filename": filename
+                "filename": filename,
+                "parsed_file_path": parsed_filepath,
+                "parsed_filename": parsed_filename,
+                "channel_name": channel_name
             })
         else:
             return create_success_response({

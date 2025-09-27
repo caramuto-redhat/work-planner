@@ -1,6 +1,6 @@
 # Slack Channel Dump
 # Channel ID: C0910QFKTSN
-# Generated: 2025-09-24T23:37:13.294290
+# Generated: 2025-09-27T21:55:34.985126
 # Total Messages: 51
 
 [2025-09-13T18:10:14.784869] U02F2L89YTS: And for ppl more advance or that like to understand what the LLMs and the transformers really are, this is a masterpiece that explains many machine learning concepts, what are transformers and LLM, and how they work. Super interesting, but maybe not for everyone :sweat_smile:
