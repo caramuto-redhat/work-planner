@@ -1,0 +1,92 @@
+# Simplified Jira MCP Configuration
+# This replaces the complex 266-line config with a clean, minimal structure
+
+teams:
+  toolchain:
+    name: "ToolChain Team"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-pdr-auto-toolchain"  # Valid AssignedTeam value
+    members:
+      - "Sameera Kalgudi"
+      - "Ozan Unsal"
+      - "Marcel Banas"
+
+  assessment:
+    name: "Assessment Team"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-fusa-assessment"  # Valid AssignedTeam value
+    members:
+      - "Joe Simmons-Talbott"
+
+  foa:
+    name: "FoA Team"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-fusa-foa"  # Valid AssignedTeam value
+    members:
+      - "Nisha Saini"
+      - "Ryan Smith"
+
+  boa:
+    name: "BoA Team"
+    project: "Automotive Feature Teams"
+    assigned_team: "rhivos-pdr-base-os-automotive"  # Valid AssignedTeam value
+    members:
+      - "Jan Onderka"
+
+organizations:
+  SP:
+    - "Sameera Kalgudi"
+    - "Ozan Unsal"
+    - "Marcel Banas"
+    - "Nisha Saini"
+    - "Ryan Smith"
+    - "Jan Onderka"
+    - "Joe Simmons-Talbott"
+
+# Team aliases for better user experience
+team_aliases:
+  # FoA Team aliases
+  "FoA": "foa"
+  "FOA": "foa"
+  "foa": "foa"
+  "fusa-foa": "foa"
+  "rhivos-fusa-foa": "foa"
+  
+  # ToolChain Team aliases
+  "ToolChain": "toolchain"
+  "toolchain": "toolchain"
+  "Toolchain": "toolchain"
+  "pdr-auto-toolchain": "toolchain"
+  "rhivos-pdr-auto-toolchain": "toolchain"
+  
+  # Assessment Team aliases
+  "Assessment": "assessment"
+  "assessment": "assessment"
+  "fusa-assessment": "assessment"
+  "rhivos-fusa-assessment": "assessment"
+  
+  # BoA Team aliases
+  "BoA": "boa"
+  "BOA": "boa"
+  "boa": "boa"
+  "pdr-base-os-automotive": "boa"
+  "rhivos-pdr-base-os-automotive": "boa"
+
+# Organization aliases for better user experience
+organization_aliases:
+  "SP": "SP"
+  "sp": "SP"
+  "Software Production": "SP"
+  "software production": "SP"
+  "SoftwareProduction": "SP"
+  "softwareproduction": "SP"
+
+# User display names mapping: Engineer Name -> Jira Username
+user_display_names:
+  "Sameera Kalgudi": "rhn-support-skalgudi"
+  "Ozan Unsal": "rhn-support-ounsal"
+  "Marcel Banas": "mabanas@redhat.com"
+  "Nisha Saini": "rhn-support-nsaini"
+  "Ryan Smith": "rsmit106"
+  "Jan Onderka": "jonderka@redhat.com"
+  "Joe Simmons-Talbott": "rhn-support-josimmon" 

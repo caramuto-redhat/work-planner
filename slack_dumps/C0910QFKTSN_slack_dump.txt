@@ -1,0 +1,159 @@
+# Slack Channel Dump
+# Channel ID: C0910QFKTSN
+# Generated: 2025-09-24T23:37:13.294290
+# Total Messages: 51
+
+[2025-09-13T18:10:14.784869] U02F2L89YTS: And for ppl more advance or that like to understand what the LLMs and the transformers really are, this is a masterpiece that explains many machine learning concepts, what are transformers and LLM, and how they work. Super interesting, but maybe not for everyone :sweat_smile:
+<https://www.youtube.com/watch?v=wjZofJX0v4M>
+[2025-09-13T18:07:22.447209] U02F2L89YTS: Here you have a nice didactic video for building a super-simple chatbot in Python with langchain + ollama. And then adding a simple RAG using chroma for the vector database.
+It's super simple, but enough to see how that actually works at a basic level:
+<https://www.youtube.com/watch?v=E4l91XKQSgw>
+[2025-09-10T13:36:56.319329] U020YLADEKA: <@U01552Z34RG> FYI for AI links are here ^€
+[2025-09-10T13:36:27.314159] U01552Z34RG: <@U01552Z34RG> has joined the channel
+[2025-09-09T06:41:36.846829] U02CVB7MDK8: <@U02CVB7MDK8> has joined the channel
+[2025-09-08T23:24:41.403169] U02F2L89YTS: I recommend anyone that's using Cursor, claude-code or any other AI tool for coding to us <https://context7.com/>
+The LLM often have old knowledge about the libraries, APIs, etc and they can make the wrong assumptions, put the wrong versions or use deprecated functions. Context7 is an MCP server that give to the IDE the tools for checking the latest documentation for most of the libs you'll ever use.
+As a tip, add also to your cursor rules or your CLAUDE.md files to check with context7 before creating a new project, add a new library or while debugging errors. The results are normally much better.
+[2025-09-08T15:40:53.177869] U04N0SVB92Q: <@U04N0SVB92Q> has joined the channel
+[2025-09-02T06:12:58.401709] U04Q4USRZTM: Hi and thanks for adding me to this channel!
+We are working on a Test Console ChatBot, early stages, and we are investigating a few things: <https://issues.redhat.com/browse/VROOM-32061>
+The goal is to have a chat bot able to interact with Test Console data, retrieving information and creating requests in our system.
+Due to that we have some questions such as:
+• what is the best interface to share with the ai in terms of tools? direct db access, api, python module, ad hoc
+• where to store the conversation history (in browser, db, not needed)
+• we need RAG? (it is enough to describe the tools or we need additional context?)
+• which LLM is better for our us case? (Gemini? we don't need to ask about the universe! An LLM deployed with Ollama?)
+Any insight will be useful!
+[2025-09-02T00:57:05.515109] U04Q4USRZTM: <@U04Q4USRZTM> has joined the channel
+[2025-09-01T14:05:21.498729] U02F2L89YTS: *For learning*
+Here you have a simple chatbot done with LangChain (a very good and standard lib for creating chatbots and agents) and Ollama (to work with local models).
+There you can learn how to talk with the LLMs and do basic ai app stuff: <https://github.com/juanje/simple-chatbot>
+And this is the same chartbot but with a simple (pssudo)RAG, so you can talk with a knowledge database. It's not using a tipical vector database, but a simple json file as a "database" for the retrieval part, to simplify things and focos on how the RAG actually works instead of focusing on the infra part or the extracting/embedding part.
+<https://github.com/juanje/simple-chatbot-miniRAG>
+[2025-09-01T13:58:02.113409] U02F2L89YTS: Following the "behind the curtin" trend, here is a code example I did to understand how the "tool calling" (which later was used for the MCPs) actually works "under de hood":
+<https://github.com/juanje/llm-tool-calling/blob/main/pseudo_tool_calling.py>
+
+That's with a old model that doesn't support "tool calling", to see what exactly the LLM (and the ai app) does.
+Then, they started to train models with thousands of examples for this, so now the models "understand" what to do when you pass a JSON schema for using a function or a tool.
+So, now you can do it "natively" like this:
+<https://github.com/juanje/llm-tool-calling/blob/main/real_tool_calling.py>
+Here is the high level explanation and shorter version of the code:
+<https://github.com/juanje/llm-tool-calling>
+[2025-09-01T12:58:11.051129] U04JRTQ4LHK: I showed <@U02F2L89YTS> this <https://www.youtube.com/watch?v=i0P56Pm1Q3U|video> and he asked I bring it up here to share further :meow_smilesweat:  Didi shared this to us in a FoA meeting and it is very illuminating how Claude Code works and why simple llm prompting with local llms isn't equivalent
+[2025-08-25T11:57:52.969279] U04JRTQ4LHK: <@U04JRTQ4LHK> has joined the channel
+[2025-08-19T12:40:02.256339] U02DXVBD5CP: I added a small project [1] to use Gemini to review gitlab MR. Just sharing here in case anyone wants to enable it in your repo.
+[1] <https://gitlab.cee.redhat.com/automotive/toolshed/automate-code-review>
+[2025-08-19T11:51:12.876729] U02F2L89YTS: Interesting :thinking_face:
+[2025-08-18T15:16:42.677819] U02F2L89YTS: In case anyone is interested on understanding a bit better some of the basic concepts about generative AI, how LLMs work, RAG, agents and other AI related topics, I curated a YouTuve list with good quality (and short) explanations. FYI, the videos have a logical and incremental order, so I recommend to follow it, but you can do as you wish :sweat_smile:
+<https://youtube.com/playlist?list=PLfZui7DiPOPgU34wnruAMXcR_EzsnFSiB&amp;si=KYPwcBurIuDoXVID>
+[2025-08-11T19:29:35.696729] U04AGQD0K8D: <@U04AGQD0K8D> has joined the channel
+[2025-08-11T19:20:57.401509] URRPFQEMS: <@URRPFQEMS> has joined the channel
+[2025-08-11T16:29:12.447629] U020YLADEKA: Hi hi folks! :face_with_cowboy_hat:
+Sharing very cool slides about writing MCp servers easily slides and recording made last week 
+[2025-07-28T04:10:29.426219] U03PXHBRX5Z: <@U03PXHBRX5Z> has joined the channel
+[2025-07-24T13:39:22.914219] U02DXVBD5CP: Hey all, if you could share in this sheet the tool you have used that would be nice
+<https://docs.google.com/spreadsheets/d/1Vdrb50eSiNLwM83qG8dj8eVwanLDB1CFbwZ3BveOa8g/edit?gid=0#gid=0>
+[2025-07-21T18:13:37.452919] U020YLADEKA: Hi <!here>,
+Posting this here if you have a Q2 great example of AI usage in a form of Demo or blog.
+Please post it here and I’ll forward it to Shawn D. For some broad core platform level recognitions :trophy: 
+[2025-07-19T02:23:09.550949] U04AGK8UJ2V: <@U04AGK8UJ2V> has joined the channel
+[2025-07-09T15:56:50.757039] U02F2L89YTS: Nice :heart_eyes:
+[2025-07-09T15:28:16.329459] U020YLADEKA: Finnaly got a successful connection with Jira with the following JIRA MCP config at Cursor!
+Check out the cool results in the pic :star-struck:
+
+```"jira": {
+      "type": "stdio",
+      "command": "podman",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "JIRA_URL",
+        "-e",
+        "JIRA_PERSONAL_TOKEN",
+        "<http://ghcr.io/sooperset/mcp-atlassian:latest|ghcr.io/sooperset/mcp-atlassian:latest>"
+      ],
+      "env": {
+        "JIRA_PERSONAL_TOKEN": "&lt;your token&gt;",
+        "JIRA_URL": "<https://issues.redhat.com>"
+      }
+    ```
+[2025-07-09T13:13:17.421779] U020YLADEKA: Hi there :redhat_cowboy:
+Coming out of short Q3 innovation days at the ISR office about AI and MCP and wanted to shre:
+1. AI/Agents/MCP <https://docs.google.com/presentation/d/1VRO2xxv3BPra4ixy7kDm5p4FVGYoqqfTns6GJ6mP30Y/edit?slide=id.g36b7eb1a849_0_3295#slide=id.g36b7eb1a849_0_3295|intresting slides.>
+2. Very interesting <https://github.com/redhat-ai-tools|MCP registry >with all kinds of goodies(as Slack MCP, Jira MCP etc ...) that would make your work easier by leveraging on them or adding your own MCP project there.
+[2025-07-08T00:28:43.860509] U02F2L89YTS: Another open source AI agent I came across recently is <https://opencode.ai/>
+I heard good things, but i haven't tried it yet. It can run multiple agents in parallel in the same session, which looks useful (or messy :thinking_face: ) and suppose to be very fast.
+[2025-07-08T00:17:31.453799] U02F2L89YTS: Hi. I've been playing around with local AI agents and <https://modelcontextprotocol.io/introduction|MCP servers> lately and I found this one: <https://block.github.io/goose/>
+It's open source and it can work with many LLMs, including local ones. It's similar to Gemini-cli or Claude-code, but it's not tied to just one LLM, and it has other interesting characteristics, like sessions, projects, and more. It looks very easy to extend and it has this interesting feature for using different models in turns in the same session:
+<https://block.github.io/goose/docs/tutorials/lead-worker>
+
+I have't used it much yet. Just tried a bit. The UI is not so nice as claude-code or gemni-cli, but it has potential. We'll see.
+[2025-07-02T16:48:55.085359] U04N9LTR47M: Justin Pierce already went through that process and got it approved, you can find more info <https://source.redhat.com/groups/public/openshift/openshift_blog/building_a_custom_ai_advisor_from_slack_history|here> (the catch, you need to ask him to run it)
+[2025-07-02T16:47:35.944909] U04N9LTR47M: we can use the native slack API "retrieving" function, but we still have to get a PIA approval which can take a long time
+[2025-07-02T16:43:58.348029] U04N9LTR47M: I've been asking/investigating how to dump data from slack channels to NotebookLM, and the most difficult and lengthy process is getting the auth token approved to run the API
+[2025-07-01T14:26:28.024829] U02F2L89YTS: It's basically an app in Python that take documentation into an embedding database and run a LLM with a RAG (to access to the doc at that database). They probably deploy it in OpenShift and they'll connect the bot account in slack with that service. So, the chatbot can answer questions using the ingested docs.
+The code looks good, and it's simple but all that you need for that. nice project for learning, but also for creating our own (or just use it, there nothing specific to konflux there).
+[2025-07-01T14:17:11.808609] U02F2L89YTS: Here is the konflux user support chatbot project:
+<https://gitlab.cee.redhat.com/sp-ai/user-support-bot>
+Very interesting.
+[2025-07-01T13:26:47.942069] U04N9LTR47M: <@U04N9LTR47M> has joined the channel
+[2025-07-01T12:48:29.256199] U04NNGY4QQ2: We can request gemini API_KEY for red hat accounts now <https://docs.google.com/document/d/1N-1CgMtU-R5eHJ5BOyLIe4jEj0rmvdmCz4i8u5YfiIE/edit?tab=t.0#heading=h.ltpr634bumh3>
+[2025-06-27T09:34:12.062519] U04NNGY4QQ2: I was playning with gemini-cli and created a small <https://github.com/ozanunsal/pipelinebot|project> for checking our product build pipeline status. Finds the failed jobs, if it is failed in testing-farm, it traces testing-farm logs for the error log. Then it finds the possible cause of error and suggests how to fix. Here is an example of a failed <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/pipelines/1889153567|pipeline>;
+
+```(venv) ounsal@ounsal-thinkpadp16vgen1:~/repo/playground/pipeline-bot$ pipelinebot --project 35939621 --pipeline 1889153567
+INFO:pipelinebot.gitlab_api:Fetching jobs for pipeline 1889153567
+INFO:pipelinebot.gitlab_api:Retrieved 20 jobs from pipeline 1889153567
+INFO:pipelinebot.summarizer:Found 2 failed jobs to process
+INFO:pipelinebot.summarizer:Processing job 1/2: smoke-tests-fusa-minimal: [x86_64]
+INFO:pipelinebot.gitlab_api:Fetching log for job 10465690769
+INFO:pipelinebot.gitlab_api:Retrieved log for job 10465690769 (5462 characters)
+INFO:pipelinebot.summarizer:Processing Testing Farm job: smoke-tests-fusa-minimal: [x86_64]
+INFO:pipelinebot.summarizer:Processing job 2/2: smoke-tests-fusa-minimal: [aarch64]
+INFO:pipelinebot.gitlab_api:Fetching log for job 10465689664
+INFO:pipelinebot.gitlab_api:Retrieved log for job 10465689664 (5463 characters)
+INFO:pipelinebot.summarizer:Processing Testing Farm job: smoke-tests-fusa-minimal: [aarch64]
+================================================================================
+🚀 PIPELINE FAILURE ANALYSIS REPORT
+================================================================================
+Job 1: smoke-tests-fusa-minimal: [x86_64]
+Reason: The boot validation process failed because the configuration for the 'qm' container has an incorrect checksum. This indicates that the container's configuration has been modified and no longer matches the expected state.
+Possible Fixes: 1.  If the configuration change to the 'qm' container was intentional, update the expected checksum in the boot check configuration to the new value: `d73b490587fe25586d8a83dfee22179b4fe7b17f32d7e85a6ca1c7d68526c972`.
+2.  If the change was unintentional, revert the 'qm' container's configuration to its original state so that it matches the expected checksum (`28ea142bf3a1720172251131e30f463305515a26ac76009f64f6b9a71af333b6`).
+
+Job 2: smoke-tests-fusa-minimal: [aarch64]
+Reason: The `auto-boot-check.service` failed due to a configuration checksum mismatch for the 'qm' container. This indicates that the container's configuration has been modified and no longer matches the expected state.
+Possible Fixes: 1.  If the changes to the 'qm' container are intentional, update the expected checksum in the boot check configuration file located at `/usr/lib/boot-check.d/qm.conf`.
+2.  If the container configuration change was unintentional, revert the 'qm' container to its original state or rebuild the image to ensure its checksum matches the expected value.```
+When I actually checked the cause of failure, I can say that gemini made a really good process.
+
+I repeated it with a successful pipeline. To see whether I am having false-negative results and it also worked.
+```(venv) ounsal@ounsal-thinkpadp16vgen1:~/repo/playground/pipeline-bot$ pipelinebot --project 35939621 --pipeline 1891039231
+INFO:pipelinebot.gitlab_api:Fetching jobs for pipeline 1891039231
+INFO:pipelinebot.gitlab_api:Retrieved 20 jobs from pipeline 1891039231
+================================================================================
+🚀 PIPELINE FAILURE ANALYSIS REPORT
+================================================================================
+All jobs passed! 🎉```
+We can get benefit from this project for checking the status of our pipelines. I have an issue with gemini when I containerized this project. It gives an authentication timeout but I'll work on it. Besides that I was trying different pipelines for detecting different error but I guess we have some quota and gemini becomes exhausted :cry: .
+[2025-06-26T19:14:49.043039] U02F2L89YTS: Here is a short video explaining a bit what gemini-cli is, how it compare with its competitors (claude-code) and showing it working a bit:
+<https://www.youtube.com/watch?v=T76NbeTdDFA>
+[2025-06-26T19:10:07.263649] U02F2L89YTS: I don't know if you watched <https://www.youtube.com/watch?v=6eBSHbLKuN0&amp;t=6s|the video that Petr shared about Cloud Code> (which he used for his project), but it's very interesting. The problem is that you need a pro account for anthropic.
+Very recently, Google released a similar tool (but open source): <https://github.com/google-gemini/gemini-cli|Gemini cli>
+Here is the blog post talking about it: <https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/>
+It's basically the same tool (same options and ui), but working with gemini instead of claude, Well, and it's free, no need for a paid account. But it doesn't work (yet) with our RH account, but it works with your personal one. Although, I'm not sure about if we can use it for internal stuff. They say that those tools don't share the local stuff, but I don't really see how they can read and modify your code without sending it to the remote LLM server...
+Very interesting tools for coding, working with agents and MCPs.
+[2025-06-13T11:15:18.549189] U02DXVBD5CP: <https://docling-project.github.io/docling/#features>
+[2025-06-11T17:04:38.331959] U04MGT65NQJ: Thanks for setting this up <@U02F2L89YTS>
+[2025-06-11T14:07:24.999719] U02F2L89YTS: has renamed the channel from "wg-team-auto-toolchain-ia" to "wg-team-auto-toolchain-ai"
+[2025-06-11T14:07:05.643659] U02F2L89YTS: I put it in spanish :sweat_smile:  I'll change it
+[2025-06-11T14:06:53.073519] U02F2L89YTS: Ouch
+[2025-06-11T14:06:33.298579] U02F2L89YTS: set the channel description: Place for sharing tips, tricks and resources related to AI and how to use it for improving our work in Auto Toolchain
+[2025-06-11T14:06:06.438239] U02DXVBD5CP: ia lol?
+[2025-06-11T14:05:45.895969] U04MGT65NQJ: <@U04MGT65NQJ> has joined the channel
+[2025-06-11T14:05:45.785609] U04NNGY4QQ2: <@U04NNGY4QQ2> has joined the channel
+[2025-06-11T14:05:45.678759] U04LP69FP6X: <@U04LP69FP6X> has joined the channel
+[2025-06-11T14:05:45.554719] U02DXVBD5CP: <@U02DXVBD5CP> has joined the channel
+[2025-06-11T14:05:45.394589] U020YLADEKA: <@U020YLADEKA> has joined the channel
+[2025-06-11T14:05:04.331559] U02F2L89YTS: <@U02F2L89YTS> has joined the channel

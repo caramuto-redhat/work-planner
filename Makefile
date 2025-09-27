@@ -1,32 +1,35 @@
-# Jira MCP Server Makefile
+# Features Teams MCP Server Makefile
 # Clean, minimal version for production MCP server only
 # All queries go through MCP tools - no direct scripts
 
 .PHONY: build run clean cursor-config setup help
 
 # Environment file path
-ENV_FILE = ~/.rh-jira-mcp-features-master-web.env
+ENV_FILE = ~/.rh-features-teams.env
 
 # Build the container
 build:
-	@echo "🔨 Building Jira MCP Server container..."
-	@podman build -t localhost/jira-mcp-features-master-web:latest .
-	@echo "💡 Using local build. Docker Hub image available: docker.io/library/jira-mcp-features-master-web:latest"
+	@echo "🔨 Building Features Teams MCP Server container..."
+	@podman build -t features-teams:latest .
+	@echo "✅ Container built with static name: features-teams:latest"
 
 # Run the container
 run:
-	@echo "🚀 Running Jira MCP Server container..."
-	@podman run -i --rm --env-file $(ENV_FILE) localhost/jira-mcp-features-master-web:latest
+	@echo "🚀 Running Features Teams MCP Server container..."
+	@mkdir -p slack_dumps
+	@podman run -i --rm --name features-teams-container --env-file $(ENV_FILE) -v $(PWD)/slack_dumps:/app/slack_dumps features-teams:latest
 
 # Run using Docker Hub image
 run-dockerhub:
-	@echo "🚀 Running Jira MCP Server from Docker Hub..."
-	@podman run -i --rm --env-file $(ENV_FILE) docker.io/library/jira-mcp-features-master-web:latest
+	@echo "🚀 Running Features Teams MCP Server from Docker Hub..."
+	@podman run -i --rm --env-file $(ENV_FILE) docker.io/library/features-teams:latest
 
 # Clean up
 clean:
 	@echo "🧹 Cleaning up..."
-	@podman rmi localhost/jira-mcp-features-master-web:latest 2>/dev/null || true
+	@podman stop features-teams-container 2>/dev/null || true
+	@podman rm features-teams-container 2>/dev/null || true
+	@podman rmi features-teams:latest 2>/dev/null || true
 	@rm -rf __pycache__
 	@rm -f *.pyc
 	@rm -rf venv

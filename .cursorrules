@@ -1,0 +1,114 @@
+# Jira MCP Server - Cursor Rules
+# This file enforces the project's MCP-only architecture and coding standards
+
+## 🚫 STRICT RULES - NO EXCEPTIONS
+
+### 1. MCP-ONLY ARCHITECTURE
+- **NEVER** create direct Python scripts for querying Jira outside of MCP tools
+- **NEVER** add manual API calls or direct Jira client usage outside of the MCP server
+- **NEVER** create utility scripts, testing scripts, or development tools
+- **ONLY** modify the MCP server (`tools` folder) to add new MCP tools
+- **ONLY** use the existing 6 MCP tools for all Jira interactions
+
+### 2. PROJECT STRUCTURE ENFORCEMENT
+- **ONLY** these files are allowed in the project root:
+  - `server.py` - Main MCP server
+  - `jira-config.yaml` - Configuration
+  - `requirements.txt` - Dependencies
+  - `Containerfile` - Container definition
+  - `example.mcp.json` - MCP configuration
+  - `example.env` - Environment template
+  - `Makefile` - Build commands
+  - `README.md` - Documentation
+  - `.cursorrules` - This file
+  - `.gitignore` - Git ignore
+  - `LICENSE` - License file
+- **ALLOWED** subdirectory: `tools/` - Contains individual MCP tool modules
+- **NEVER** add new Python files outside of the tools folder
+- **NEVER** create additional subdirectories beyond tools/
+
+### 3. CODE MODIFICATION RULES
+- **ONLY** modify files in the `tools/` folder to:
+  - Add new MCP tools (using `@mcp.tool()` decorator)
+  - Improve existing MCP tool functionality
+  - Fix bugs in MCP tool implementation
+- **ONLY** modify `server.py` to:
+  - Import and register new tools from the tools folder
+  - Update core server functionality
+- **NEVER** add:
+  - Direct Jira API calls outside of MCP tools
+  - Standalone functions for manual Jira queries
+  - Testing or debugging code in production files
+  - Import statements for non-MCP related libraries
+
+### 4. MCP TOOL REQUIREMENTS
+- All new MCP tools must:
+  - Use the `@mcp.tool()` decorator
+  - Return JSON-formatted responses
+  - Include proper error handling
+  - Follow the existing naming convention
+  - Be documented in the README.md
+
+### 5. CONTAINER-FIRST APPROACH
+- **NEVER** add development dependencies or testing tools
+- **NEVER** create local development scripts
+- **ONLY** modify files that are part of the production container
+- **MAINTAIN** the clean, minimal container design
+
+### 6. DOCUMENTATION REQUIREMENTS
+- **ALWAYS** update README.md when adding new MCP tools
+- **ALWAYS** document new configuration options
+- **NEVER** remove existing documentation without replacement
+
+## ✅ ALLOWED MODIFICATIONS
+
+1. **Adding new MCP tools** to the `tools/` folder
+2. **Updating configuration** in `jira-config.yaml`
+3. **Adding dependencies** to `requirements.txt` (MCP-related only)
+4. **Improving error handling** in existing MCP tools
+5. **Updating documentation** in README.md
+6. **Container optimization** in Containerfile
+7. **Updating server.py** to register new tools from the tools folder
+
+## ❌ FORBIDDEN MODIFICATIONS
+
+1. **Creating new Python files** outside of the tools folder
+2. **Adding direct Jira API calls** outside of MCP tools
+3. **Creating utility functions** for manual Jira queries
+4. **Adding development tools** or testing frameworks
+5. **Creating subdirectories** beyond the tools folder
+6. **Modifying the MCP protocol** or transport layer
+
+## 🔍 ENFORCEMENT
+
+- Cursor will **REJECT** any code changes that violate these rules
+- **NO EXCEPTIONS** to the MCP-only architecture
+- **ALL** Jira interactions must go through MCP tools
+- **MAINTAIN** the clean, production-ready container design
+
+## 📝 EXAMPLE OF CORRECT MCP TOOL ADDITION
+
+**1. Create new tool file in `tools/new_tool.py`:**
+```python
+from fastmcp import FastMCP
+from ..server import jira_client
+from .utils import create_error_response, create_success_response
+
+def register_tool(mcp: FastMCP):
+    @mcp.tool()
+    def new_mcp_tool(param: str) -> str:
+        """New MCP tool description."""
+        try:
+            result = jira_client.search_issues(f'project = "{param}"')
+            return create_success_response({"data": result})
+        except Exception as e:
+            return create_error_response("Failed to execute", str(e))
+```
+
+**2. Update `tools/__init__.py` to include the new tool**
+
+**3. Update `server.py` to import and register the new tool**
+
+## 🚨 REMINDER
+
+**This project is designed to work EXCLUSIVELY through MCP tools. Any attempt to bypass this architecture will be rejected.**

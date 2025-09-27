@@ -1,0 +1,100 @@
+# Slack Channel to Team Mapping Configuration
+# This file maps Slack channel IDs to team IDs for data collection
+
+slack_channels:
+  # ToolChain Team Channels
+  "C04JDFLHJN6": "toolchain"  # #toolchain-team
+  "C05BYR06B0V": "toolchain"  # #toolchain-infra
+  "C04U16VAWL9": "toolchain"  # #toolchain-release-readiness
+  "C095CUUBNM9": "toolchain"  # #toolchain-sla
+  "C0910QFKTSN": "toolchain"  # #toolchain-AI
+  "C064MPL86N6": "toolchain"  # #toolchain-errata
+    
+  # FoA Team Channels  
+  "C0659G4HAF9": "foa"        # #team-auto-follow-on-activities
+  
+  # Assessment Team Channels
+  "C065HHG49QB": "assessment" # #team-auto-assessment
+  
+  # BoA Team Channels
+  "C04QNKX7RU4": "boa"        # #boa-team
+  
+  # SP-RHIVOS Team Channels
+  "C06B9BCD456": "sp-rhivos"  # SP-RHIVOS team channel
+
+# Data Collection Settings
+data_collection:
+  # How far back to fetch messages (in days)
+  history_days: 30
+  
+  # Text dump file location
+  dump_directory: "slack_dumps"
+
+# User Display Names Mapping
+# Maps Slack user IDs to display names for search functionality
+# This is the single source of truth for all user mappings
+user_display_names:
+  # Core Team Members (verified from comprehensive mapping)
+  "U04N9LTR47M": "Paul Caramuto"
+  "U04Q4USRZTM": "Marcel Banas"
+  "U02JHD5HMGC": "Robert O'Brien"  # Updated from "Rob O'Brien"
+  "U0171SJF00H": "Roni Eliezer"
+  "U020YLADEKA": "Luigi Pellecchia"  # Updated from "Hubert Stefanski"
+  "U04NN2GEXLZ": "Kanitha Chim"
+  
+  # Additional Team Members (verified from comprehensive mapping)
+  "U04N2DV1W3Y": "Rachel Sibley"  # Updated from "Ahmed Mohamed"
+  "U03DM1LN4UW": "Charles Timko"
+  "UEFFLKJAJ": "Miguel Angel Ajo Pelayo"
+  "U028G091SNM": "Brian Grech"
+  "U03PV3B9Q7K": "Tomas Golembiovsky"
+  "U02F2L89YTS": "Hubert Stefanski"  # Updated from "Juanje Ojeda"
+  "U04MXBN4WRZ": "Enric Balletbo"
+  "U011CBYSALV": "Michal Skrivanek"
+  "U04MTUF83QX": "Pierre-Yves Chibon"
+  "U04PQB5SV41": "Stephen Bertram"
+  "U04MUFF92JZ": "Albert Esteve"
+  "UEHF1HH6Y": "Leonardo Rossetti"
+  "U8E7ZSTTQ": "Martin Perina"
+  "U04MGT65NQJ": "Eitan Raviv"
+  "UFB1TK0Q7": "Lev Veyde"
+  "U04N6RDGNAU": "Alessandro Carminati"
+  "U04JCEH31RV": "Alex McLeod"
+  "U02SMLD2JTY": "Milos Prchlik"
+  "U04QUNNNX16": "Philip Daly"
+  "U05AAM5H2MC": "Pablo Ridolfi"
+  "U04NNGY4QQ2": "Sameera Kalgudi"  # Updated from "Luigi Pellecchia"
+  
+  # Users from comprehensive mapping that were missing from manual
+  "U02DXVBD5CP": "Avihai Efrat"  # Was "REPLACE_WITH_REAL_NAME"
+  "U04KLL3QSF4": "Juanje Ojeda"  # Was "REPLACE_WITH_REAL_NAME"
+  "U04LP69FP6X": "Marcel Banas"  # Was "REPLACE_WITH_REAL_NAME"
+  
+  # Users that still need manual verification (from generated mapping)
+  "U01552Z34RG": "Unknown User"
+  "U01V2TVUSV6": "Unknown User"
+  "U028BN60UGJ": "Unknown User"
+  "U02CVB7MDK8": "Unknown User"
+  "U039U9VMNCC": "Unknown User"
+  "U03HHMDH8CX": "Unknown User"
+  "U03PXHBRX5Z": "Unknown User"
+  "U044WFQDKBK": "Unknown User"
+  "U04AGK8UJ2V": "Unknown User"
+  "U04AGQD0K8D": "Unknown User"
+  "U04AXB4GK52": "Unknown User"
+  "U04JJADSWGM": "Unknown User"
+  "U04JRTQ4LHK": "Unknown User"
+  "U04JV0JBEFM": "Unknown User"
+  "U04KNU6HGCU": "Unknown User"
+  "U04N0SVB92Q": "Unknown User"
+  "U04NH4CEEJF": "Unknown User"
+  "U04NHTDFS6P": "Unknown User"
+  "U04NLT3HY3Y": "Unknown User"
+  "U04QH469ETF": "Unknown User"
+  "U04QL2XHGP4": "Unknown User"
+  "U04QNH25QA1": "Unknown User"
+  "U064YNKHH43": "Unknown User"
+  "UG0N57XEX": "Unknown User"
+  "UKSAK8JRH": "Unknown User"
+  "URRPFQEMS": "Unknown User"
+  "USLACKBOT": "Unknown User"

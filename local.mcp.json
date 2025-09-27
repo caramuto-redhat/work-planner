@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "featuresTeamsMcp": {
+      "command": "python",
+      "args": [
+        "server.py"
+      ],
+      "cwd": "/Users/pacaramu/Documents/Git/features-teams",
+      "env": {
+        "ENV_FILE": "/Users/pcaramu/.rh-features-teams.env"
+      },
+      "description": "Local Features Teams MCP server with Slack integration"
+    }
+  }
+}

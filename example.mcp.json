@@ -1,16 +1,20 @@
 {
   "mcpServers": {
-    "jiraMcp": {
+    "featuresTeamsMcpContainer": {
       "command": "podman",
       "args": [
         "run",
         "-i",
         "--rm",
+        "--name",
+        "features-teams-container",
         "--env-file",
-            "~/.rh-jira-mcp-features-master-web.env",
-    "docker.io/library/jira-mcp-features-master-web:latest"
+        "~/.rh-features-teams.env",
+        "-v",
+        "/path/to/your/slack_dumps:/app/slack_dumps",
+        "features-teams:latest"
       ],
-      "description": "A containerized MCP server to query Jira issues"
+      "description": "Containerized Features Teams MCP server with static image and container names"
     }
   }
 }
