@@ -1,13 +1,13 @@
-# Features Teams MCP Server - Current Architecture
+# Work Planner MCP Server - Current Architecture
 
 ## 🏗️ System Overview
 
-This diagram shows the current, cleaned-up architecture of the Features Teams MCP Server after consolidation and cleanup.
+This diagram shows the current, cleaned-up architecture of the Work Planner MCP Server after consolidation and cleanup.
 
 ## 📁 Current Project Structure
 
 ```
-features-teams/
+work-planner/
 ├── server.py                    # Main MCP server (direct imports)
 ├── connectors/                  # Modular connector system
 │   ├── jira/                   # Jira connector
@@ -44,7 +44,7 @@ features-teams/
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Features Teams MCP Server                    │
+│                    Work Planner MCP Server                    │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────┐ │
@@ -299,4 +299,4 @@ The current architecture supports easy extension:
 3. **New Configs**: Add new `config/new_service.yaml`
 4. **Server Updates**: Import and register new connector in `server.py`
 
-This architecture provides a clean, maintainable foundation for the Features Teams MCP Server.
+This architecture provides a clean, maintainable foundation for the Work Planner MCP Server.

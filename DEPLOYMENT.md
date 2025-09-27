@@ -1,12 +1,12 @@
 # Deployment Guide
 
-This guide covers different deployment options for the Features Teams MCP Server.
+This guide covers different deployment options for the Work Planner MCP Server.
 
 ## 🚀 GitHub Secrets Setup
 
 ### Step 1: Add Repository Secrets
 
-1. **Go to your repository:** https://github.com/caramuto-redhat/features-teams
+1. **Go to your repository:** https://github.com/caramuto-redhat/work-planner
 2. **Click "Settings"** tab
 3. **Click "Secrets and variables"** → **"Actions"**
 4. **Click "New repository secret"** for each secret:
@@ -30,14 +30,15 @@ After adding all secrets, you should see them listed in the "Repository secrets"
 The repository includes a GitHub Actions workflow that automatically:
 - Tests the application with GitHub secrets
 - Builds the container
+- Pushes to both GitHub Container Registry and Quay.io
 - Deploys to your preferred platform
 
 ### Manual Container Build
 
 ```bash
 # Clone the repository
-git clone https://github.com/caramuto-redhat/features-teams.git
-cd features-teams
+git clone https://github.com/caramuto-redhat/work-planner.git
+cd work-planner
 
 # Build the container
 make build
@@ -49,7 +50,23 @@ docker run -i --rm \
   -e SLACK_XOXC_TOKEN="$SLACK_XOXC_TOKEN" \
   -e SLACK_XOXD_TOKEN="$SLACK_XOXD_TOKEN" \
   -e LOGS_CHANNEL_ID="$LOGS_CHANNEL_ID" \
-  features-teams:latest
+  work-planner:latest
+```
+
+### Deploy to Quay.io
+
+```bash
+# Set your Quay.io credentials
+export QUAY_USERNAME=your-quay-username
+export QUAY_TOKEN=your-quay-token
+
+# Deploy using the provided script
+./deploy-quay.sh
+
+# Or manually:
+podman build -t quay.io/rhn-support-pacaramu/work-planner:latest .
+echo "$QUAY_TOKEN" | podman login quay.io -u "$QUAY_USERNAME" --password-stdin
+podman push quay.io/rhn-support-pacaramu/work-planner:latest
 ```
 
 ## 🔧 Local Development

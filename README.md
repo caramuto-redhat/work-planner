@@ -1,4 +1,4 @@
-# Features Teams MCP Server
+# Work Planner MCP Server
 
 A clean, modular Model Context Protocol (MCP) server for querying Jira issues and Slack discussions. This server provides 17 MCP tools for comprehensive team insights through Cursor's AI assistant.
 
@@ -38,7 +38,7 @@ A clean, modular Model Context Protocol (MCP) server for querying Jira issues an
 ```bash
 # Create environment file with your credentials
 make setup
-# Edit ~/.rh-features-teams.env with your Jira URL, API token, and Slack tokens
+# Edit ~/.rh-work-planner.env with your Jira URL, API token, and Slack tokens
 ```
 
 ### 2. Build Container
@@ -58,11 +58,11 @@ make cursor-config
 - You'll get the default configuration from `example.mcp.json`
 - If you have custom MCP server configurations, they will be lost
 
-**💡 Note**: If you already have a working MCP configuration (like `featuresTeamsMcp`), you may not need to run this command unless you want to reset to the default configuration.
+**💡 Note**: If you already have a working MCP configuration (like `workPlannerMcp`), you may not need to run this command unless you want to reset to the default configuration.
 
 ### 4. Use in Cursor
 
-The MCP server will be available in Cursor as `featuresTeamsMcp`. You can now ask the AI assistant to:
+The MCP server will be available in Cursor as `workPlannerMcp`. You can now ask the AI assistant to:
 
 - "Get me toolchain tickets in progress"
 - "Show me issues assigned to the SP team"
@@ -76,7 +76,7 @@ The MCP server will be available in Cursor as `featuresTeamsMcp`. You can now as
 ## 📁 Project Structure
 
 ```
-features-teams/
+work-planner/
 ├── server.py                    # Main MCP server (direct imports)
 ├── connectors/                  # Modular connector system
 │   ├── jira/                   # Jira connector
@@ -170,7 +170,7 @@ The configuration files use a flexible approach:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Features Teams MCP Server                    │
+│                    Work Planner MCP Server                    │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────┐ │
@@ -216,14 +216,20 @@ make run
 
 ```bash
 # Build
-podman build -t localhost/features-teams:latest .
-# Or use the Docker Hub image:
-# docker.io/library/features-teams:latest
+podman build -t localhost/work-planner:latest .
 
-# Run
-podman run -i --rm --env-file ~/.rh-features-teams.env localhost/features-teams:latest
-# Or use the Docker Hub image:
-# podman run -i --rm --env-file ~/.rh-features-teams.env docker.io/library/features-teams:latest
+# Run from different registries
+# Local build:
+podman run -i --rm --env-file ~/.rh-work-planner.env localhost/work-planner:latest
+
+# GitHub Container Registry:
+podman run -i --rm --env-file ~/.rh-work-planner.env ghcr.io/caramuto-redhat/work-planner:latest
+
+# Quay.io:
+podman run -i --rm --env-file ~/.rh-work-planner.env quay.io/rhn-support-pacaramu/work-planner:latest
+
+# Docker Hub:
+podman run -i --rm --env-file ~/.rh-work-planner.env docker.io/library/work-planner:latest
 ```
 
 ## 🎯 MCP Tools Usage
@@ -382,6 +388,7 @@ make test
 ```bash
 make build          # Build the container
 make run            # Run the container
+make run-quay       # Run using Quay.io image
 make clean          # Clean up container and cache
 make test           # Test server locally
 make cursor-config  # Setup Cursor MCP configuration
@@ -389,11 +396,22 @@ make setup          # Setup environment file
 make help           # Show available commands
 ```
 
+### Deploy to Quay.io
+
+```bash
+# Set your Quay.io credentials
+export QUAY_USERNAME=your-quay-username
+export QUAY_TOKEN=your-quay-token
+
+# Deploy to Quay.io
+./deploy-quay.sh
+```
+
 ## 📋 Environment Variables
 
 ### Local Development
 
-Create `~/.rh-features-teams.env` with:
+Create `~/.rh-work-planner.env` with:
 
 ```bash
 # Required Jira Configuration
@@ -512,7 +530,7 @@ teams:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Features Teams MCP Server                    │
+│                    Work Planner MCP Server                    │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────┐ │

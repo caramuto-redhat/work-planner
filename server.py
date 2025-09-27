@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Features Teams MCP Server
+Work Planner MCP Server
 Simple server that imports and registers tools from connectors
 """
 
@@ -81,7 +81,7 @@ except Exception as e:
 def list_available_tools() -> str:
     """List all available MCP tools"""
     return create_success_response({
-        "message": "Features Teams MCP Server is running",
+        "message": "Work Planner MCP Server is running",
         "tools": [
             "search_issues", "get_team_issues", "get_project_info", 
             "get_user_info", "list_teams", "list_organizations",

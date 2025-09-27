@@ -1,20 +1,20 @@
 {
   "mcpServers": {
-    "featuresTeamsMcpContainer": {
+    "workPlannerMcpContainer": {
       "command": "podman",
       "args": [
         "run",
         "-i",
         "--rm",
         "--name",
-        "features-teams-container",
+        "work-planner-container",
         "--env-file",
-        "~/.rh-features-teams.env",
+        "~/.rh-work-planner.env",
         "-v",
         "/path/to/your/slack_dumps:/app/slack_dumps",
-        "features-teams:latest"
+        "work-planner:latest"
       ],
-      "description": "Containerized Features Teams MCP server with static image and container names"
+      "description": "Containerized Work Planner MCP server with static image and container names"
     }
   }
 }

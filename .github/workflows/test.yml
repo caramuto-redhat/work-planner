@@ -1,4 +1,4 @@
-name: Test Features Teams MCP Server
+name: Test Work Planner MCP Server
 
 on:
   push:

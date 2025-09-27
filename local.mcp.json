@@ -1,15 +1,15 @@
 {
   "mcpServers": {
-    "featuresTeamsMcp": {
+    "workPlannerMcp": {
       "command": "python",
       "args": [
         "server.py"
       ],
-      "cwd": "/Users/pacaramu/Documents/Git/features-teams",
+      "cwd": "/Users/pacaramu/Documents/Git/work-planner",
       "env": {
-        "ENV_FILE": "/Users/pcaramu/.rh-features-teams.env"
+        "ENV_FILE": "/Users/pcaramu/.rh-work-planner.env"
       },
-      "description": "Local Features Teams MCP server with Slack integration"
+      "description": "Local Work Planner MCP server with Slack integration"
     }
   }
 }
