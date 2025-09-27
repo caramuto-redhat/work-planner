@@ -391,6 +391,8 @@ make help           # Show available commands
 
 ## 📋 Environment Variables
 
+### Local Development
+
 Create `~/.rh-features-teams.env` with:
 
 ```bash
@@ -403,6 +405,20 @@ SLACK_XOXC_TOKEN=xoxc-your-slack-web-token-here
 SLACK_XOXD_TOKEN=xoxd-your-slack-cookie-token-here
 LOGS_CHANNEL_ID=C0000000000
 ```
+
+### GitHub Secrets (Recommended for Production)
+
+For production deployments and CI/CD, use GitHub repository secrets:
+
+1. **Go to Repository Settings** → **Secrets and variables** → **Actions**
+2. **Add these secrets:**
+   - `JIRA_URL` = `https://issues.redhat.com`
+   - `JIRA_API_TOKEN` = `your_actual_jira_api_token`
+   - `SLACK_XOXC_TOKEN` = `your_actual_slack_xoxc_token`
+   - `SLACK_XOXD_TOKEN` = `your_actual_slack_xoxd_token`
+   - `LOGS_CHANNEL_ID` = `your_actual_logs_channel_id`
+
+The application automatically uses GitHub secrets when available, falling back to local environment variables.
 
 ## 🔄 Display Name Resolution System
 

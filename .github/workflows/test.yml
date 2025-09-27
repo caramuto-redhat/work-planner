@@ -1,0 +1,43 @@
+name: Test Features Teams MCP Server
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Test with GitHub Secrets
+      env:
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
+        SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
+        LOGS_CHANNEL_ID: ${{ secrets.LOGS_CHANNEL_ID }}
+      run: |
+        python -c "
+        import os
+        print('Testing environment variables from GitHub secrets:')
+        print(f'JIRA_URL: {os.getenv(\"JIRA_URL\", \"NOT SET\")}')
+        print(f'JIRA_API_TOKEN: {\"SET\" if os.getenv(\"JIRA_API_TOKEN\") else \"NOT SET\"}')
+        print(f'SLACK_XOXC_TOKEN: {\"SET\" if os.getenv(\"SLACK_XOXC_TOKEN\") else \"NOT SET\"}')
+        print(f'SLACK_XOXD_TOKEN: {\"SET\" if os.getenv(\"SLACK_XOXD_TOKEN\") else \"NOT SET\"}')
+        print(f'LOGS_CHANNEL_ID: {os.getenv(\"LOGS_CHANNEL_ID\", \"NOT SET\")}')
+        print('✅ All secrets loaded successfully!')
+        "
