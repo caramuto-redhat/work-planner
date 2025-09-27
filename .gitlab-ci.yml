@@ -10,7 +10,7 @@ build_container:
   stage: build
   image: docker:latest
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
   script:
     - echo "Building Work Planner container with GitLab secrets..."
     - docker build --build-arg JIRA_URL="$JIRA_URL" --build-arg JIRA_API_TOKEN="$JIRA_API_TOKEN" --build-arg SLACK_XOXC_TOKEN="$SLACK_XOXC_TOKEN" --build-arg SLACK_XOXD_TOKEN="$SLACK_XOXD_TOKEN" --build-arg LOGS_CHANNEL_ID="$LOGS_CHANNEL_ID" -t $CI_REGISTRY_IMAGE:latest .
@@ -24,7 +24,7 @@ test_container:
   stage: test
   image: docker:latest
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
   script:
     - echo "Testing Work Planner container..."
     - docker run --rm $CI_REGISTRY_IMAGE:latest python -c "print('Container test successful')"
