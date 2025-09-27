@@ -33,6 +33,14 @@ A clean, modular Model Context Protocol (MCP) server for querying Jira issues an
 
 ## 🚀 Quick Start
 
+### GitLab Integration
+
+**Repository**: [https://gitlab.cee.redhat.com/pacaramu/work-planner](https://gitlab.cee.redhat.com/pacaramu/work-planner)
+
+**Container Registry**: `registry.gitlab.cee.redhat.com/pacaramu/work-planner:latest`
+
+**CI/CD Pipeline**: Automated builds on every push using GitLab CI/CD variables for secrets management.
+
 ### 1. Setup Environment
 
 ```bash
