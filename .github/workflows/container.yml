@@ -65,6 +65,12 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          JIRA_URL=${{ secrets.JIRA_URL }}
+          JIRA_API_TOKEN=${{ secrets.JIRA_API_TOKEN }}
+          SLACK_XOXC_TOKEN=${{ secrets.SLACK_XOXC_TOKEN }}
+          SLACK_XOXD_TOKEN=${{ secrets.SLACK_XOXD_TOKEN }}
+          LOGS_CHANNEL_ID=${{ secrets.LOGS_CHANNEL_ID }}
 
     - name: Test container
       run: |
