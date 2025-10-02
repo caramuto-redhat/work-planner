@@ -61,30 +61,31 @@ jobs:
         print('🎉 Slack data collection completed')
         "
     
-    - name: Upload to Google Drive
+    - name: Send Slack Data via Email
       if: always()
       env:
-        GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
-        GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
+        EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+        EMAIL_TOKEN: ${{ secrets.EMAIL_TOKEN }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       run: |
         python -c "
         import os
-        import json
-        import zipfile
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.base import MIMEBase
+        from email import encoders
         from datetime import datetime
-        from google.oauth2 import service_account
-        from googleapiclient.discovery import build
-        from googleapiclient.http import MediaFileUpload
+        import zipfile
         
-        # Create credentials from secret
-        credentials_info = json.loads(os.getenv('GOOGLE_DRIVE_CREDENTIALS'))
-        credentials = service_account.Credentials.from_service_account_info(
-            credentials_info,
-            scopes=['https://www.googleapis.com/auth/drive.file']
-        )
+        # Email configuration
+        email_username = os.getenv('EMAIL_USERNAME')
+        email_token = os.getenv('EMAIL_TOKEN')
+        email_from = os.getenv('EMAIL_FROM')
         
-        # Build Drive service
-        service = build('drive', 'v3', credentials=credentials)
+        if not all([email_username, email_token, email_from]):
+            print('❌ Email credentials not configured')
+            exit(1)
         
         # Create zip file with all slack dumps
         zip_filename = f'slack-dumps-{datetime.now().strftime(\"%Y%m%d-%H%M%S\")}.zip'
@@ -95,25 +96,72 @@ jobs:
                     arcname = os.path.relpath(file_path, 'connectors/slack/slack_dump/')
                     zipf.write(file_path, arcname)
         
-        # Upload to Google Drive (Shared Drive)
-        folder_id = os.getenv('GOOGLE_DRIVE_FOLDER_ID')
-        file_metadata = {
-            'name': zip_filename,
-            'parents': [folder_id] if folder_id else []
-        }
+        # Create email
+        msg = MIMEMultipart()
+        msg['From'] = email_from
+        msg['To'] = email_from  # Send to yourself
+        msg['Subject'] = f'Slack Data Collection - {datetime.now().strftime(\"%Y-%m-%d %H:%M\")}'
         
-        media = MediaFileUpload(zip_filename, mimetype='application/zip')
+        # Email body
+        body = f'''
+        Slack Data Collection Report
         
-        # Use supportsAllDrives=True for Shared Drives
-        file = service.files().create(
-            body=file_metadata,
-            media_body=media,
-            fields='id',
-            supportsAllDrives=True
-        ).execute()
+        Date: {datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")}
+        Run: {os.getenv(\"GITHUB_RUN_NUMBER\")}
+        Commit: {os.getenv(\"GITHUB_SHA\")[:8]}
         
-        print(f'✅ Uploaded {zip_filename} to Google Drive')
-        print(f'📁 File ID: {file.get(\"id\")}')
+        This email contains the latest Slack data dumps from all configured channels.
+        The attached zip file includes both raw and parsed data.
+        
+        Channels processed:
+        '''
+        
+        # Add channel list to email body
+        from connectors.slack.config import SlackConfig
+        slack_config = SlackConfig.load('config/slack.yaml')
+        slack_channels = slack_config.get('slack_channels', {})
+        
+        for channel_id, team_name in slack_channels.items():
+            body += f'  - {channel_id} ({team_name})\\n'
+        
+        body += '''
+        
+        The zip file contains:
+        - Raw Slack dumps (JSON format)
+        - Parsed Slack dumps (text format)
+        
+        Best regards,
+        Work Planner MCP Server
+        '''
+        
+        msg.attach(MIMEText(body, 'plain'))
+        
+        # Attach zip file
+        with open(zip_filename, 'rb') as attachment:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(attachment.read())
+            encoders.encode_base64(part)
+            part.add_header(
+                'Content-Disposition',
+                f'attachment; filename= {zip_filename}',
+            )
+            msg.attach(part)
+        
+        # Send email
+        try:
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(email_username, email_token)
+            text = msg.as_string()
+            server.sendmail(email_from, email_from, text)
+            server.quit()
+            
+            print(f'✅ Email sent successfully with {zip_filename}')
+            print(f'📧 Sent to: {email_from}')
+            
+        except Exception as e:
+            print(f'❌ Failed to send email: {e}')
+            exit(1)
         
         # Clean up local zip file
         os.remove(zip_filename)
