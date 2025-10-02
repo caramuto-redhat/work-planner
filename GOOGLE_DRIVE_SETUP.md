@@ -34,17 +34,32 @@ This guide explains how to set up Google Drive integration for the scheduled Sla
 6. Click "Create"
 7. **Save the JSON file securely** - this contains your credentials
 
-### 4. Create Google Drive Folder
+### 4. Create Shared Drive (Required!)
+
+**⚠️ Important**: Service accounts cannot upload to personal Google Drive folders. You must use a **Shared Drive**.
+
+#### Option A: Create New Shared Drive (Recommended)
 
 1. Go to [Google Drive](https://drive.google.com/)
-2. Create a new folder: `Slack Data Dumps`
-3. Right-click the folder → "Share"
-4. Add your service account email (from step 2)
-5. Give "Editor" permissions
-6. Copy the **Folder ID** from the URL:
+2. Click "Shared drives" in the left sidebar
+3. Click "New" → "Shared drive"
+4. Name it: `Slack Data Collection`
+5. Click "Create"
+6. Right-click the shared drive → "Manage members"
+7. Add your service account email (from step 2)
+8. Give "Content manager" permissions
+9. Copy the **Shared Drive ID** from the URL:
    ```
-   https://drive.google.com/drive/folders/FOLDER_ID_HERE
+   https://drive.google.com/drive/folders/SHARED_DRIVE_ID_HERE
    ```
+
+#### Option B: Use Existing Shared Drive
+
+1. Go to your existing shared drive
+2. Right-click → "Manage members"
+3. Add your service account email
+4. Give "Content manager" permissions
+5. Copy the **Shared Drive ID** from the URL
 
 ### 5. Configure GitHub Secrets
 
@@ -72,7 +87,7 @@ Add these secrets to your GitHub repository:
 ```
 
 #### `GOOGLE_DRIVE_FOLDER_ID`
-- **Value**: The folder ID from step 4
+- **Value**: The Shared Drive ID from step 4
 - **Example**: `1ABC123DEF456GHI789JKL`
 
 ## 🎯 How It Works

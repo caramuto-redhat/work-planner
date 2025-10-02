@@ -95,7 +95,7 @@ jobs:
                     arcname = os.path.relpath(file_path, 'connectors/slack/slack_dump/')
                     zipf.write(file_path, arcname)
         
-        # Upload to Google Drive
+        # Upload to Google Drive (Shared Drive)
         folder_id = os.getenv('GOOGLE_DRIVE_FOLDER_ID')
         file_metadata = {
             'name': zip_filename,
@@ -103,10 +103,13 @@ jobs:
         }
         
         media = MediaFileUpload(zip_filename, mimetype='application/zip')
+        
+        # Use supportsAllDrives=True for Shared Drives
         file = service.files().create(
             body=file_metadata,
             media_body=media,
-            fields='id'
+            fields='id',
+            supportsAllDrives=True
         ).execute()
         
         print(f'✅ Uploaded {zip_filename} to Google Drive')
