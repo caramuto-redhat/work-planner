@@ -61,34 +61,57 @@ jobs:
         print('🎉 Slack data collection completed')
         "
     
-    - name: Upload Slack Data Artifacts
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: slack-data-${{ github.run_number }}
-        path: connectors/slack/slack_dump/
-        retention-days: 30
-    
-    - name: Send Notification to Slack
+    - name: Upload to Google Drive
       if: always()
       env:
-        SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
-        LOGS_CHANNEL_ID: ${{ secrets.LOGS_CHANNEL_ID }}
+        GOOGLE_DRIVE_CREDENTIALS: ${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}
+        GOOGLE_DRIVE_FOLDER_ID: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
       run: |
         python -c "
         import os
-        import requests
+        import json
+        import zipfile
+        from datetime import datetime
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        from googleapiclient.http import MediaFileUpload
         
-        slack_token = os.getenv('SLACK_XOXC_TOKEN')
-        channel_id = os.getenv('LOGS_CHANNEL_ID')
+        # Create credentials from secret
+        credentials_info = json.loads(os.getenv('GOOGLE_DRIVE_CREDENTIALS'))
+        credentials = service_account.Credentials.from_service_account_info(
+            credentials_info,
+            scopes=['https://www.googleapis.com/auth/drive.file']
+        )
         
-        if slack_token and channel_id:
-            status = '✅ Success' if os.getenv('JOB_STATUS') == 'success' else '❌ Failed'
-            message = f'{status} Daily Slack data collection\\nRun: {os.getenv(\"GITHUB_RUN_NUMBER\")}\\nCommit: {os.getenv(\"GITHUB_SHA\")[:8]}'
-            
-            requests.post('https://slack.com/api/chat.postMessage', {
-                'token': slack_token,
-                'channel': channel_id,
-                'text': message
-            })
+        # Build Drive service
+        service = build('drive', 'v3', credentials=credentials)
+        
+        # Create zip file with all slack dumps
+        zip_filename = f'slack-dumps-{datetime.now().strftime(\"%Y%m%d-%H%M%S\")}.zip'
+        with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, dirs, files in os.walk('connectors/slack/slack_dump/'):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, 'connectors/slack/slack_dump/')
+                    zipf.write(file_path, arcname)
+        
+        # Upload to Google Drive
+        folder_id = os.getenv('GOOGLE_DRIVE_FOLDER_ID')
+        file_metadata = {
+            'name': zip_filename,
+            'parents': [folder_id] if folder_id else []
+        }
+        
+        media = MediaFileUpload(zip_filename, mimetype='application/zip')
+        file = service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields='id'
+        ).execute()
+        
+        print(f'✅ Uploaded {zip_filename} to Google Drive')
+        print(f'📁 File ID: {file.get(\"id\")}')
+        
+        # Clean up local zip file
+        os.remove(zip_filename)
         "
