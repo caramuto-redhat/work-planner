@@ -4,8 +4,19 @@ Work Planner MCP Server
 Simple server that imports and registers tools from connectors
 """
 
+import signal
+import sys
 from fastmcp import FastMCP
 from utils.responses import create_success_response
+
+# Signal handler for graceful shutdown
+def signal_handler(signum, frame):
+    print(f"\n🛑 Received signal {signum}, shutting down gracefully...")
+    sys.exit(0)
+
+# Register signal handlers
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
 # Create MCP server
 mcp = FastMCP()
