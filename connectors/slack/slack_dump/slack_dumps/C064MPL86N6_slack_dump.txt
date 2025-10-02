@@ -1,0 +1,368 @@
+# Slack Channel Dump
+# Channel ID: C064MPL86N6
+# Generated: 2025-10-01T23:12:08.175300
+# Total Messages: 192
+
+[2023-11-07T14:51:27.897849] U02DXVBD5CP: <@U02DXVBD5CP> has joined the channel
+[2023-11-07T14:52:07.272229] U04NNGY4QQ2: <@U04NNGY4QQ2> has joined the channel
+[2023-11-07T14:52:07.354989] U04JJADSWGM: <@U04JJADSWGM> has joined the channel
+[2023-11-07T14:53:01.584189] U02DXVBD5CP: Hi :wave:, I just created a working group here for us to share some insight and questions
+[2023-11-07T15:00:56.348949] U04NNGY4QQ2: thanks Kanitha :+1:
+[2023-11-07T16:12:40.706309] U02DXVBD5CP: <@U04JJADSWGM> <@U04NNGY4QQ2>, this is how I imagine errata fits into our workflow. What does it look like to you?
+[2023-11-07T17:10:31.608769] U04NNGY4QQ2: Thanks Kanitha for the diagram but still I am not sure about the arca-x plugins. Since there won’t be greenwave plugin and also no UMB support, I couldn’t convince myself about the Errata placement :smile: 
+[2023-11-07T17:16:41.192649] U02DXVBD5CP: Yeah, I guess for now brew-fetch and brew-tag is arca-x plugin. You're right greenwave is not there yet.
+Regarding UMB, I think it is done by Errata. <@U04JJADSWGM> correct me if I am wrong
+[2023-11-08T07:35:16.348509] U04JJADSWGM: <@U02DXVBD5CP> I have couple of questions
+[2023-11-08T07:36:04.146749] U04JJADSWGM: 1. Which release/product/PV you will choose when create advisory?
+[2023-11-08T07:36:08.178609] U04JJADSWGM: 2. Will you attach builds into advisory?
+[2023-11-08T07:36:28.389899] U04JJADSWGM: 3. Will you attach JIRA issues or Bugzilla bugs into advisory?
+[2023-11-08T08:07:48.277909] U04JJADSWGM: 4. So all the status will changed from your automation by REST API, right?
+[2023-11-08T08:08:32.092189] U04JJADSWGM: The whole process currently is NEW_FILES -&gt; QE -&gt; REL_PREP -&gt; PUSH_READY -&gt; IN_PUSH -&gt; SHIPPED_LIVE
+[2023-11-08T08:09:20.968429] U04JJADSWGM: You should be able use the REST API to update state
+[2023-11-08T08:09:35.317429] U04JJADSWGM: ET is sending UMB message for the state change
+[2023-11-08T08:11:03.042109] U04JJADSWGM: See <https://datagrepper.engineering.redhat.com/raw?topic=/topic/VirtualTopic.eng.errata.activity.status&amp;rows_per_page=1&amp;delta=2592000>
+[2023-11-08T08:33:22.114159] U02DXVBD5CP: <@U04JJADSWGM> Sorry to answer your questions with questions
+1. I am not aware of what information we need to provide when creating advisory yet. By release/product/PV did you mean something like RHEL or RHIVOS?
+2. Initially, I thought it was mandatory to attach builds to advisory. Could you explain the different usecases(to attach builds and not attach builds)?
+3. Yes, I think we might attach JIRA issues
+4. We're not sure yet, but ideally, we want to automate this process rather than doing it manually
+5.  
+[2023-11-08T08:34:28.824879] U02DXVBD5CP: Again, sorry for dumping more questions. Feel free to answer it with your own time. Also if you feel like adding someone else to this channel, please don't hesitate. Thanks a lot!
+[2023-11-08T09:18:41.724789] U04JJADSWGM: 1. Yes, do you want to do release outside the RHEL product in ET, that means you need to create the product like RHIVOS and release, Product version before creating advisories
+[2023-11-08T09:19:45.264089] U04JJADSWGM: 2. If you want to show some testing results inside gating service(Greenwave) you should attach builds to advisory, I also suggest to attach builds as this may help on the future case.
+[2023-11-08T09:20:48.464009] U04JJADSWGM: add <@U02QFB1R4SE> in the loop
+[2023-11-08T09:20:55.486929] U02QFB1R4SE: <@U02QFB1R4SE> has joined the channel
+[2023-11-08T09:43:55.566129] U02DXVBD5CP: Thanks a lot <@U04JJADSWGM>. Anyway, it it possible for me to have access to ET stage and try creating some dummy advisory?
+[2023-11-08T09:49:04.594299] U02DXVBD5CP: One more question, we don't know yet if we will ship the product through ET. In this case,  can we eliminate the state to just NEW_FILES -&gt; QE -&gt; REL_PREP -&gt; PUSH_READY?
+[2023-11-08T10:30:25.037139] U04NNGY4QQ2: <@U04JJADSWGM> as Kanitha said we want to automative the ET process, as much as possible. Can we create advisories and update process steps with service account? 
+
+In addition to this, is there some documentation regarding to authenticate to ET. Can we handle this with keytab, etc.?
+[2023-11-13T06:27:44.806049] U04JJADSWGM: ET can't customize the states during process, it should be NEW_FILES -&gt; QE -&gt; REL_PREP -&gt; PUSH_READY -&gt; IN_PUSH -&gt; SHIPPED_LIVE. But you can just user the keytab as the login and call the REST API to switch directly from PUSH_READY -&gt; IN_PUSH -&gt; SHIPPED_LIVE once you finish the whole process, it's like calling two extra API
+[2023-11-13T06:27:50.396939] U04JJADSWGM: APIs
+[2023-11-13T06:28:24.286339] U04JJADSWGM: This can let you better to support the future change like you want to handling something during push, then the IN_PUSH and SHIPPED_LIVE you will need
+[2023-11-13T06:29:56.625869] U04JJADSWGM: Also I saw on the RHEL-9.0 Alpha and Beta release, the product team use the whole process(The ruleset defined in ET), but they just drop the advisories as finished after QE, then it's like NEW_FILES -&gt; QE -&gt; DROPPED
+[2023-11-13T06:30:30.587259] U04JJADSWGM: But I don't suggest you do like this as you may add further step during the process
+[2023-11-13T06:30:56.026639] U04JJADSWGM: "NEW_FILES -&gt; QE -&gt; REL_PREP -&gt; PUSH_READY -&gt; IN_PUSH -&gt; SHIPPED_LIVE" change will make the future support work eaiser
+[2023-11-13T06:32:02.898169] U04JJADSWGM: Just request your keytab login through <https://errata.devel.redhat.com/documentation/user-guide/intro-introduction.html#getting-access-to-errata-tool>
+[2023-11-13T06:32:14.709299] U04JJADSWGM: Any problem, just let me know
+[2023-11-13T07:03:06.217439] U04JJADSWGM: <@U02DXVBD5CP> I just added you the devel/qa roles on ET stage <https://errata.stage.engineering.redhat.com> Please try it
+[2023-11-13T08:16:35.678379] U02DXVBD5CP: Thanks a lot for the clarification <@U04JJADSWGM>
+[2023-11-13T08:16:49.697819] U02DXVBD5CP: I'll try ET stage and see
+[2023-11-13T08:21:08.502009] U04NNGY4QQ2: <@U04JJADSWGM> could you please also add me on ET stage?
+[2023-11-13T08:35:16.798099] U04JJADSWGM: Done, please have a try
+[2023-11-13T08:36:10.275829] U04NNGY4QQ2: Thank you now I have an access
+[2023-11-14T14:57:02.429289] U02DXVBD5CP: <@U04JJADSWGM> Just to clarify, we can switch to state to PUSH_READY -&gt; IN_PUSH -&gt; SHIPPED_LIVE through API, but that doesn't mean we have to ship composes with Errata right? For now, we won't ship product through Errata so I am asking if we can just move states and not actually push or ship anything in ET
+[2023-11-15T08:30:19.101179] U04JJADSWGM: I believe so
+[2023-11-15T08:30:29.605109] U04JJADSWGM: yep, you can do like that
+[2023-11-15T08:32:39.925969] U02DXVBD5CP: Thank you so much. We want to push some new packages to Errata, could you advise us where to start?
+[2023-11-15T08:33:48.112029] U04JJADSWGM: Is your package on prod brew?
+[2023-11-15T08:34:07.143869] U04JJADSWGM: The stage is connecting some stage third party services
+[2023-11-15T08:34:25.968819] U04JJADSWGM: if you want to try some operation, I can share you a dev instance
+[2023-11-15T08:34:30.867249] U04JJADSWGM: You can try there
+[2023-11-15T08:34:42.693079] U02DXVBD5CP: Yes, the packages are on prod brew
+[2023-11-15T08:34:46.337279] U04JJADSWGM: It may not stable thought
+[2023-11-15T08:34:52.534959] U04JJADSWGM: *though
+[2023-11-15T08:34:57.461429] U04JJADSWGM: OK
+[2023-11-15T08:35:38.399799] U02DXVBD5CP: One question, is pushing packages to Errata the same as creating advisory? or it is different process
+[2023-11-15T08:37:34.314009] U04JJADSWGM: You need to create advisory first
+[2023-11-15T08:37:49.685819] U04JJADSWGM: Then add your package name(nvr) into the advisory
+[2023-11-15T08:37:51.328039] U04JJADSWGM: <https://errata-04.devel.engineering.redhat.com/errata>
+[2023-11-15T08:37:57.937759] U04JJADSWGM: Please try this instance
+[2023-11-15T08:38:08.396769] U04JJADSWGM: Let me grant you guys the permission
+[2023-11-15T08:39:37.295979] U02DXVBD5CP: Thanks a lot, this is only for testing as well right? or this is official
+[2023-11-15T08:39:40.924799] U04JJADSWGM: Done you can login this instance now
+[2023-11-15T08:39:47.806309] U04JJADSWGM: yep
+[2023-11-15T08:39:52.710099] U04JJADSWGM: You can try any operations there
+[2023-11-15T08:40:15.457239] U02DXVBD5CP: Thanks a lot!
+[2023-11-15T08:49:56.172929] U04JJADSWGM: NP
+[2023-11-15T09:01:09.648329] U04NNGY4QQ2: thanks <@U04JJADSWGM> I confirm that I can access to the instance
+[2023-11-15T10:19:11.435579] U02DXVBD5CP: I tried creating advisory manually (not the assisted option). I chose RHEL product because there isn't any RHIVOS product. I also can't create product. When I tried to add build, I can't find anything. Although, we have rhivos-candidate here: <https://brewweb.engineering.redhat.com/brew/taginfo?tagID=104789>
+[2023-11-15T10:19:38.815619] U02DXVBD5CP: I guess we need product and release first?
+[2023-11-15T10:21:43.589999] U02DXVBD5CP: this is my test advisory: <https://errata-04.devel.engineering.redhat.com/advisory/110786>
+[2023-11-16T02:49:54.825219] U04JJADSWGM: Yep, please provide the product and release info, then I can create for you
+[2023-11-16T03:00:45.547969] U04JJADSWGM: I created the product, PV, release for you
+[2023-11-16T03:00:47.825959] U04JJADSWGM: and update the <https://errata-04.devel.engineering.redhat.com/advisory/details/110786>
+[2023-11-16T03:03:31.745739] U04JJADSWGM: BTW you can only attaching builds under <https://brewweb.engineering.redhat.com/brew/taginfo?tagID=104789|rhivos-1.0.0-candidate>
+[2023-11-16T03:03:44.098819] U04JJADSWGM: You have  	3702 now
+[2023-11-16T03:03:58.612279] U04JJADSWGM: I can see they are all rpms?
+[2023-11-16T03:04:41.993309] U04JJADSWGM: I just randomly pick one <https://brewweb.engineering.redhat.com/brew/buildinfo?buildID=2766973|systemtap-5.0-2.el9>
+[2023-11-16T07:54:49.476759] U04JJADSWGM: It's added
+[2023-11-16T07:55:06.689689] U04JJADSWGM: I changed that ET server to connect the brew prod
+[2023-11-16T08:11:08.495439] U02DXVBD5CP: Very nice
+[2023-11-16T08:11:12.525769] U02DXVBD5CP: Thank you so much
+[2023-11-16T09:33:49.982349] U02DXVBD5CP: <@U0171SJF00H> adding you here as well in case you're interested
+[2023-11-16T09:33:52.373319] U0171SJF00H: <@U0171SJF00H> has joined the channel
+[2023-11-20T10:51:14.606169] U02DXVBD5CP: Hi <@U03DM1LN4UW>, I'm adding you to the channel as we're starting to work on integrating Errata with our gating workflow. There is already a ticket here <https://issues.redhat.com/browse/VROOM-8645> which I'm starting to look at and also trying to gather more information. Please let me know how prodsec would like to priority. Thanks
+[2023-11-20T10:51:17.123389] U03DM1LN4UW: <@U03DM1LN4UW> has joined the channel
+[2023-11-20T13:45:20.823769] U03DM1LN4UW: Thanks <@U02DXVBD5CP>
+[2023-11-20T13:52:39.789629] U02DXVBD5CP: You're welcome, let me know what you think and feel free to update the tickets. Also, please take your time :smile_meow:
+[2023-11-23T15:11:00.477299] U02DXVBD5CP: has renamed the channel from "wg-auto-toolchain-errata" to "wg-team-auto-toolchain-errata"
+[2023-11-30T15:31:22.347879] U02DXVBD5CP: <@U04JJADSWGM> or anyone else,
+Do you have permission to see who created this product? <https://errata.engineering.redhat.com/products/209>
+[2023-11-30T15:34:35.797459] U04NNGY4QQ2: and in addition what is the way to update the product information? Should we make a POST request or do we need to have a right for product info update?
+[2023-11-30T15:37:53.057329] U02DXVBD5CP: side-note: we have already `IVOS` product in Errata production but we're not sure if we can use it or if we should change the name to `RHIVOS`. So we want to know who created it.
+Adding <@U04NHTDFS6P> and <@U04N9LTR47M> to the loop
+[2023-11-30T15:37:55.881469] U04NHTDFS6P: <@U04NHTDFS6P> has joined the channel
+[2023-11-30T15:37:56.020849] U04N9LTR47M: <@U04N9LTR47M> has joined the channel
+[2023-12-04T09:51:44.202909] U02DXVBD5CP: <@U0171SJF00H> if I remember correctly, you requested service account keytab for errata along with brew’s key tab right? I was looking at how to request permission for errata as a team. To do that, I need to ask errata team to add permission to our errata’s key tab. Just want to confirm that you haven’t done it already (I tested the key tab and it seems to not have permission yet)
+[2023-12-04T09:58:05.982279] U0171SJF00H: Hmm, <@U04JV0JBEFM> filed those requests a while back
+[2023-12-04T09:58:15.631489] U0171SJF00H: try checking our bitwarden vault for those
+[2023-12-04T09:58:22.967649] U0171SJF00H: I think we got one for errata as well
+[2023-12-04T10:03:49.180499] U0171SJF00H: just checked, it's under `<http://errata.engineering.redhat.com/auto-toolchain-service-errata|errata.engineering.redhat.com/auto-toolchain-service-errata>`
+[2023-12-04T10:04:00.911559] U0171SJF00H: the keytab for it is also there
+[2023-12-04T10:54:07.683289] U02DXVBD5CP: Yes, I saw it there so I was wondering if you already did everything. 
+[2023-12-04T11:03:25.558739] U0171SJF00H: oh, Jim is probably the best person to answer that, I can't remember :sweat_smile:
+[2023-12-04T11:12:11.969919] U02DXVBD5CP: Okay, thanks. Waiting for Jim 
+[2023-12-04T15:04:34.478329] U04JV0JBEFM: <@U04JV0JBEFM> has joined the channel
+[2023-12-04T15:06:00.636649] U04JV0JBEFM: <@U02DXVBD5CP> it's supposed to be, but the brew keytab required a lot of poking to get working. I would use <https://github.com/red-hat-storage/errata-tool> to create a simple script to auth/read an errata and print it out to see if the keytab is working
+[2023-12-04T15:17:23.284899] U04JV0JBEFM: if you need a repo to grab an example out of, I would use the OSCI automation though it's changed quite a bit since I last looked at it: <https://gitlab.cee.redhat.com/osci/errata-automation>
+[2023-12-04T15:17:58.800439] U04JV0JBEFM: but I would probably just use something like this: <https://gitlab.cee.redhat.com/osci/errata-automation/-/blob/master/errata_automation/errata.py?ref_type=heads#L401-404>
+[2023-12-04T21:02:59.385449] U02DXVBD5CP: <@U04JV0JBEFM> Yes I did the kinit with our keytab and got this:
+```kinit -V -kt ~/.ssh/auto-toolchain-service-errata.keytab auto-toolchain-service-errata@IPA.REDHAT.COM
+Using existing cache: 1000:64834
+Using principal: auto-toolchain-service-errata@IPA.REDHAT.COM
+Using keytab: /home/kchim/.ssh/auto-toolchain-service-errata.keytab
+Authenticated to Kerberos v5```
+Then I tried to get an advisory from production but got some error like this:
+```errata-tool advisory get 124911
+Traceback (most recent call last):
+  File "/home/kchim/.local/bin/errata-tool", line 5, in <module>
+    main.main()
+  File "/home/kchim/.local/lib/python3.12/site-packages/errata_tool/cli/main.py", line 40, in main
+    args.func(args)
+  File "/home/kchim/.local/lib/python3.12/site-packages/errata_tool/cli/advisory.py", line 107, in get
+    e = Erratum(errata_id=args.errata_id)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kchim/.local/lib/python3.12/site-packages/errata_tool/erratum.py", line 132, in __init__
+    self._fetch(kwargs['errata_id'])
+  File "/home/kchim/.local/lib/python3.12/site-packages/errata_tool/erratum.py", line 187, in _fetch
+    r = self._get(endpoint)
+        ^^^^^^^^^^^^^^^^^^^
+  File "/home/kchim/.local/lib/python3.12/site-packages/errata_tool/connector.py", line 171, in _get
+    raise ErrataException(
+errata_tool.exception.ErrataException: You need Errata access for this operation!```
+So I guess we need to request for permission
+[2023-12-04T21:03:33.938569] U02DXVBD5CP: Just want to confirm from your side that we haven't already requested any so I can proceed
+[2023-12-05T08:30:17.029719] U02DXVBD5CP: Just wanted to update that <@U04JJADSWGM> added permission for our keytab to stage and env prod :smile_meow:
+[2023-12-06T14:39:23.141269] U03DM1LN4UW: I mentioned this to Steve, but maybe here would have been a better place to communicate this. There are some changes coming to ET (errata tool) w.r.t. ProdSec workflow. Due to the reorganization of ProdSec and the refocusing of energy to be earlier in the development lifecycle, we are pushing over the security validation step for RHSA's to the engineering teams to perform and this will become integrated into ET in the QE phase and will be a blocker.
+[2023-12-06T14:40:00.216159] U03DM1LN4UW: I'll make sure to forward on the official announcement, but I wanted to mention it because it may play into the work being done here and unfortunately, I don't have much more that I can share.
+[2023-12-06T14:54:04.825119] U02DXVBD5CP: Thanks a lot <@U03DM1LN4UW> for the update. I am looking forward to the official announcement and more detail info on how it works
+[2024-01-03T15:22:17.163269] U04AGQD0K8D: <@U04AGQD0K8D> has joined the channel
+[2024-01-18T10:08:37.740479] U02DXVBD5CP: Hi <@U03DM1LN4UW> FYI, I'm forwarding discussion with <@U04JJADSWGM> here and maybe you have answers to some questions here:
+Right now, ET is not integrating with RPMInspect, the check is supposed to happen before the advisory is created and the build attaching to ET. Do you know what we can use to do that?
+
+For signing strategies, do you perhaps know what ET function that you would like to use?
+I'm guessing that we only want to use ET to track the RHIVOS CVE fixes, or are we planning to track other things as well?
+[2024-01-18T14:33:14.106899] U04JJADSWGM: Since RPMDiff sunset. ET doesn't integrate with RPMInspect, but if the RPMInspect results are on gating service now(resultdb), ET has a standard process to fetch the data and onboarding a new transition blocker check
+[2024-01-18T14:35:01.786569] U04JJADSWGM: See <https://docs.engineering.redhat.com/display/Errata/Onboard+new+checkpoint+that+already+have+results+in+greenwave+into+ET>
+[2024-01-18T14:54:07.131269] U02DXVBD5CP: That's good to know, thanks for sharing!
+[2024-01-18T14:54:14.115629] U02DXVBD5CP: I'll take a look at the doc
+[2024-01-18T16:08:40.404919] U03DM1LN4UW: <@U02DXVBD5CP> IMO, for ET we should be signing as soon as possible after the FuSa gating. ET for RHIVOS CVEs would be the primary requirement from us. Until ProdSec has a replacement system that runs independently of ET.
+[2024-01-18T16:19:13.521469] U0171SJF00H: Are we talking about package or release gating?
+[2024-01-18T19:49:24.197789] U04JV0JBEFM: <@U02DXVBD5CP> to follow up, rpminspect moved from ET to build gating; rpmdiff was basically v1 of gating at Red Hat, and rpminspect replaces it (and it happens much earlier in the process). For a build to reach ET, it will have already been run through rpminspect
+[2024-03-26T12:17:17.954829] U02DXVBD5CP: We have follow up errata meeting at 14 CET, in case anyone interested:
+RHIVOS: Errata - Bootstrapping initial RHIVOS rpms advisories
+Tuesday, March 26 · 2:00 – 2:30pm
+Time zone: Europe/Prague
+Google Meet joining info
+Video call link: <https://meet.google.com/yco-fkfg-dfs>
+Or dial: ‪(CZ) +420 234 610 000‬ PIN: ‪560 036 927 5277‬#
+More phone numbers: <https://tel.meet/yco-fkfg-dfs?pin=5600369275277>
+Or join via SIP: sip:<mailto:5600369275277@gmeet.redhat.com|5600369275277@gmeet.redhat.com>
+[2024-03-26T12:31:58.155179] U02DXVBD5CP: <https://docs.google.com/document/d/17FqSE9Dgi8c5kSIrsMLLGD5xobPN0m5uX_FNFKrBxoI/edit>
+[2024-03-26T12:58:13.998569] U04N9LTR47M: thanks Kanitha, it should be interesting, prod sec will be there, good to learn about errata advisories also, see you soon
+[2024-09-02T13:17:10.500109] U02DXVBD5CP: <@U04JJADSWGM> I want to confirm my understanding that when advisory in QE state - RADAS will automatically sign the rpms. Another thing is that it is possible to set a build to promote from a certain tag to another tag? For example, build that are in `*-candidate` can be promoted to `*-pending`
+
+according to this doc: <https://spaces.redhat.com/pages/viewpage.action?spaceKey=CATALOG&amp;title=radas+%5BRH-Restricted%5D>
+```RADAS signs rpms, containers and other artifact types for the product pipeline. For the most general RPM signing case, it listens on the Unified Message Bus on the errata.activity.status topic for an advisory state change to "QE", then signs all the unsigned builds within the advisory and updates Errata Tool about it```
+[2024-09-02T13:17:51.177529] U04KLL3QSF4: <@U04KLL3QSF4> has joined the channel
+[2024-09-03T01:33:26.855959] U064YNKHH43: <@U064YNKHH43> has joined the channel
+[2024-09-03T01:33:26.996529] U039U9VMNCC: <@U039U9VMNCC> has joined the channel
+[2024-09-03T01:36:19.136049] U04JJADSWGM: <@U02DXVBD5CP> RADAS does the signing work for RPMs once the build is attached to the advisory, the pub service is doing the signing work  for containers during the push job, the tagging work will run when we trigger the push for rpm in the ET push task, that was the previous logic,  now there is a new service to monitor the advisory change and do the tagging work.
+[2024-09-05T11:58:05.961059] U02DXVBD5CP: <@U04QH469ETF> I have started this proposal to look into creating advisory for packages like kernel-automotive, qm, bluechi [1]. I would appreciate your review when you have time
+[1] <https://docs.google.com/document/d/10TrSV2rclR90doKyRlNO5P4h0sdUczFusUi0Ay5uus8/edit>
+[2024-09-05T11:58:10.512969] U04QH469ETF: <@U04QH469ETF> has joined the channel
+[2024-09-17T15:23:56.311329] U04QL2XHGP4: <@U04QL2XHGP4> has joined the channel
+[2024-09-25T12:03:33.507809] U02DXVBD5CP: Hi all,
+I want to provide an update here:
+• For TechPreview, we're thinking to push all the RPMs to CDN directly (which means we won't involve with Errata yet). For us to be able to do this, we need all rpms to be signed. Agreement is to inhert RHEL signed for RHEL packages and use RHIVOS' keys to sign RHIVOS-related rpms such as qm, kernel-automotive and bluechi
+• For GA, if I understand correctly, we need to use Errata to release. Right now, we're working to create advisories for RHIVOS-related packages. One challenge now is that, it seems that we can't mix keys in Errata (redhatrelease2 & rhivos key)
+The second bullet is what we need to figure out.
+Please let me know if my understanding is correct, thanks!
+[2024-09-26T12:09:29.649669] UKSAK8JRH: <@UKSAK8JRH> has joined the channel
+[2024-10-01T17:37:59.203159] U044WFQDKBK: <@U044WFQDKBK> has joined the channel
+[2024-10-08T13:51:11.805189] U02DXVBD5CP: <@U04JJADSWGM> <@U064YNKHH43> Are you the right contact for us to ask permission for ComposeDB? I'm looking at this <https://spaces.redhat.com/display/CATALOG/product-listings-manager+%5BRH-Restricted%5D>
+For the background info, I created an advisory in staging and added a build to it but I had problem with `product-listing` <https://errata.stage.engineering.redhat.com/advisory/90180/builds>
+We want to get permission to ComposeDB to check if our composes are there
+[2024-10-08T13:54:50.036139] U04NNGY4QQ2: <@U02DXVBD5CP> maybe I can check whether I have an access to composeDB or not. Do you know how should I check this?
+[2024-10-10T06:03:02.846289] U03HHMDH8CX: <@U03HHMDH8CX> has joined the channel
+[2024-10-10T06:03:03.024439] U01V2TVUSV6: <@U01V2TVUSV6> has joined the channel
+[2024-10-22T11:23:15.051959] U02DXVBD5CP: <@U04JJADSWGM> <@U04QL2XHGP4> I ran into this error while creating test advisory - it seems that we can't use `rhivosrelease` key in Errata Tool
+```(Please don't reply directly to this email. Any additional comments should be
+made in ET via the 'Add Comment' form for this advisory).
+
+prod-radas (prod-radas@IPA.REDHAT.COM) at 11:20am on Tue Oct 22 2024 (+0000):
+The auto-signing service has encountered an error while signing RPMs in this advisory.
+Error message:
+rhivosrelease key is not allowed to be used by this consumer for signing
+
+Please switch back to NEW_FILES then to QE again to re-trigger signing, and if problem persists, open a ticket by clicking the "FILE A BUG" button in RADAS service catalog page: <https://docs.engineering.redhat.com/display/catalog/radas>
+
+This error is applicable to RPM signing only. If your advisory only has containers, you may safely disregard this message.```
+[2024-10-22T11:26:22.899269] U02DXVBD5CP: this is the advisory <https://errata.engineering.redhat.com/advisory/140167>
+[2024-10-22T13:16:54.614989] U04QL2XHGP4: Correct.  SIGNSERVER-1452 only dealt with the initial key creation , and the initial ACL granting access to the individuals named and the <http://rpm-sign-auto-toolchain.redhat.com|rpm-sign-auto-toolchain.redhat.com>.
+
+It's a fairly simple task to update the ACLs to give radas premissions, now that the key exists.  However, that request must be driven by a "SIGNSERVER" jira request for tracking purposes..
+
+In this case, the three piecies of info you need to present in the request (<https://spaces.redhat.com/display/PRODSEC/Signing+Server+User+Guide#SigningServerUserGuide-1.1RequestinganACLchange|Requesting an ACL change>) are ...
+1.  The key name. Sounds like it will be:  *rhivosrelease*
+2. The hosts allowed.  In the case of Radas, it's:    **.<http://rsig-001.prod.iad2.dc.redhat.com|rsig-001.prod.iad2.dc.redhat.com>*
+3. The kerberos principal.  In the case of Radas, you're not using an individual's kerberos. It would be:  *<mailto:prod-radas@IPA.REDHAT.COM|prod-radas@IPA.REDHAT.COM>*
+I can make that change today, if the request comes in and the radas team has no objections.
+[2024-10-22T13:20:50.068339] U04NN2GEXLZ: <@U04NN2GEXLZ> has joined the channel
+[2024-10-29T17:35:54.583329] U02DXVBD5CP: Just want to share the conclusion from today's meeting here:
+*We are going to drop RHIVOS’s keys. Going forward, all rpms will be signed with redhatrelease2 key.*
+
+For more detail, please check the meeting note: <https://docs.google.com/document/d/1TC-L11aL_YIQ9O4kO1C3JtwXeDHrkexB9x6av9RMqPA/edit?tab=t.0>
+
+cc <@U04NHTDFS6P> <@U04JJADSWGM>
+[2024-11-01T14:43:14.508699] U02DXVBD5CP: <@U04KLL3QSF4> rpm is ready to be signed through ET advisory now <https://errata.engineering.redhat.com/advisory/140167/builds>, we can start creating advisory for the rhivos pkgs if we have no luck for manual signing
+while we're waiting for the assignees' info for some fields in errata, we can just add our contacts to every field if there is no objection
+cc <@U04NN2GEXLZ>
+[2024-11-06T09:45:56.809789] U02DXVBD5CP: <@U04JJADSWGM> I have a question, what would happen if I click `push to CDN stage` from errata advisory and later use the pub tool `pub push-staged` to do that for the same set of builds? Just concerned if it will cause any issue
+[2024-11-06T12:20:05.197499] U04JJADSWGM: Yeah, it will call the pub push-staged and connecting the stage pub
+[2024-11-06T12:20:24.586859] U04JJADSWGM: I believe you are using different pub instance, so you'd better not to trigger the button
+[2024-11-14T12:10:02.976129] U02DXVBD5CP: <@U04JJADSWGM> Could you remind me what the service is that monitors the change of advisory and does the tagging/promoting? I wonder if we need to modify anything else for that to work, for example: when builds should be moved from *-candidate to *-pending ...etc
+[2024-11-14T12:46:08.330509] U04JJADSWGM: oh hmm, I can't remember the name, but I know the owner, <@U028BN60UGJ> Hey, Andrew,  do you have any idea about this?
+[2024-11-20T16:20:57.563309] U02DXVBD5CP: <@U04JJADSWGM> Can I have the following permission in Errata Stage?
+• Advisory Manager
+• Releng
+• Product Configuration Manager
+I would like to try to do a release in Errata stage
+[2024-11-25T09:37:13.542449] U04KLL3QSF4: Hello <@U04JJADSWGM> <@U064YNKHH43> I requested for some roles in staging Errata in this <https://redhat.service-now.com/help?id=rh_ticket&amp;table=sc_req_item&amp;sys_id=bc7ffc11330252d06c59a3570e5c7b8d|ticket> and it seems one of the roles `Advisory Manager`  is in pending, the other were approved but can't be processed until all requests are completed.
+Can you help me with that?
+Thanks in advance.
+[2024-11-26T09:25:28.659289] U02DXVBD5CP: <@U064YNKHH43> <@U04JJADSWGM> do you by any chance know why some builds in here are signed and some are not? <https://errata.stage.engineering.redhat.com/advisory/90194>
+[2024-12-02T12:56:54.031599] U02DXVBD5CP: Hi <@U064YNKHH43> <@U04JJADSWGM>
+how do I fix the repository mapping in errata?
+the tech preview repo should be <https://gitlab.cee.redhat.com/automotive/pipe-x/release-definitions/-/blob/main/definitions/rhivos-1/rhivos-0.8-beta.yml?ref_type=heads>
+but in Errata too it's wrong <https://errata.engineering.redhat.com/product_versions/2316/cdn_repos>
+
+I ran into issue while trying to push to cdn: <https://pub.stage.devel.redhat.com/pub/task/493329/log/stdout.log>
+[2024-12-03T14:00:24.139419] U02DXVBD5CP: <@UKSAK8JRH> any idea why it still can't find the pulp repo <https://pub.stage.devel.redhat.com/pub/task/493331/log/stdout.log>
+I think I have it here already: <https://rhsm-pulp.corp.redhat.com/content/beta/rhivos1/0.8/>
+[2024-12-04T07:50:21.682579] U04KLL3QSF4: <@U064YNKHH43> <@U04JJADSWGM> Hello, I wanted to ask, whether there is an option to redirect/send emails about advisory to a different address than the one of  Reporter.
+Afaik currently there is an option to request for Errata permissions for individual/service account, though for RHIVOS, when we would create advisories for RHEL related packages we would like to have them sent to a mailing list `<mailto:auto-toolchain-errata@redhat.com|auto-toolchain-errata@redhat.com>`.
+Currently when I try to put such email into e.g. `Manager Contact` field when creating advisory, it won't let me due to insufficient permissions.
+I wanted to ask if this can be achieved, to have in some fields the email instead of individual or a service account creating advisory.
+[2025-01-06T12:57:01.540129] U02DXVBD5CP: Hi, <@U04QH469ETF> <@U03DM1LN4UW>, we have 3 advisories below that are blocked because of security alert. There are builds inherited from RHEL so I think there should not be any issues. Could you double check and unblock them?
+• <https://errata.engineering.redhat.com/advisory/144262>
+• <https://errata.engineering.redhat.com/advisory/144248>
+• <https://errata.engineering.redhat.com/advisory/144245>
+[2025-01-06T14:30:16.025239] U02DXVBD5CP: Hi <@U04NN2GEXLZ>
+there is a tool - Release Driver that is able to auto releasing advisories of the product when they are in `Push Ready` state. Here is the detail: <https://spaces.redhat.com/pages/viewpage.action?spaceKey=CLOUDDST&amp;title=Auto-Releasing+Product+Advisories> and <https://spaces.redhat.com/display/RHELDST/Errata+Release+Automation>
+
+WDYT? RHEL and other products are using this. Are you okay with RHIVOS onboarding the tool? It needs product owner approval as well
+If you agree, I would also ask <@U04N9LTR47M> to help out with communication with the SP side first before proceeding
+[2025-01-06T14:59:04.550669] U03DM1LN4UW: <@U02DXVBD5CP> I have a little more investigating to do, but it looks like this is going to the incident response team's queue for processing. I'll check with them to see how I can help them move these along. I'll do my best to make these move quickly, but I am not sure if I'll be able to. Do we have a date that we need to have this resolved by? Or is it just, ASAP?
+
+In short, this is happening because rpminspect is flagging a bunch of elfs that haven't been compiled with -fPIC. I remember this being a thing for many RHEL packages and I should be able to clear these up, but I need to communicate with the responsible parties in ProdSec.
+[2025-02-05T07:33:51.832869] U04KLL3QSF4: Hello, can someone from TC team take a look at this <https://gitlab.cee.redhat.com/automotive/services/errata-advisory-automation/-/merge_requests/2/diffs|MR>? Thanks in advance
+[2025-05-12T09:18:03.045399] U04NN2GEXLZ: Hmm, when I try to move my advisory to QE, I get this error.
+[2025-05-12T09:18:18.403749] U04NN2GEXLZ: And it fails... <https://errata.engineering.redhat.com/advisory/148503>
+[2025-05-12T09:18:21.360469] U04NN2GEXLZ: What's wrong with it?
+[2025-05-12T09:26:50.602309] U02DXVBD5CP: Not sure, maybe RHELWF applied the compose level gating there
+they said they deployed it on May 8th
+[2025-05-12T09:27:04.562889] U02DXVBD5CP: I'll check with them
+[2025-05-12T09:58:05.123669] U02DXVBD5CP: <@U04NN2GEXLZ> works now, some other naming issue
+[2025-05-14T07:09:40.462909] U04KLL3QSF4: Hello <@U03DM1LN4UW>,
+similarly as with RHIVOS's TechPreview release, for RHIVOS 1.0.0 we have some advisories blocked on security alert due to `rpminspect` flagging. It concerns <https://errata.devel.redhat.com/advisory/filters/new?utf8=%E2%9C%93&amp;authenticity_token=t10BFTwIJ249Q5SO3G4OCjaCe5OKY6sxxPuDrP3xnpWnAP1MbTRq%2B9B4ceQD5Z1iPKkTupbQFYMdALVFsDa0YQ%3D%3D&amp;_method=&amp;errata_filter%5Buser_id%5D=3005864&amp;errata_filter%5Bfilter_params%5D%5Bshow_type_RHBA%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_type_RHEA%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_type_RHSA%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_NEW_FILES%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_QE%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_REL_PREP%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_PUSH_READY%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_IN_PUSH%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_SHIPPED_LIVE%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bbatch%5D%5B%5D=3669&amp;_disregard_batch%5B%5D=3669&amp;errata_filter%5Bfilter_params%5D%5Bsynopsis_text%5D=&amp;errata_filter%5Bfilter_params%5D%5Bblocking_role%5D%5B%5D=9&amp;errata_filter%5Bfilter_params%5D%5Bembargo_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Btext_only_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bprerelease_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bhotfix_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bgroup_by%5D=none&amp;errata_filter%5Bfilter_params%5D%5Bopen_closed_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bsort_by_fields%5D%5B%5D=batchblock&amp;errata_filter%5Bfilter_params%5D%5Bsort_by_fields%5D%5B%5D=new&amp;errata_filter%5Bfilter_params%5D%5Boutput_format%5D=standard&amp;errata_filter%5Bfilter_params%5D%5Bpl_cache_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bpagination_option%5D=20&amp;errata_filter%5Bname%5D=&amp;commit=Apply|6 advisories> (the number should be final as scanning is finished). These are advisories that contain RHEL content.
+For some of the advisories prior we've had these blocks resolve based on automatic tickets, but e.g. <https://redhat.service-now.com/help?id=rh_ticket&amp;table=incident&amp;sys_id=1ee2c36c2b6d22581956f2f9ed91bf38|here> I see comment `No action` and closed ticket...
+Could you help us unblock these advisories?
+[2025-05-14T14:25:13.597529] U03DM1LN4UW: *RHEA-2025:149544-01* has been unblocked. Will keep reviewing the others.
+[2025-05-16T13:34:57.424539] U02DXVBD5CP: I want to give a status update here regarding compose level gating specifically the Errata and Greenwave integration.
+Right now in Errata stage, we can see that Errata is trying to fetch test results from resultDB [1] <https://errata.stage.engineering.redhat.com/advisory/90358/test_run/rhivos_compose_fusa_gate>. Since we don't have tests for this build yet, so it's giving us an error of `missing result` which is expected.
+[2025-05-16T13:37:59.646829] U02DXVBD5CP: There is a concern about waiving part <https://waiverdb.stage.engineering.redhat.com/api/v1.0/waivers/new?product_version=rhivos-1.0.0&subject_identifier=kernel-automotive-5.14.0-570.518.9.1.9.el9_6iv&subject_type=brew-build&testcase=rhivos.brew-build.functional-safety.continuous-certification&scenario=|https://waiverdb.stage.engineering.redhat.com/api/v1.0/waivers/new?product_version=rhivos-1.0.0[…]nctional-safety.continuous-certification&scenario=>
+because the testcase name `rhivos.brew-build.functional-safety.continuous-certification` doesn't match with the rule here: <https://gitlab.cee.redhat.com/gating/waiverdb-playbooks/-/blob/be20a9522c8ebdf4f2f5bbe3713491dbf3c6156c/files/stage/permissions.yml#L372>
+We will need to pick whether we want to use `rhivos.*` or `rhivos-*`
+[2025-05-16T13:43:06.295659] U02DXVBD5CP: Another issue I'm seeing is for build that doesn't have test result, when I try to move them to next state in Errata. I see the blocker:
+<https://errata.stage.engineering.redhat.com/advisory/90321>.
+This is not clear to me whether we will be able to move this certain advisory forward once the tests for other builds in the same Errata Release/Batch pass or waived. So I have checked with RHELWF team and created this follow-up ticket: <https://issues.redhat.com/browse/RHELWF-12774>
+[2025-05-16T13:44:36.546919] U02DXVBD5CP: Some action items:
+• Clarify the testcase name
+• Get the list of builds that we are going to run the test
+• Run example tests
+• and try to test again to verify it works as expected
+[2025-05-16T13:44:57.381649] U02DXVBD5CP: cc: <@U04NHTDFS6P> <@U04NN2GEXLZ> <@U020YLADEKA>
+[2025-05-19T08:00:16.075289] U020YLADEKA: Thanks for the update <@U02DXVBD5CP>!
+
+Some Q's to follow-up and clarify the implications/impact of what you mentioned:
+1. Are we blocked by the issues mentioned, and do you need help with escalating something with ET team ?
+2. When do you estimate that we'll have compose level gating working?
+3. About next action items, who is doing that and when? Do you/Marcel need assistance?
+4. Can you please mention in the next release readiness meeting how we're doing, concerns/blockers.  With B&amp;E phase ending early June5 option , will we be ready with compose level gating via Errata by start/mid/end June? 
+5. What is the mitigation in case compose level gating is not working/ready on time - Can we release manually, skipping it?
+6. <@U04NN2GEXLZ> <@U04NHTDFS6P>, what is your/program view on compose level gating? we might slip functionality working GA date with the issues mentioned( and the ones we yet not seen)
+[2025-05-19T20:06:51.203279] U04N9LTR47M: so from my understanding rhivos_compose_fusa_gate is a requirement for moving to QE. Given that RHIVOS only tests specific (ASIL) builds, what are the exact FuSa requirements driving this gate? And if the gate expects results for all builds in an advisory, is there a documented process for manually overriding or waiving the check for builds that are outside the scope of RHIVOS testing?
+[2025-05-21T15:03:34.543939] U04N9LTR47M: btw, (from the release readiness call) I like Steve´s idea of a work-around to run validator to all builds to go through the Errata gating
+[2025-06-06T07:03:33.895599] U02DXVBD5CP: <@U0171SJF00H> <@U04AXB4GK52> <@U04N9LTR47M> <@U04NHTDFS6P> The greenwave integration in Errata is done and was deployed to Production. Now in every advisory, there is a greenwave tab there. The transition between `NEW_FILE` to `QE` is blocked unless Errata can fetch test results from ResultDB (passed or waived)
+<https://issues.redhat.com/browse/RHELWF-12562>
+[2025-06-06T07:05:18.385659] U02DXVBD5CP: <@U04KLL3QSF4> FYI ^^
+[2025-06-09T08:59:18.529869] U02DXVBD5CP: Hi <@U03DM1LN4UW>
+Could you approve or give me and this SA the permission to access embargo? I have created SNOW tickets here
+<https://redhat.service-now.com/help?id=rh_ticket&table=sc_req_item&sys_id=eac749c847c26e544d8b409c716d4340>
+<https://redhat.service-now.com/help?id=rh_ticket&table=sc_req_item&sys_id=22a98999474aa2184d8b409c716d439d>
+
+I understand that I will need permission from Prodsec
+[2025-06-09T13:39:36.738639] U02DXVBD5CP: Another topic is the access to see jira issues that are marked as embargoed. Do you know who can get that access or how to request it?
+[2025-06-23T15:11:00.079109] U02DXVBD5CP: Update: Errata &amp; Greenwave integration is enabled again <https://issues.redhat.com/browse/RHELWF-12858>
+FYI <@U0171SJF00H> <@U04NHTDFS6P> <@U020YLADEKA> <@U04KLL3QSF4> <@U04N9LTR47M>
+[2025-06-23T15:11:34.254359] U02DXVBD5CP: right now it blocks advisories moving from NEW_FILE to QE as expected
+[2025-07-22T13:35:52.225449] U04KLL3QSF4: <@U02DXVBD5CP> <@U04NN2GEXLZ> I created the ticket to adjust for kernel's components: <https://issues.redhat.com/browse/VROOM-31403>
+[2025-07-22T13:38:57.472159] U02DXVBD5CP: No rush, please also create a ticket to capture the workflow and also attaching jira issues even after advisories have been created
+[2025-07-29T11:04:50.090569] U04KLL3QSF4: Hello <@U04JJADSWGM> <@U064YNKHH43> I wanted to ask you if you can help us, or know the cause of the `Incomplete brew` files issue that is occurring in couple of our RHIVOS GA advisories that prevents state change from NEW_FILES to QE.
+There is 8 <https://errata.engineering.redhat.com/advisory/filters/new?utf8=%E2%9C%93&amp;authenticity_token=nGz42IBEwGSnCFEwRlS%2BvuOv2IEIhLYdYIk0RUJTGKIBChhnQfzP%2B0uq3r0gfwPvF%2Bt2aI3iqlzXCtygWjxKjA%3D%3D&amp;_method=&amp;errata_filter%5Buser_id%5D=3005864&amp;errata_filter%5Bfilter_params%5D%5Bshow_type_RHBA%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_type_RHEA%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_type_RHSA%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_NEW_FILES%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bshow_state_SHIPPED_LIVE%5D=1&amp;errata_filter%5Bfilter_params%5D%5Bbatch%5D%5B%5D=3669&amp;_disregard_batch%5B%5D=3669&amp;errata_filter%5Bfilter_params%5D%5Bsynopsis_text%5D=&amp;errata_filter%5Bfilter_params%5D%5Bembargo_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Btext_only_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bprerelease_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bhotfix_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bgroup_by%5D=none&amp;errata_filter%5Bfilter_params%5D%5Bopen_closed_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bsort_by_fields%5D%5B%5D=batchblock&amp;errata_filter%5Bfilter_params%5D%5Bsort_by_fields%5D%5B%5D=new&amp;errata_filter%5Bfilter_params%5D%5Boutput_format%5D=standard&amp;errata_filter%5Bfilter_params%5D%5Bpl_cache_option%5D=&amp;errata_filter%5Bfilter_params%5D%5Bpagination_option%5D=20&amp;errata_filter%5Bname%5D=&amp;commit=Apply|advisories> currently that have this issue preventing state change.
+Example:
+the fusa gcc plugin data advisory reports incomplete brew files and there are no rpms shown in the build - <https://errata.engineering.redhat.com/advisory/149344/builds>
+but in the product listings they are visible - <https://errata.engineering.redhat.com/release_engineering/product_listings?rp%5Bnvr%5D=fusa-gcc-plugin-data-0.1.0-2.el9_6iv&amp;rp%5Brelease_version_id%5D=2141|https://errata.engineering.redhat.com/release_engineering/product_listings?rp%5Bnvr%5D=fusa[…]n-data-0.1.0-2.el9_6iv&amp;rp%5Brelease_version_id%5D=2141>
+After the reload of files and also reattachment of build affected, the issue still persists.
+[2025-07-31T10:33:41.590239] U04KLL3QSF4: Hello, I created such a <https://docs.google.com/document/d/1iNL6YixiDmY9eyh4HA2I_u7uSvAAYo8cmSK2Ctu3nFI/edit?tab=t.0|document> with last section still open to modification and contribution. Please let me know if I missed some important parts of the current workflow for automotive packages and also some suggestions for end-to-end workflow after `NEW_FILES` state.
+[2025-08-25T08:34:06.670729] U02DXVBD5CP: <@U04JJADSWGM> <@U064YNKHH43> I want to ask about `Rhivos Compose Fusa Gate`. Going forward we will have two types of release. One is Fusa release and the other is QM release. With that QM release will not require `Rhivos Compose Fusa Gate` , can we create a new workflow that won't block moving from `QE` to `REL_PREP` for this QM release?
+This is the current workflow <https://errata.engineering.redhat.com/workflow_rules/29> that blocks QE to REL_PREP by `Rhivos Compose Fusa Gate`.
+I thought I could use this other workflow for QM release: <https://errata.engineering.redhat.com/workflow_rules/8> but I also see `Rhivos Compose Fusa Gate` in the rule set.
+[2025-09-10T12:12:07.891159] U04KLL3QSF4: Hello <@U04JJADSWGM> <@U064YNKHH43>,
+we wanted to ask about recently <https://redhat-internal.slack.com/archives/C064MPL86N6/p1753789320313099?thread_ts=1753787090.090569&amp;cid=C064MPL86N6|discussed> product variants for RHIVOS-1.0.0. As of now, the variant's name for 1.0.0 version should be, as defined <https://gitlab.cee.redhat.com/rhelwfautomation/product-configure-tool/-/blob/master/release_vars/rhivos/RHIVOS-1.0.0.yml?ref_type=heads#L31|here>, `9Base-RHIVOS` , which also <https://errata.engineering.redhat.com/product_versions/2141/variants|shows in ET>. Originally, until the issue regarding block from moving advisories to QE and correcting the variant name, we were running the composedb import command with variant `9Base-RHIVOS-1.0.0` and in ET, packages seem to hence list duplicate of rpms under two variants in product listings (as Kanitha <https://errata.engineering.redhat.com/release_engineering/product_listings?rp%5Bnvr%5D=kernel-automotive-5.14.0-570.518.16.1.16.el9_6iv&amp;rp%5Brelease_version_id%5D=2141|discovered>).
+Could this potentially cause some issues?
+
+We also wanted to ask another ET related question - currently, we should have structure of CDN repositories for 1.0 version as follows:
+*in CDN*:
+• rhivos1/1/
+• rhivos1/1.0
+• rhivos1/1.1
+*names/labels of content-sets to match directories (<https://gitlab.cee.redhat.com/sp-pv-mdm/product-service-config-auto/-/blob/main/rhel/rhivos/rhivos-1-for-aarch64.cset.yaml?ref_type=heads#L54|example>):*
+rhivos1/1/ == rhivos-one...
+rhivos1/1.0 == rhivos-1...
+rhivos1/1.1 == rhivos-1_DOT_1
+
+Though in Errata Tool, for RHIVOS 1.0.0 we are able to see only <https://errata.engineering.redhat.com/product_versions/2141/cdn_repos|12 repositories> - without `rhivos-one` .
+For Z-stream, we are able to see <https://errata.engineering.redhat.com/product_versions/2442/cdn_repos|only 6 repositories> - only `rhivos-one` .
+Even though in config we list all three, `rhivos-1` , `rhivos-one` ,`rhivos-1_DOT_1` as <https://gitlab.cee.redhat.com/rhelwfautomation/product-configure-tool/-/blob/master/release_vars/rhivos/RHIVOS-1.0.0.yml?ref_type=heads#L58|shown here> (please note the comment on line below, the release values are matching <https://gitlab.cee.redhat.com/automotive/pipe-x/release-definitions/-/tree/main/productids/rhivos-1?ref_type=heads|names of the files in release definition repo>). Could you help us understand this as well please?
+
+Thank you in advance.
+[2025-09-10T20:25:51.393459] U04N9LTR47M: <@U064YNKHH43> <@U04JJADSWGM>, thank you for helping us fix our previous advisory issue. Looks like Marcel has some follow-up questions:
+[2025-09-10T20:26:11.882039] U04N9LTR47M: 1. Will the now-unused 9Base-RHIVOS-1.0.0 variant, which still exists in ComposeDB from the initial import error, cause any future problems for shipping or reporting? Should we take action to clean it up?
+[2025-09-10T20:26:50.479639] U04N9LTR47M: 2. Regarding the CDN repositories, could you help us understand why the Errata Tool is not displaying the complete and correct set of repositories for the `1.0.0` and Z-stream releases, despite what appears to be the correct configuration?
+[2025-09-11T09:21:12.939669] U064YNKHH43: &gt; 1. Will the now-unused 9Base-RHIVOS-1.0.0 variant, which still exists in ComposeDB from the initial import error, cause any future problems for shipping or reporting? Should we take action to clean it up?
+It won't cause problem for shipping and reporting externally, Errata Tool will only pick the Compose Variant it mapped(*9Base-RHIVOS*) and carry over the data to Distribution
+Like in different RHEL phase(EUS-&gt;AUS), the builds are built for most of the variants, but the supported variants get less and less, Errata Tool only passed supported content of those variants to Distribution repos. So those dup variant's data can be left in composeDB, <@U04JJADSWGM> Please correct me if I am wrong.
+
+&gt; 2. Regarding the CDN repositories, could you help us understand why the Errata Tool is not displaying the complete and correct set of repositories for the `1.0.0` and Z-stream releases, despite what appears to be the correct configuration?
+<https://errata.engineering.redhat.com/product_versions/2442#cdn_repos_tab> should show all the cdn links that product version has, either directly or indirectly. e.g. there are some repos created for 1.0.0 and now attached to 1.0.Z, those repos are indirectly repos.
+&gt; For Z-stream, we are able to see <https://errata.engineering.redhat.com/product_versions/2442/cdn_repos|only 6 repositories> - only `rhivos-one` .
+If you switch to the last tab, you will see there are 6 more repos.
+Every erratum has a content tab, once the build is attached. e.g. <https://errata.devel.redhat.com/errata/content/149556>, it will show what rpm will be shipped to where.
+Hopefully this address your concerns.
+[2025-09-11T10:09:47.333589] U04KLL3QSF4: Thank you <@U064YNKHH43> for the detailed answer :thanks-ty:
+Yes, this addresses our concerns, we wanted to make sure if these points needed some action to fix from Toolchain team prior to GA.
+[2025-10-01T07:29:35.918179] U02DXVBD5CP: Hi, <@U04JJADSWGM> do you know why ET doesn't re-fetch the test result automatically? we already have result for this build <https://resultsdb.engineering.redhat.com/results?item:like=aboot*&amp;testcases=rhivos.brew-build.functional-safety.continuous-certification&amp;since=2025-09-02T00%3A00%3A00%2C2025-10-01T23%3A59%3A59|https://resultsdb.engineering.redhat.com/results?item:like=aboot*&amp;testcases=rhivos.brew-build[…]ce=2025-09-02T00%3A00%3A00%2C2025-10-01T23%3A59%3A59>
+but ET last result was 2 months ago <https://errata.engineering.redhat.com/advisory/148805/test_run/rhivos_compose_fusa_gate>

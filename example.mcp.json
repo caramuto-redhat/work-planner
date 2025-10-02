@@ -11,7 +11,7 @@
         "--env-file",
         "~/.rh-work-planner.env",
         "-v",
-        "/path/to/your/slack_dumps:/app/slack_dumps",
+        "/path/to/your/slack_dumps:/app/connectors/slack/slack_dump/slack_dumps",
         "work-planner:latest"
       ],
       "description": "Containerized Work Planner MCP server with static image and container names"

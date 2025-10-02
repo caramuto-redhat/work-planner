@@ -1,12 +1,12 @@
 # Work Planner MCP Server
 
-A clean, modular Model Context Protocol (MCP) server for querying Jira issues and Slack discussions. This server provides 17 MCP tools for comprehensive team insights through Cursor's AI assistant.
+A comprehensive Model Context Protocol (MCP) server for querying Jira issues, Slack discussions, AI-powered analysis, and scheduled data collection. This server provides 21 MCP tools for comprehensive team insights through Cursor's AI assistant.
 
 **🎯 This project is designed to work ONLY through MCP tools - no direct scripts or manual queries.**
 
 ## 🎯 Features
 
-### MCP Tools Available
+### MCP Tools Available (21 total)
 
 #### Jira Tools (6 tools)
 1. **`search_issues`** - Search Jira issues using JQL queries
@@ -16,30 +16,30 @@ A clean, modular Model Context Protocol (MCP) server for querying Jira issues an
 5. **`list_teams`** - List all configured teams
 6. **`list_organizations`** - List all configured organizations
 
-#### Slack Tools (10 tools)
-7. **`dump_slack_channel`** - Dump Slack channel data to files
-8. **`dump_team_slack_data`** - Dump all team Slack channels
-9. **`read_slack_channel`** - Read Slack channel data (auto-refreshes if needed)
-10. **`read_team_slack_data`** - Read all team Slack data
+#### Slack Tools (5 tools)
+7. **`dump_slack_data`** - Dump Slack data for channels or teams
+8. **`read_slack_data`** - Read Slack data (auto-refreshes if needed)
+9. **`search_slack_data`** - Search for mentions in Slack channels
+10. **`list_slack_channels`** - List all Slack channels
 11. **`list_slack_dumps`** - List available Slack dump files
-12. **`get_slack_dump_summary`** - Get summary statistics for team dumps
-13. **`force_fresh_slack_dump`** - Force fresh dump of all team channels
-14. **`search_slack_mentions`** - Search for mentions in Slack channels
-15. **`search_team_slack_mentions`** - Search mentions across all team channels
-16. **`list_team_slack_channels`** - List Slack channels for a team
+
+#### AI Analysis Tools (4 tools)
+12. **`analyze_slack_data`** - Analyze Slack data using Gemini AI
+13. **`analyze_jira_data`** - Analyze Jira data using Gemini AI
+14. **`generate_email_summary`** - Generate email summary combining Slack and Jira data
+15. **`custom_ai_analysis`** - Perform custom AI analysis with custom prompts
+
+#### Schedule Management Tools (5 tools)
+16. **`get_schedule_status`** - Get current status of scheduled data collection
+17. **`run_scheduled_collection`** - Run scheduled data collection for services
+18. **`update_schedule_config`** - Update schedule configuration
+19. **`add_team_to_schedule`** - Add team to schedule configuration
+20. **`remove_team_from_schedule`** - Remove team from schedule configuration
 
 #### Built-in Tools (1 tool)
-17. **`list_available_tools`** - List all available MCP tools
+21. **`list_available_tools`** - List all available MCP tools
 
 ## 🚀 Quick Start
-
-### GitLab Integration
-
-**Repository**: [https://gitlab.cee.redhat.com/pacaramu/work-planner](https://gitlab.cee.redhat.com/pacaramu/work-planner)
-
-**Container Registry**: `registry.gitlab.cee.redhat.com/pacaramu/work-planner:latest`
-
-**CI/CD Pipeline**: Automated builds on every push using GitLab CI/CD variables for secrets management.
 
 ### 1. Setup Environment
 
@@ -77,6 +77,9 @@ The MCP server will be available in Cursor as `workPlannerMcp`. You can now ask 
 - "Search for critical VROOM tickets"
 - "Read toolchain team Slack discussions"
 - "Search for mentions of 'deployment' in Slack"
+- "Analyze toolchain team Slack data"
+- "Generate email summary for assessment team"
+- "Check schedule status"
 - "List all available teams"
 
 **✅ All queries go through MCP tools automatically**
@@ -91,19 +94,28 @@ work-planner/
 │   │   ├── client.py           # Jira API client
 │   │   ├── config.py           # Jira config loader
 │   │   └── tools/              # Jira MCP tools (6 tools)
-│   └── slack/                  # Slack connector
-│       ├── client.py           # Slack API client
-│       ├── config.py           # Slack config loader
-│       └── tools/              # Slack MCP tools (10 tools)
+│   ├── slack/                  # Slack connector
+│   │   ├── client.py           # Slack API client
+│   │   ├── config.py           # Slack config loader
+│   │   ├── tools/              # Slack MCP tools (5 tools)
+│   │   └── slack_dump/         # Slack data organization
+│   │       ├── slack_dumps/    # Raw Slack data cache
+│   │       └── slack_dumps_parsed/ # Parsed Slack dumps with real names
+│   ├── gemini/                 # Gemini AI connector
+│   │   ├── client.py           # Gemini API client
+│   │   ├── config.py           # Gemini config loader
+│   │   └── tools/              # AI analysis tools (4 tools)
+│   └── schedule/               # Schedule management connector
+│       ├── config.py           # Schedule config loader
+│       └── tools/              # Schedule tools (5 tools)
 ├── config/                     # Configuration files
 │   ├── jira.yaml              # Jira teams & organizations
-│   └── slack.yaml             # Slack channels & user mappings
+│   ├── slack.yaml             # Slack channels & user mappings
+│   ├── gemini.yaml            # Gemini AI configuration
+│   └── schedule.yaml          # Schedule configuration
 ├── utils/                      # Shared utilities
 │   ├── responses.py            # Response helpers
 │   └── validators.py           # Input validation
-├── slack_dumps_parsed/            # Parsed Slack dumps with real names
-├── slack_dumps/               # Slack data cache
-├── requirements.txt            # Python dependencies
 ├── Containerfile              # Container definition
 ├── example.mcp.json           # Cursor MCP configuration
 ├── example.env                # Environment variables template
@@ -117,10 +129,12 @@ work-planner/
 
 ### Modular Connector System
 
-The project uses a clean, modular architecture where each service (Jira, Slack) has its own connector:
+The project uses a clean, modular architecture where each service has its own connector:
 
 - **`connectors/jira/`** - Jira API integration with 6 MCP tools
-- **`connectors/slack/`** - Slack API integration with 10 MCP tools
+- **`connectors/slack/`** - Slack API integration with 5 MCP tools
+- **`connectors/gemini/`** - AI analysis integration with 4 MCP tools
+- **`connectors/schedule/`** - Schedule management with 5 MCP tools
 - **`config/`** - Service-specific configuration files
 - **`utils/`** - Shared utilities and helpers
 
@@ -130,7 +144,9 @@ The server uses a simple, direct import pattern:
 ```python
 # server.py
 from connectors.jira.tools import search_issues_tool, get_team_issues_tool, ...
-from connectors.slack.tools import read_slack_channel_tool, search_slack_mentions_tool, ...
+from connectors.slack.tools import read_slack_data_tool, search_slack_data_tool, ...
+from connectors.gemini.tools import analyze_slack_data_tool, generate_email_summary_tool, ...
+from connectors.schedule.tools import get_schedule_status_tool, run_scheduled_collection_tool, ...
 ```
 
 ### Benefits of This Architecture
@@ -159,7 +175,7 @@ The server is configured for the following teams with their Jira `AssignedTeam` 
 
 The system uses a consolidated user mapping approach:
 
-1. **`config/slack.yaml`** - Single source of truth for all user mappings (57+ mappings)
+1. **`config/slack.yaml`** - Single source of truth for all user mappings (150+ mappings)
 2. **`config/jira.yaml`** - Jira-specific user mappings for team filtering
 
 ### Configuration Structure
@@ -235,9 +251,6 @@ podman run -i --rm --env-file ~/.rh-work-planner.env ghcr.io/caramuto-redhat/wor
 
 # Quay.io:
 podman run -i --rm --env-file ~/.rh-work-planner.env quay.io/rhn-support-pacaramu/work-planner:latest
-
-# Docker Hub:
-podman run -i --rm --env-file ~/.rh-work-planner.env docker.io/library/work-planner:latest
 ```
 
 ## 🎯 MCP Tools Usage
@@ -261,52 +274,54 @@ podman run -i --rm --env-file ~/.rh-work-planner.env docker.io/library/work-plan
 }
 ```
 
-#### Smart Filtering Examples
-
-**Get all toolchain tickets (no organization filter):**
-```json
-{
-  "team": "toolchain",
-  "status": "In Progress"
-}
-```
-*Result: All tickets assigned to the toolchain team using `AssignedTeam = "rhivos-pdr-auto-toolchain"`*
-
-**Get toolchain tickets for SP organization only:**
-```json
-{
-  "team": "toolchain",
-  "status": "In Progress",
-  "organization": "SP"
-}
-```
-*Result: Only tickets assigned to toolchain team members who are also in the SP organization*
-
 ### Slack Tools
 
-#### read_team_slack_data
+#### read_slack_data
 ```json
 {
-  "team": "toolchain",
+  "target": "toolchain",
   "max_age_hours": 24
 }
 ```
 
-#### search_slack_mentions
+#### search_slack_data
 ```json
 {
-  "channel_id": "C04U16VAWL9",
+  "target": "toolchain",
   "search_term": "deployment",
   "max_age_hours": 24
 }
 ```
 
-#### search_team_slack_mentions
+### AI Analysis Tools
+
+#### analyze_slack_data
 ```json
 {
   "team": "toolchain",
-  "search_term": "bug",
-  "max_age_hours": 24
+  "analysis_type": "summary"
+}
+```
+
+#### generate_email_summary
+```json
+{
+  "team": "toolchain"
+}
+```
+
+### Schedule Management Tools
+
+#### get_schedule_status
+```json
+{}
+```
+
+#### run_scheduled_collection
+```json
+{
+  "service": "slack",
+  "team": "toolchain"
 }
 ```
 
@@ -354,33 +369,89 @@ The MCP server includes comprehensive Slack integration to read team channel dis
 "read slack channel C04U16VAWL9"
 
 # Force fresh data for analysis
-"force fresh slack dump for toolchain team"
+"dump fresh slack data for toolchain team"
 
 # Search for mentions across team channels
 "search for 'deployment' mentions in toolchain team"
 
 # Check what dumps are available
 "list slack dumps for toolchain team"
-
-# Get summary of team data
-"get slack dump summary for toolchain team"
 ```
 
-### Data Flow
-1. **User Request**: "Get toolchain team comprehensive status"
-2. **Auto-Check**: System checks if Slack data is fresh
-3. **Auto-Dump**: If stale, automatically fetches latest Slack data
-4. **Data Reading**: Reads the fresh Slack dump files
-5. **LLM Analysis**: Raw Slack data is provided to LLM for analysis
-6. **Combined Results**: Jira tickets + Slack discussions in unified response
+## 🤖 AI Analysis Integration
 
-### Benefits
-- ✅ **Always Fresh Data**: Automatic refresh ensures latest information
-- ✅ **Zero Maintenance**: No manual dump management required
-- ✅ **LLM-Ready**: Raw text data perfect for AI analysis
-- ✅ **Team Context**: Correlate Jira work with Slack discussions
-- ✅ **Comprehensive View**: Combine structured (Jira) and unstructured (Slack) data
-- ✅ **User Identification**: Consistent user mapping across all tools
+### Overview
+The MCP server includes Gemini AI integration for intelligent analysis of Slack and Jira data, enabling automated insights and email summaries.
+
+### Features
+- **Slack Analysis**: Summarize discussions, extract action items, identify blockers
+- **Jira Analysis**: Project status reports, progress tracking, issue analysis
+- **Email Summaries**: Professional daily/weekly team summaries
+- **Custom Analysis**: Flexible AI analysis with custom prompts
+
+### Configuration
+Configure Gemini AI settings in `config/gemini.yaml`:
+```yaml
+model: "models/gemini-2.0-flash"
+generation_config:
+  temperature: 0.7
+  max_output_tokens: 2048
+```
+
+### Usage Examples
+
+```bash
+# Analyze team Slack discussions
+"analyze toolchain team slack data"
+
+# Generate project status from Jira
+"analyze assessment team jira data"
+
+# Create email summary
+"generate email summary for toolchain team"
+
+# Custom analysis
+"perform custom AI analysis with prompt: 'What are the main themes in this data?'"
+```
+
+## 📅 Schedule Management
+
+### Overview
+The MCP server includes comprehensive schedule management for automated data collection and analysis.
+
+### Features
+- **Automated Data Collection**: Scheduled Slack and Jira data collection
+- **AI Analysis Scheduling**: Automated AI analysis and email generation
+- **Team Management**: Add/remove teams from scheduled services
+- **Configuration Management**: Update schedule settings dynamically
+
+### Configuration
+Configure schedules in `config/schedule.yaml`:
+```yaml
+slack:
+  enabled: true
+  schedule: "0 6 * * *"  # Daily at 6 AM UTC
+  teams:
+    - name: "toolchain"
+      channels: "all"
+      max_age_hours: 24
+```
+
+### Usage Examples
+
+```bash
+# Check schedule status
+"get schedule status"
+
+# Run data collection
+"run scheduled collection for slack"
+
+# Update schedule configuration
+"update schedule config for slack team toolchain max_age_hours to 12"
+
+# Add team to schedule
+"add team to schedule for slack team assessment"
+```
 
 ## 🛠️ Development
 
@@ -430,6 +501,9 @@ JIRA_API_TOKEN=your_jira_api_token_here
 SLACK_XOXC_TOKEN=xoxc-your-slack-web-token-here
 SLACK_XOXD_TOKEN=xoxd-your-slack-cookie-token-here
 LOGS_CHANNEL_ID=C0000000000
+
+# Optional Gemini AI Configuration
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 ### GitHub Secrets (Recommended for Production)
@@ -443,6 +517,7 @@ For production deployments and CI/CD, use GitHub repository secrets:
    - `SLACK_XOXC_TOKEN` = `your_actual_slack_xoxc_token`
    - `SLACK_XOXD_TOKEN` = `your_actual_slack_xoxd_token`
    - `LOGS_CHANNEL_ID` = `your_actual_logs_channel_id`
+   - `GEMINI_API_KEY` = `your_actual_gemini_api_key`
 
 The application automatically uses GitHub secrets when available, falling back to local environment variables.
 
@@ -504,6 +579,9 @@ teams:
 - **Slack Integration**: Read and search team Slack discussions
 - **User Mapping**: Consistent user identification across Jira and Slack
 - **Auto-Caching**: Smart Slack data management with automatic refresh
+- **AI Analysis**: Intelligent analysis of Slack and Jira data
+- **Schedule Management**: Automated data collection and analysis
+- **Email Summaries**: Professional team communication
 
 ### 🎯 Example Results
 
@@ -524,6 +602,18 @@ teams:
 - User identification using consolidated mappings
 - LLM-ready raw text data for analysis
 
+**AI Analysis:**
+- Intelligent summarization of team discussions
+- Project status analysis from Jira data
+- Professional email summaries
+- Custom analysis capabilities
+
+**Schedule Management:**
+- Automated data collection
+- Configurable team schedules
+- Dynamic configuration updates
+- Service status monitoring
+
 ### 🔧 Technical Features
 
 - **Containerized**: Runs in Podman/Docker for consistency
@@ -531,8 +621,10 @@ teams:
 - **Error Handling**: Graceful fallbacks and comprehensive error messages
 - **Caching**: User display name caching for performance
 - **Flexible Queries**: Supports both team-based and assignee-based filtering
-- **Modular Architecture**: Clean separation between Jira and Slack connectors
+- **Modular Architecture**: Clean separation between connectors
 - **Consolidated Configuration**: Single source of truth for user mappings
+- **AI Integration**: Gemini AI for intelligent analysis
+- **Schedule Management**: Automated data collection and processing
 
 ## 📊 Quick Visual Summary
 
@@ -542,18 +634,36 @@ teams:
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────┐ │
-│  │   Jira Tools    │    │  Slack Tools    │    │   Built-in  │ │
-│  │   (6 tools)     │    │   (10 tools)    │    │   (1 tool)  │ │
+│  │   Jira Tools    │    │  Slack Tools    │    │   AI Tools   │ │
+│  │   (6 tools)     │    │   (5 tools)     │    │   (4 tools)  │ │
 │  ├─────────────────┤    ├─────────────────┤    ├─────────────┤ │
-│  │ • search_issues │    │ • read_slack_   │    │ • list_     │ │
-│  │ • get_team_     │    │   channel       │    │   available_│ │
-│  │   issues        │    │ • search_slack_ │    │   tools     │ │
-│  │ • get_project_  │    │   mentions      │    │             │ │
-│  │   info          │    │ • dump_slack_   │    │             │ │
-│  │ • get_user_info │    │   channel       │    │             │ │
-│  │ • list_teams    │    │ • force_fresh_  │    │             │ │
-│  │ • list_orgs     │    │   slack_dump    │    │             │ │
-│  │                 │    │ • [4 more...]   │    │             │ │
+│  │ • search_issues │    │ • dump_slack_   │    │ • analyze_  │ │
+│  │ • get_team_     │    │   data          │    │   slack_data│ │
+│  │   issues        │    │ • read_slack_   │    │ • analyze_  │ │
+│  │ • get_project_  │    │   data          │    │   jira_data │ │
+│  │   info          │    │ • search_slack_  │    │ • generate_ │ │
+│  │ • get_user_info │    │   data          │    │   email_    │ │
+│  │ • list_teams    │    │ • list_slack_   │    │   summary   │ │
+│  │ • list_orgs     │    │   channels       │    │ • custom_ai_│ │
+│  │                 │    │ • list_slack_    │    │   analysis  │ │
+│  │                 │    │   dumps          │    │             │ │
+│  └─────────────────┘    └─────────────────┘    └─────────────┘ │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────┐ │
+│  │ Schedule Tools   │    │   Built-in      │    │   Total     │ │
+│  │   (5 tools)      │    │   (1 tool)      │    │   (21 tools)│ │
+│  ├─────────────────┤    ├─────────────────┤    ├─────────────┤ │
+│  │ • get_schedule_  │    │ • list_         │    │             │ │
+│  │   status         │    │   available_    │    │             │ │
+│  │ • run_scheduled_ │    │   tools         │    │             │ │
+│  │   collection     │    │                 │    │             │ │
+│  │ • update_       │    │                 │    │             │ │
+│  │   schedule_     │    │                 │    │             │ │
+│  │   config         │    │                 │    │             │ │
+│  │ • add_team_to_  │    │                 │    │             │ │
+│  │   schedule       │    │                 │    │             │ │
+│  │ • remove_team_   │    │                 │    │             │ │
+│  │   from_schedule  │    │                 │    │             │ │
 │  └─────────────────┘    └─────────────────┘    └─────────────┘ │
 │                                                                 │
 │  📊 For detailed diagrams: ARCHITECTURE_DIAGRAM.md             │

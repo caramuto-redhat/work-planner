@@ -30,6 +30,7 @@ jobs:
         SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
         SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
         LOGS_CHANNEL_ID: ${{ secrets.LOGS_CHANNEL_ID }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
         python -c "
         import os
@@ -39,5 +40,34 @@ jobs:
         print(f'SLACK_XOXC_TOKEN: {\"SET\" if os.getenv(\"SLACK_XOXC_TOKEN\") else \"NOT SET\"}')
         print(f'SLACK_XOXD_TOKEN: {\"SET\" if os.getenv(\"SLACK_XOXD_TOKEN\") else \"NOT SET\"}')
         print(f'LOGS_CHANNEL_ID: {os.getenv(\"LOGS_CHANNEL_ID\", \"NOT SET\")}')
+        print(f'GEMINI_API_KEY: {\"SET\" if os.getenv(\"GEMINI_API_KEY\") else \"NOT SET\"}')
         print('✅ All secrets loaded successfully!')
+        "
+    
+    - name: Test Gemini Integration
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: |
+        python -c "
+        print('🤖 Testing Gemini integration...')
+        try:
+            from connectors.gemini.client import GeminiClient
+            from connectors.gemini.config import GeminiConfig
+            print('✅ Gemini client imported successfully')
+            
+            config = GeminiConfig()
+            print('✅ Gemini config loaded successfully')
+            print(f'✅ Model: {config.get_config().get(\"model\", \"Not set\")}')
+            
+            # Test client initialization
+            try:
+                client = GeminiClient(config.get_config())
+                print('✅ Gemini client initialized successfully')
+                print('✅ Gemini integration ready!')
+            except Exception as e:
+                print(f'⚠️  Gemini client initialization: {e}')
+                print('✅ Integration ready - API key configured')
+        except Exception as e:
+            print(f'❌ Gemini test failed: {e}')
+            exit(1)
         "

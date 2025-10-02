@@ -23,6 +23,9 @@ class SlackConfig:
                 if section not in config:
                     raise ValueError(f"Missing required configuration section: {section}")
             
+            # Add the config file path for reference
+            config['_config_path'] = config_path
+            
             return config
             
         except FileNotFoundError:

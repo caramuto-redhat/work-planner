@@ -3,21 +3,21 @@
 
 slack_channels:
   # ToolChain Team Channels
-  "C04JDFLHJN6": "toolchain"  # #toolchain-team
-  "C05BYR06B0V": "toolchain"  # #toolchain-infra
-  "C04U16VAWL9": "toolchain"  # #toolchain-release-readiness
-  "C095CUUBNM9": "toolchain"  # #toolchain-sla
-  "C0910QFKTSN": "toolchain"  # #toolchain-AI
-  "C064MPL86N6": "toolchain"  # #toolchain-errata
+  "C04JDFLHJN6": "toolchain"  # team-toolchain-automotive
+  "C05BYR06B0V": "toolchain"  # toolchain-infra
+  "C04U16VAWL9": "toolchain"  # toolchain-release-readiness
+  "C095CUUBNM9": "toolchain"  # toolchain-sla
+  "C0910QFKTSN": "toolchain"  # toolchain-AI
+  "C064MPL86N6": "toolchain"  # toolchain-errata
     
   # FoA Team Channels  
-  "C0659G4HAF9": "foa"        # #team-auto-follow-on-activities
+  "C0659G4HAF9": "foa"        # team-auto-follow-on-activities
   
   # Assessment Team Channels
-  "C065HHG49QB": "assessment" # #team-auto-assessment
+  "C065HHG49QB": "assessment" # team-auto-assessment
   
   # BoA Team Channels
-  "C04QNKX7RU4": "boa"        # #boa-team
+  "C04QNKX7RU4": "boa"        # boa-team
   
   # SP-RHIVOS Team Channels
   "C06B9BCD456": "sp-rhivos"  # SP-RHIVOS team channel
@@ -28,73 +28,123 @@ data_collection:
   history_days: 30
   
   # Text dump file location
-  dump_directory: "slack_dumps"
+  dump_directory: "connectors/slack/slack_dump/slack_dumps"
+  
+  # Parsed dump file location
+  parsed_directory: "connectors/slack/slack_dump/slack_dumps_parsed"
 
 # User Display Names Mapping
 # Maps Slack user IDs to display names for search functionality
 # This is the single source of truth for all user mappings
 user_display_names:
-  # Core Team Members (verified from comprehensive mapping)
-  "U04N9LTR47M": "Paul Caramuto"
-  "U04Q4USRZTM": "Marcel Banas"
-  "U02JHD5HMGC": "Robert O'Brien"  # Updated from "Rob O'Brien"
-  "U0171SJF00H": "Roni Eliezer"
-  "U020YLADEKA": "Luigi Pellecchia"  # Updated from "Hubert Stefanski"
-  "U04NN2GEXLZ": "Kanitha Chim"
-  
-  # Additional Team Members (verified from comprehensive mapping)
-  "U04N2DV1W3Y": "Rachel Sibley"  # Updated from "Ahmed Mohamed"
-  "U03DM1LN4UW": "Charles Timko"
-  "UEFFLKJAJ": "Miguel Angel Ajo Pelayo"
-  "U028G091SNM": "Brian Grech"
-  "U03PV3B9Q7K": "Tomas Golembiovsky"
-  "U02F2L89YTS": "Hubert Stefanski"  # Updated from "Juanje Ojeda"
-  "U04MXBN4WRZ": "Enric Balletbo"
+  "UJJV82KRP": "Eli Mesika"
   "U011CBYSALV": "Michal Skrivanek"
-  "U04MTUF83QX": "Pierre-Yves Chibon"
-  "U04PQB5SV41": "Stephen Bertram"
-  "U04MUFF92JZ": "Albert Esteve"
-  "UEHF1HH6Y": "Leonardo Rossetti"
-  "U8E7ZSTTQ": "Martin Perina"
-  "U04MGT65NQJ": "Eitan Raviv"
-  "UFB1TK0Q7": "Lev Veyde"
-  "U04N6RDGNAU": "Alessandro Carminati"
-  "U04JCEH31RV": "Alex McLeod"
+  "U01552Z34RG": "Yosi Ben Shimon"
+  "U0171SJF00H": "Hubert Stefanski"
+  "U018G4EKMSA": "Yariv Rachmani"
+  "U01B16R8TNC": "Davide Caratti"
+  "U01CA50VC3C": "Daniel Farrell"
+  "U01KBN9MFB7": "Jaime Flynn"
+  "U01NHRC0E4D": "Miloslav Trmač"
+  "U01TKQ3K2HM": "Adam Černý"
+  "U01TXCW3RMF": "Ed Chong"
+  "U01V2TVUSV6": "Lukas Holecek"
+  "U0205F28UMN": "Stephen Smoogen"
+  "U020YLADEKA": "Avihai Efrat"
+  "U028B6GFVHV": "Matt Currier"
+  "U028BN60UGJ": "Andrew Hills"
+  "U028G091SNM": "Brian Grech"
+  "U02CVB7MDK8": "Maya Peretz"
+  "U02DXVBD5CP": "Kanitha Chim"
+  "U02E54249V5": "Patricia Viladegut"
+  "U02F2L89YTS": "Juanje Ojeda"
+  "U02JHD5HMGC": "Robert O'Brien"
+  "U02M0G43C2F": "Jiri B-a"
+  "U02QFB1R4SE": "Ren Yang"
   "U02SMLD2JTY": "Milos Prchlik"
+  "U039S3WUR3Q": "Andreia Gaita"
+  "U039U9VMNCC": "Jon Orris"
+  "U03BXJ3CYKX": "Amanda Sopkin"
+  "U03DQ7V743D": "Christian Kellner"
+  "U03DM1LN4UW": "Charles Timko"
+  "U03GHUGCJPP": "Gabriel N. de C."
+  "U03GVFNAWAC": "JT Tinkham"
+  "U03HHMDH8CX": "Rony Gong"
+  "U03PXHBRX5Z": "Kartik Shah"
+  "U03PV3B9Q7K": "Tomas Golembiovsky"
+  "U03Q57JBXK4": "Khaled El-Sayed"
+  "U044WFQDKBK": "Shawn Jamison"
+  "U04AGK8UJ2V": "Inho Cho"
+  "U04AGQD0K8D": "Nisha Saini"
+  "U04AXB4GK52": "Ryan Smith"
+  "U04CLM07JNA": "Sagar Sundaray"
+  "U04FTPUGJH1": "John Dennis"
+  "U04HK2W8NGL": "Marcin Sobczyk"
+  "U04JCCD2ZB7": "Kudos"
+  "U04JCEH31RV": "Alex McLeod"
+  "U04JD5EV3MJ": "Julio Faracco"
+  "U04JDAPLMSN": "Jochen Breuer"
+  "U04JJADSWGM": "Chuang Cao"
+  "U04JPFBCSTB": "Francisco da Rocha"
+  "U04JRTQ4LHK": "Michael Ho"
+  "U04JV0JBEFM": "Jim Bair"
+  "U04K6JJJULC": "Miroslav Vadkerti"
+  "U04KJ2RSEL8": "Rob"
+  "U04KM6EGXC3": "Alberto Martin"
+  "U04KLL3QSF4": "Marcel Banas"
+  "U04KNU6HGCU": "Petr Matyas"
+  "U04L83NL5MK": "David O'Brien"
+  "U04LP69FP6X": "Sameera Kalgudi"
+  "U04MGT65NQJ": "Eitan Raviv"
+  "U04MD42UL92": "Sabine Vogel"
+  "U04MTUF83QX": "Pierre-Yves Chibon"
+  "U04MUFF92JZ": "Albert Esteve"
+  "U04MXBN4WRZ": "Enric Balletbo"
+  "U04MXTNUW1Z": "Allison King"
+  "U04N0SVB92Q": "Rakesh Musalay"
+  "U04N2DV1W3Y": "Rachel Sibley"
+  "U04N4GB25GV": "Bilal Elmoussaoui"
+  "U04N6RDGNAU": "Alessandro Carminati"
+  "U04N98MG9DG": "Fabrizio Tronci"
+  "U04N9LTR47M": "Paul Caramuto"
+  "U04NH4CEEJF": "Shir Fishbain"
+  "U04NHMNPD32": "Eric Chanudet"
+  "U04NHTDFS6P": "Steve Loranz"
+  "U04NL553V53": "Felicia Kleinfelt"
+  "U04NLT3HY3Y": "Simon Walter"
+  "U04NSVCMTBP": "Advait Shailesh Gupte"
+  "U04NW5PV4DA": "Jilun Li"
+  "U04NZ662TAL": "Leonardo Garcia"
+  "U04NN2GEXLZ": "Petr Sabata"
+  "U04NNGY4QQ2": "Ozan Unsal"
+  "U04P10NE5A5": "Iker Galardi"
+  "U04PQB5SV41": "Stephen Bertram"
+  "U04Q4USRZTM": "Luigi Pellecchia"
+  "U04QDJC59E2": "Brendan Donegan"
+  "U04QH469ETF": "Austin Kimbrell"
+  "U04QL3MD2CB": "Tom Callaway"
+  "U04QL2XHGP4": "Dylan Gross"
+  "U04QNH25QA1": "Roni Eliezer"
   "U04QUNNNX16": "Philip Daly"
+  "U04QYMVRDDF": "Jan Onderka"
   "U05AAM5H2MC": "Pablo Ridolfi"
-  "U04NNGY4QQ2": "Sameera Kalgudi"  # Updated from "Luigi Pellecchia"
-  
-  # Users from comprehensive mapping that were missing from manual
-  "U02DXVBD5CP": "Avihai Efrat"  # Was "REPLACE_WITH_REAL_NAME"
-  "U04KLL3QSF4": "Juanje Ojeda"  # Was "REPLACE_WITH_REAL_NAME"
-  "U04LP69FP6X": "Marcel Banas"  # Was "REPLACE_WITH_REAL_NAME"
-  
-  # Users that still need manual verification (from generated mapping)
-  "U01552Z34RG": "Unknown User"
-  "U01V2TVUSV6": "Unknown User"
-  "U028BN60UGJ": "Unknown User"
-  "U02CVB7MDK8": "Unknown User"
-  "U039U9VMNCC": "Unknown User"
-  "U03HHMDH8CX": "Unknown User"
-  "U03PXHBRX5Z": "Unknown User"
-  "U044WFQDKBK": "Unknown User"
-  "U04AGK8UJ2V": "Unknown User"
-  "U04AGQD0K8D": "Unknown User"
-  "U04AXB4GK52": "Unknown User"
-  "U04JJADSWGM": "Unknown User"
-  "U04JRTQ4LHK": "Unknown User"
-  "U04JV0JBEFM": "Unknown User"
-  "U04KNU6HGCU": "Unknown User"
-  "U04N0SVB92Q": "Unknown User"
-  "U04NH4CEEJF": "Unknown User"
-  "U04NHTDFS6P": "Unknown User"
-  "U04NLT3HY3Y": "Unknown User"
-  "U04QH469ETF": "Unknown User"
-  "U04QL2XHGP4": "Unknown User"
-  "U04QNH25QA1": "Unknown User"
-  "U064YNKHH43": "Unknown User"
-  "UG0N57XEX": "Unknown User"
-  "UKSAK8JRH": "Unknown User"
-  "URRPFQEMS": "Unknown User"
-  "USLACKBOT": "Unknown User"
+  "U05AGS4SE78": "Wisdom Omuya"
+  "U06J9AHRB37": "Andrea F."
+  "U06N09DL50A": "ATC Demo Reminder"
+  "U8E7ZSTTQ": "Martin Perina"
+  "UDAENJUEB": "Troy Dawson"
+  "UDLVC8W83": "Asaf Rachmani"
+  "UEFFLKJAJ": "Miguel Angel Ajo Pelayo"
+  "UEHF1HH6Y": "Leonardo Rossetti"
+  "UFB1TK0Q7": "Lev Veyde"
+  "UG0N57XEX": "Pavol Brilla"
+  "UG137FY4U": "Dustin Black"
+  "UH5H4M38F": "Yaning Wang"
+  "UKSDRN92R": "Martin Coufal"
+  "UKSAK8JRH": "Shaun Daley"
+  "ULXQZ1GUQ": "Lenka Špačková"
+  "UN1JC12N4": "Michel Normand"
+  "UNMGRQNRZ": "Sandro Bonazzola"
+  "URH2PJUCV": "Arik Hadas"
+  "URRPFQEMS": "Lei Wang"
+  "UTM49Q8JJ": "Douglas Landgraf"

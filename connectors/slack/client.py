@@ -19,7 +19,7 @@ class SlackClient:
         if not all([self.xoxc_token, self.xoxd_token]):
             raise RuntimeError("Missing SLACK_XOXC_TOKEN or SLACK_XOXD_TOKEN environment variables")
     
-    async def get_channel_history(self, channel_id: str) -> List[Dict[str, Any]]:
+    async def get_channel_history(self, channel_id: str, latest_date: str = None) -> List[Dict[str, Any]]:
         """Get channel history using Slack API"""
         headers = {
             "Authorization": f"Bearer {self.xoxc_token}",
@@ -28,7 +28,22 @@ class SlackClient:
         cookies = {"d": self.xoxd_token}
         
         url = f"{self.base_url}/conversations.history"
-        payload = {"channel": channel_id}
+        payload = {
+            "channel": channel_id,
+            "limit": 1000,  # Fetch up to 1000 messages (Slack API maximum)
+            "oldest": "0"   # Start from the beginning of channel history
+        }
+        
+        # Add latest date if provided
+        if latest_date:
+            from datetime import datetime
+            try:
+                # Convert date string to Unix timestamp
+                dt = datetime.strptime(latest_date, "%Y-%m-%d")
+                timestamp = int(dt.timestamp())
+                payload["latest"] = str(timestamp)
+            except ValueError:
+                raise ValueError(f"Invalid date format. Use YYYY-MM-DD format. Got: {latest_date}")
         
         async with httpx.AsyncClient() as client:
             try:
@@ -39,7 +54,10 @@ class SlackClient:
                 data = response.json()
                 
                 if data.get("ok"):
-                    return data.get("messages", [])
+                    messages = data.get("messages", [])
+                    # Reverse to get oldest first (Slack returns newest first by default)
+                    messages.reverse()
+                    return messages
                 else:
                     raise RuntimeError(f"Slack API error: {data.get('error', 'Unknown error')}")
                     

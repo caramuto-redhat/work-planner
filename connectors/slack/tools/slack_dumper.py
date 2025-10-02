@@ -15,7 +15,7 @@ import json
 def dump_slack_channel_tool(client, config):
     """Create dump_slack_channel tool function"""
     
-    def dump_slack_channel(channel_id: str) -> str:
+    def dump_slack_channel(channel_id: str, latest_date: str = None) -> str:
         """Dump a specific Slack channel to text file."""
         try:
             # Input validation
@@ -23,7 +23,7 @@ def dump_slack_channel_tool(client, config):
             
             # Get channel history using async function
             def run_async():
-                return asyncio.run(client.get_channel_history(validated_channel_id))
+                return asyncio.run(client.get_channel_history(validated_channel_id, latest_date))
             
             # Run in a separate thread to avoid event loop conflicts
             result = None
@@ -53,6 +53,8 @@ def dump_slack_channel_tool(client, config):
                 f.write(f"# Slack Channel Dump\n")
                 f.write(f"# Channel ID: {validated_channel_id}\n")
                 f.write(f"# Generated: {datetime.now().isoformat()}\n")
+                if latest_date:
+                    f.write(f"# Messages up to: {latest_date}\n")
                 f.write(f"# Total Messages: {len(messages)}\n\n")
                 
                 for message in messages:
@@ -84,18 +86,40 @@ def dump_slack_channel_tool(client, config):
                 f.write(f"# Channel ID: {validated_channel_id}\n")
                 f.write(f"# Channel Name: {channel_name}\n")
                 f.write(f"# Generated: {datetime.now().isoformat()}\n")
+                if latest_date:
+                    f.write(f"# Messages up to: {latest_date}\n")
                 f.write(f"# Total Messages: {len(messages)}\n\n")
+                
+                # Get user display names mapping
+                user_mappings = config.get('user_display_names', {})
+                print(f"DEBUG: User mappings loaded: {len(user_mappings)} mappings")
+                if user_mappings:
+                    print(f"DEBUG: First mapping example: {list(user_mappings.items())[0]}")
+                else:
+                    print("DEBUG: No user mappings found!")
                 
                 for message in messages:
                     timestamp = datetime.fromtimestamp(float(message['ts']))
-                    user = message.get('user', 'Unknown')
+                    user_id = message.get('user', 'Unknown')
                     text = message.get('text', '')
+                    
+                    # Replace user ID with display name if available
+                    user = user_mappings.get(user_id, user_id)
+                    if user != user_id:
+                        print(f"DEBUG: Mapped {user_id} -> {user}")
                     
                     # Enhanced parsing: clean up Slack formatting
                     parsed_text = text
                     # Remove Slack user mentions and replace with readable format
                     import re
-                    parsed_text = re.sub(r'<@([A-Z0-9]+)>', r'@\1', parsed_text)
+                    # Replace user mentions in message content with display names
+                    def replace_user_mention(match):
+                        mentioned_user_id = match.group(1)
+                        display_name = user_mappings.get(mentioned_user_id, mentioned_user_id)
+                        if display_name != mentioned_user_id:
+                            print(f"DEBUG: Mapped mention {mentioned_user_id} -> {display_name}")
+                        return f"@{display_name}"
+                    parsed_text = re.sub(r'<@([A-Z0-9]+)>', replace_user_mention, parsed_text)
                     # Remove Slack channel links and replace with readable format
                     parsed_text = re.sub(r'<#([A-Z0-9]+)\|([^>]+)>', r'#\2', parsed_text)
                     # Remove general links but keep the URL
@@ -111,7 +135,8 @@ def dump_slack_channel_tool(client, config):
                 "filename": filename,
                 "parsed_file_path": parsed_filepath,
                 "parsed_filename": parsed_filename,
-                "channel_name": channel_name
+                "channel_name": channel_name,
+                "latest_date": latest_date
             })
             
         except ValueError as e:

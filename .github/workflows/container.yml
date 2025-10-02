@@ -71,6 +71,7 @@ jobs:
           SLACK_XOXC_TOKEN=${{ secrets.SLACK_XOXC_TOKEN }}
           SLACK_XOXD_TOKEN=${{ secrets.SLACK_XOXD_TOKEN }}
           LOGS_CHANNEL_ID=${{ secrets.LOGS_CHANNEL_ID }}
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
 
     - name: Test container
       run: |

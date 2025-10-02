@@ -1,0 +1,1770 @@
+# Slack Channel Dump
+# Channel ID: C05BYR06B0V
+# Generated: 2025-10-01T23:12:05.145353
+# Total Messages: 1000
+
+[2024-10-24T14:59:39.797789] U0171SJF00H: <@U02F2L89YTS> <@U04NNGY4QQ2> I want to double-verify <https://eu-west-1.console.aws.amazon.com/s3/buckets/auto-product-build-downstream-staging?region=eu-west-1&amp;bucketType=general&amp;prefix=RHIVOS-1/&amp;showversions=false|https://eu-west-1.console.aws.amazon.com/s3/buckets/auto-product-build-downstream-staging?reg[…]cketType=general&amp;prefix=RHIVOS-1/&amp;showversions=false> are safe to delete?
+[2024-10-24T15:00:10.943639] U0171SJF00H: want to check before merging that MR, just in case :see_no_evil:
+[2024-10-24T15:02:31.923799] U02F2L89YTS: <@U0171SJF00H> Yes, that's only useful during the time the MR pipeline runs. After that, we don't use it or need it.
+Go ahead! :trashcan: :ok_hand:
+[2024-10-24T15:03:21.446489] U0171SJF00H: That's what I thought but didn't want to do something stupid :sweat_smile: thank you
+[2024-10-24T15:04:23.638389] U02F2L89YTS: Thanks for checking! Better safe than sorry :sweat_smile:
+[2024-10-24T15:10:24.949499] U0171SJF00H: Cool cool, that got applied, we've just got to wait until midnight for the lifecycler to kick in :crossed_fingers:
+[2024-10-24T15:13:04.772249] U02F2L89YTS: Thanks!!!
+[2024-10-24T15:14:46.140339] U0171SJF00H: If my math is correct, this could mean a few hundred $ of savings :smile: per month
+[2024-10-24T15:20:59.147379] U04AXB4GK52: Hello fellow infra folks, could you please take a look at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/362|this MR> I've just submitted?
+[2024-10-24T16:54:59.495349] U0171SJF00H: approved, just one comment that I think you already know about, but left it just in case
+[2024-10-25T12:19:43.183859] U04AXB4GK52: <@U0171SJF00H> and <@U02F2L89YTS> thanks to Hubes' keen eye I took out the changes to rename the contcert automation user since it would induce regenerating access keys. The MR has been updated with the latest changes having taken that commit out if you could take another look Id appreciate it
+[2024-10-25T14:05:55.113149] U0171SJF00H: ^^ re-approved
+[2024-10-28T15:58:28.580459] U04AXB4GK52: <@U0171SJF00H> any insight in to this? <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/28369309#L207>
+[2024-10-30T13:35:27.856779] U0171SJF00H: <@U04NNGY4QQ2> can you share that job log for the SSH issue you mentioned?
+[2024-10-30T13:57:13.990639] U04NHTDFS6P: We're being asked to answer some questions for CMDB IDs VHCL-004 through VHCL-008, VHCL-012, and VHCL-013 in <https://issues.redhat.com/browse/EXDSP-2922> ... Each STI has a page in confluence with questions about the service. It doesn't actually look too terrible, but I need help from this group. Any takers?
+[2024-10-30T20:15:19.059569] U02F2L89YTS: I'm getting this kind of errors with the upstream `pipe-x_upstream_runner_aws_rosa_su` runner :confused:
+<https://gitlab.com/redhat/edge/ci-cd/pipe-x/tf-requests/-/jobs/8232457445>
+[2024-11-04T12:40:59.482939] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/366> easy review for anyone
+[2024-11-04T12:41:47.281639] U0171SJF00H: (I'm still amazed at how well the CI trigger rules work here,)
+[2024-11-04T13:08:01.195079] U0171SJF00H: And one more:
+
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/367>
+
+This one offboards the decomissioned `auto-prod` cluster from the repository
+[2024-11-07T12:20:15.642369] U0171SJF00H: <@U04AGQD0K8D> <@U04N9LTR47M> thanks for the input in <https://issues.redhat.com/browse/EXDSP-2922>, you saved us a bunch of work it looks like :meow_dance:
+[2024-11-07T12:30:32.578019] U04AXB4GK52: +1, thank you both!
+[2024-11-07T12:36:40.925399] U04NNGY4QQ2: I still have one :disappointed:
+[2024-11-07T12:43:56.489869] U04AXB4GK52: :headstone:
+[2024-11-07T12:44:17.979029] U04AXB4GK52: Which service?
+[2024-11-07T12:49:56.261009] U04NNGY4QQ2: autosd-product-pipeline
+[2024-11-07T13:22:08.898649] U04AGQD0K8D: Actually the vhcl-013 was skipped from the SOA requests given it is upstream which doesn’t come in the realm of PPSC team. But i am not sure why is it still marked for self assessment in this epic.
+[2024-11-07T13:38:09.357369] U04AGQD0K8D: I see why - it is marked criticality as C2. And as per Peggy's email they are auditing C1,C2 tier STIs
+[2024-11-07T13:56:02.750039] U04N9LTR47M: right, because it's marked as C2, let's see what Peggy comes back with as fas a refining the questions. If we need to move forward with the 013, we should divide the work somehow and help Ozan finish it off...
+[2024-11-07T15:16:28.451139] U04AXB4GK52: <@U0171SJF00H> and <@U04MGT65NQJ> - did something change with the automation service account for MP+? It used to be able to create Roles just fine, and now is being rejected as in <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/jobs/28661606|here> and <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/jobs/28661602|here>
+[2024-11-07T15:56:14.819679] U0171SJF00H: hmm, this is odd, I don't recall making any changes, can you verify the token in the ci/cd store is the same one as it is on the mpp ns?
+[2024-11-07T15:56:27.705309] U04AXB4GK52: I can, sec
+[2024-11-07T16:10:50.870619] U04AXB4GK52: Okay, I think the token has maybe been rotated
+
+```$ oc get -o yaml sa tenantaccess-contcert-deployment-automation-sa
+apiVersion: v1
+imagePullSecrets:
+- name: tenantaccess-contcert-deployment-automation-sa-dockercfg-r2bv8
+kind: ServiceAccount
+metadata:
+  creationTimestamp: "2023-12-06T12:18:29Z"
+  name: tenantaccess-contcert-deployment-automation-sa
+  namespace: contcert--config
+  ownerReferences:
+  - apiVersion: <http://tenantaccess.paas.redhat.com/v1beta1|tenantaccess.paas.redhat.com/v1beta1>
+    blockOwnerDeletion: true
+    controller: true
+    kind: TenantServiceAccount
+    name: contcert-deployment-automation-sa
+    uid: 17d38847-ab61-47ed-95ed-7771fd46b5da
+  resourceVersion: "4771181525"
+  uid: 933b678e-7541-4989-8c1b-186664fac162
+secrets:
+- name: tenantaccess-contcert-deployment-automation-sa-dockercfg-r2bv8
+- name: tenantaccess-contcert-deployment-automation-sa-token-q6wzl```
+[2024-11-07T16:11:12.778109] U04AXB4GK52: That second secret there, `tenantaccess-contcert-deployment-automation-sa-token-q6wzl`, does not match the token in CI/CD variables
+[2024-11-07T16:12:16.447259] U04AXB4GK52: However, when I
+
+```$ oc describe sa tenantaccess-contcert-deployment-automation-sa
+Name:                tenantaccess-contcert-deployment-automation-sa
+Namespace:           contcert--config
+Labels:              &lt;none&gt;
+Annotations:         &lt;none&gt;
+Image pull secrets:  tenantaccess-contcert-deployment-automation-sa-dockercfg-r2bv8
+Mountable secrets:   tenantaccess-contcert-deployment-automation-sa-dockercfg-r2bv8
+                     tenantaccess-contcert-deployment-automation-sa-token-q6wzl
+Tokens:              tenantaccess-contcert-deployment-automation-sa-token
+                     tenantaccess-contcert-deployment-automation-sa-token-54r4p
+                     tenantaccess-contcert-deployment-automation-sa-token-q6wzl
+Events:              &lt;none&gt;```
+This token: `tenantaccess-contcert-deployment-automation-sa-token-54r4p` does match
+[2024-11-07T16:12:37.805639] U04AXB4GK52: My assumption is that in this `describe` output, all tokens from history are shown
+[2024-11-07T16:12:55.553349] U04AXB4GK52: And the last one is latest, which matches what's in `oc get sa -o yaml`
+[2024-11-07T16:21:51.931029] U0171SJF00H: completely lost as to why that happened :thinking_face:
+[2024-11-07T16:22:12.224669] U0171SJF00H: I guess maybe we can ask Eitan on Monday if he accidentally rotated it with the runner work he's doing
+[2024-11-07T16:22:35.990709] U0171SJF00H: but that's a different tenant all together hmmmm
+[2024-11-07T16:40:00.478429] U04AXB4GK52: Let me ask IT cloud - maybe they auto-rotate
+[2024-11-07T16:58:38.560559] U04AXB4GK52: cc: <@U04HK2W8NGL> ^^
+[2024-11-07T16:58:47.564749] U04HK2W8NGL: gdmit...
+[2024-11-07T16:59:40.765929] U04HK2W8NGL: just pushed my MR and I was hoping to see the pipeline results :slightly_smiling_face:
+[2024-11-07T17:02:02.530949] U04AXB4GK52: Why did yours pass :thinking_meow:  did someone secretly rotate the token in CI/CD variables?
+[2024-11-07T17:02:18.234269] U04AXB4GK52: Eh, fudge it. I won't mess with that right now while we get that MR merged
+[2024-11-13T13:48:00.954859] U02F2L89YTS: <@U02DXVBD5CP> <@U0171SJF00H> FYI, I did a small change to the webserver.
+[2024-11-13T16:21:23.618249] U02DXVBD5CP: does anybody know this repo <https://gitlab.cee.redhat.com/automotive/demos/ces2025-vector-demo>?
+I was asked to create a main default branch
+[2024-11-19T13:45:11.415589] U04HK2W8NGL: Hi, I've rebased <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/370|my MR> in the `infrastructure` repository and CI is <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/jobs/28996744|crying about some auth stuff>. Is this a known issue? <@U0171SJF00H> :meow_pwettyplease:
+[2024-11-19T13:46:36.500619] U0171SJF00H: We hit that a few times yesterday, no apparent root cause ;/
+[2024-11-19T13:46:47.204719] U0171SJF00H: re-running it a few times made it pass eventually
+[2024-11-19T13:47:58.084689] U0171SJF00H: It inherits the docker auth config from pipe-x <https://gitlab.cee.redhat.com/groups/automotive/pipe-x/-/settings/ci_cd>
+[2024-11-19T13:48:16.718039] U0171SJF00H: that has permissions to automotive-toolchain and auto-fusa
+[2024-11-19T13:48:39.085319] U04HK2W8NGL: ack, will retry, thanks!
+[2024-11-19T14:13:30.814939] U0171SJF00H: <@U04MGT65NQJ> do we have our own runners enabled for the infra repo? :thinking_face:
+[2024-11-19T14:13:40.497099] U0171SJF00H: seems like this one is just using the release runner for whatever reason
+[2024-11-19T14:14:58.164559] U02F2L89YTS: We had that issue already with the tacocat image :confused:
+<https://issues.redhat.com/browse/VROOM-24342>
+It was affecting more runners, not just ours.
+[2024-11-19T14:15:39.662489] U02F2L89YTS: I worked around for a bit changing the pull-policy on the runner, but it was causing other issues
+[2024-11-19T14:18:46.091409] U02F2L89YTS: <@U04HK2W8NGL> sort answer: it's a known and annoying issue. but AFAIK, it wasn't affecting the infra repo, tho :thinking_face:
+[2024-11-19T14:58:35.797419] U04AXB4GK52: This quirk seems to be a lot more common since I updated DOCKER_AUTH_CONFIG to include auths for both `<http://quay.io/automotive-toolchain|quay.io/automotive-toolchain>` and `<http://quay.io/auto-fusa|quay.io/auto-fusa>` even though this is valid w.r.t. the auth schema
+[2024-11-19T15:07:06.331739] U02F2L89YTS: Yep. And I tested that config inside a container to be sure that I wasn't using any local config and it works as expected :confused:
+But for some reason, it doesn't work fine at the runners. (ours or the instance runners)
+[2024-11-19T15:09:33.905219] U02F2L89YTS: What is more confusing is that now it worked....
+```Authenticating with credentials from $DOCKER_AUTH_CONFIG
+Pulling docker image <http://quay.io/automotive-toolchain/infrastructure:latest|quay.io/automotive-toolchain/infrastructure:latest> ...
+Using docker image sha256:a2c43abcd6364aa545a058d4520e9214a1bf05c836b6522391194b9321c9f42e for <http://quay.io/automotive-toolchain/infrastructure:latest|quay.io/automotive-toolchain/infrastructure:latest> with digest <http://quay.io/automotive-toolchain/infrastructure@sha256:f7bea158190a69c6599718f62d3318cd94f448114380b4b18f2d00083a8250ee|quay.io/automotive-toolchain/infrastructure@sha256:f7bea158190a69c6599718f62d3318cd94f448114380b4b18f2d00083a8250ee> ...```
+It was using our runner, which doesn't have the workaround (the pull-policy to avoid re-pulling images that already exists) anymore :thinking_face:
+[2024-11-19T15:17:06.810649] U04AXB4GK52: I suppose we could devise an experiment to determine if it's Quay (which Im most inclined to blame) or if it's the runner(s)
+[2024-11-19T15:24:58.502669] U02F2L89YTS: I was also inclined to blame quay, but after testing it, I'm not sure anymore. It works fine with my credentials and with the credentials at the CI/CD.
+I'm not sure if it's the runners, as it happens in both ours and the instance runners.
+I wanted to do some experiments with a simple repo and CI, to be able to experiment more quickly and test different things.
+[2024-11-19T17:52:03.187279] U02F2L89YTS: <@U04NNGY4QQ2> <@U02DXVBD5CP> <@U0171SJF00H> Something fishy is happening with the autosd webserver. Apart from the fact that the latest compose has some files mixed (like it didn't sync completely), the bucket show 5 dirs plus nightly.
+But the web shows 6 dirs plus nightly.
+Any ideas?
+[2024-11-20T01:50:47.590799] U04JRTQ4LHK: Just want to add that I'm hitting the quay authentication issues still on the infra repo:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/377>
+```ERROR: Job failed: failed to pull image "<http://quay.io/automotive-toolchain/infrastructure:latest|quay.io/automotive-toolchain/infrastructure:latest>" with specified policies [always]: Error response from daemon: {"message":"unauthorized: access to the requested resource is not authorized"} (manager.go:250:1s)```
+I had one pipeline that failed 100% consistently (while retrying the jobs). On a new pipeline, one job passed but two still failed..
+[2024-11-20T02:19:46.395889] U04JRTQ4LHK: I'll post it here so people don't miss the discussion I have in the thread above! The DOCKER_AUTH_CONFIG doesn't fully support two tokens for registries sitting on the same domain. I swapped the auto-foa and the automotive-toolchain tokens around to fix the infrastructure repository jobs. But we expect something that used that auto-foa token to break :thinking_meow: I guess the terraform jobs for managing auto-foa validator container image repos.
+[2024-11-20T02:21:15.886559] U04JRTQ4LHK: Fyi, <@U04MGT65NQJ>, my MR to add a new GitLab repo looks like it also would destroy the AWS runners: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/jobs/29018472>
+[2024-11-20T12:05:20.813389] U020YLADEKA: Hi <@U04JRTQ4LHK> <@U04AXB4GK52>,
+<@U04MGT65NQJ> mentioned we are blocked by the <https://redhat.service-now.com/surl.do?n=INC3064728|gitlab-shared-runners - Artifact upload permission denied issue.>
+Also that the url_close WA that was suggested there is not actually working.
+
+Currently this ticket is with priority 5 (WA exist) and I want to reflect and escalate it further so I have 2 options:
+• Raise to priority 2 : No WA buisness critical priority
+• Raise to priority 3: No WA does NOT block buisness critical priority
+What do you suggest we choose and why ?
+
+Also <@U04MGT65NQJ> he will check about old runners that might not have this issue until this is resolved.
+
+Another last Q: What have you been using so far to run the validators on and for how long can you keep using it?
+[2024-11-20T12:25:46.194109] U04JRTQ4LHK: <@U04JDAPLMSN> ^ When you asked about this, what was your expectation? Only do it if it's an easy win, right?
+[2024-11-20T12:26:20.059039] U04JRTQ4LHK: &gt; Another last Q: What have you been using so far to run the validators on and for how long can you keep using it?
+We use the gitlab cee shared runners, we can continue to use them, we just wanted to see if we could get better queueing/run speeds on private runners.
+[2024-11-20T13:33:21.444039] U04AXB4GK52: This request is only for CI runners to replace our use of the GitLab shared instance runners for FoA validator project CI. The primary objective is to experiment with dedicated runners and gather data to determine whether using dedicated vs shared runners will improve CI job queuing time.
+
+In short - this is not business critical so Prio 3 at the most imo.
+
+One last point: it seems strange that IT's "gitlab-shared-runners - Artifact upload permission denied issue." experienced when turning on a new fleet of runners as result of an outage is somehow blocking us from turning on a self-managed fleet of runners :thinking_meow:  at the end of the day like Michael said this was meant to be "do it if its an easy win" and so far this has neither been easy nor a win
+[2024-11-20T13:56:54.786859] U04JDAPLMSN: > <@U04JDAPLMSN>
+> ^ When you asked about this, what was your expectation? Only do it if it's an easy win, right?
+I would replace easy with "reasonable effort". If this becomes a problem, we should run this past Steve to make sure we are not blocking other things that might be more important.
+[2024-11-20T14:03:58.016289] U04AXB4GK52: Yes, reasonable effort is a much better way to say "easy win", thank you for the correction.
+[2024-11-20T14:12:47.282309] U020YLADEKA: Thanks <@U04JRTQ4LHK> and <@U04AXB4GK52>!
+I moved the <https://redhat.service-now.com/surl.do?n=INC3064728|gitlab-shared-runners - Artifact upload permission denied issue> ticket to pri 3.
+Also nudged the assignee in the hope that we will get another WA or help .
+[2024-11-20T15:48:09.153119] U04JRTQ4LHK: gentle ping for review <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/377> <@U04AXB4GK52> <@U0171SJF00H>
+[2024-11-20T16:10:59.989669] U04AGQD0K8D: Hi All,
+For getting the auto-signing we need to get the SOA expedited - I am working with the respective teams. Can the respective SMEs please confirm if the _services (in italics_) still required Or if _*new services*_ added to the below list?
+ 	 
+VHCL-004	rhivos-package-level-pipeline
+_*VHCL-006	auto-toolchain-sea-bridge*_
+VHCL-007	contcert
+VHCL-008	rhivos-product-pipeline
+VHCL-009	auto-toolchain-infrastructure
+VHCL-012	rhivos-webserver
+VHCL-013	AutoSD Product Pipeline
+_*VHCL-015	test-console*_
+[2024-11-20T16:12:50.251959] U02F2L89YTS: I'd say that `auto-toolchain-sea-bridge` *no*, but `test-console` *yes*.
+[2024-11-20T16:13:47.501149] U02F2L89YTS: Well, maybe I spoke too soon... <@U02DXVBD5CP> <@U04JRTQ4LHK> do we need sea-bridge?
+[2024-11-20T16:14:31.381069] U02DXVBD5CP: no we don't
+[2024-11-20T16:14:33.456939] U02DXVBD5CP: :smile:
+[2024-11-20T16:15:02.845609] U04AGQD0K8D: Great! 1 less service :+1:
+[2024-11-20T16:16:04.247319] U02DXVBD5CP: thank you, Nisha!
+[2024-11-25T12:57:24.702289] U02F2L89YTS: <@U04MGT65NQJ> <@U0171SJF00H> I've noticed a bunch of errors like these (at least from yesterday, not sure if before) with the upstream runners:
+```Running with gitlab-runner 17.6.0 (374d34fd)
+  on pipe-x-gitlab-autoscale-runners-upstream t2_Kh5DTj, system ID: s_2e6b9886b188
+Resolving secrets
+Preparing the "docker-autoscaler" executor
+45:10
+ERROR: Preparation failed: unable to acquire instance: context deadline exceeded
+Will be retried in 3s ...
+ERROR: Preparation failed: unable to acquire instance: context deadline exceeded
+Will be retried in 3s ...
+ERROR: Preparation failed: unable to acquire instance: context deadline exceeded
+Will be retried in 3s ...
+ERROR: Job failed (system failure): unable to acquire instance: context deadline exceeded```
+[2024-11-25T13:00:38.519089] U0171SJF00H: <@U04MGT65NQJ> I'm trying to get <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/382> in for <@U04Q4USRZTM> to back up the TC DB, but I'm seeing my plan overwrites some fields on the runners, did you add any of these manually? :thinking_face:
+[2024-11-25T13:00:46.076599] U0171SJF00H: don't wanna overwrite your changes if you did
+[2024-11-26T11:39:52.698329] U04NNGY4QQ2: Any idea why this pipeline is stuck <https://gitlab.com/redhat/edge/ci-cd/pipe-x/image-info-generator/-/pipelines/1559618768> ?
+[2024-11-27T10:47:14.610689] U04KLL3QSF4: Hello, I wanted to ask if I can have higher than `Developer` role in <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code|pipelines as code repo> - current justification to access/see CI/CD variables values for fixing one job.
+Thanks in advance.
+[2024-11-27T13:36:37.489129] U0171SJF00H: Can we get one more approval here: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/385> ?
+[2024-11-27T13:37:11.209869] U0171SJF00H: This adds the tf-integrations bucket properly, since it was created manually before it got added to terraform it broke the plan
+[2024-11-27T15:13:37.752269] U04Q4USRZTM: Hi guys, actually plp timeout is blocking some report upload in polarion.
+In my case a test is passing but gitlab job failed due timeout.
+Can we extend that to support Renesas performance?
+<https://gitlab.cee.redhat.com/automotive/pipe-x/package-level-pipelines/-/jobs/29214463>
+[2024-11-29T14:08:48.800139] U04JRTQ4LHK: <@U02DXVBD5CP> <@U0171SJF00H> I'd like to change the repo name for one of the foa validators, could I get a review please? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/388>
+[2024-12-02T14:40:08.629929] U0171SJF00H: We finally got a full month view for the recent cost savings :meow_dance:
+[2024-12-02T14:40:55.222219] U0171SJF00H: 
+[2024-12-03T02:09:57.894419] U04AGQD0K8D: Hi All, upon running the "weak passwords" report on bitwarden, 1 weak pwd was found. We should change it <@U0171SJF00H> /<@U04MGT65NQJ>
+[2024-12-03T02:10:49.744259] U04AGQD0K8D: QQ: how are we managing access in Bitwarden vault? Is there role based access Or some rover group to manage that?
+[2024-12-03T08:38:23.551869] U0171SJF00H: It's managed by rover groups, each rover group gets automatically created when we add `@BW@`  in the notes of the rover group, anyone within that group is automatically added/removed based on their membership status
+[2024-12-03T08:38:44.221089] U0171SJF00H: I think this specific one we use somewhere in the ATC dashboard :thinking_face:
+[2024-12-03T10:33:57.003219] U04JRTQ4LHK: Yeah
+[2024-12-03T10:34:01.100739] U04JRTQ4LHK: It's used to access the news
+[2024-12-03T10:34:12.060119] U04JRTQ4LHK: That password was generated for us btw when I requested it long ago
+[2024-12-03T10:34:18.680849] U04JRTQ4LHK: Not sure it's changeable. It's more a token.
+[2024-12-03T15:54:07.820819] U04AGQD0K8D: If we do not need this token anymore we can remove it.
+[2024-12-03T15:56:40.276289] U04AGQD0K8D: Another question is related to gitlab runners- IIUC we are only relying on AWS hosted runners because there is currently an ongoing issue with runners on MP+.
+1. Do we have any ticket to track the remediation for MP+ runners issue?
+2. Do we plan to keep using the AWS runners long term as in till July 2025 Or will move back to MP+ in near future?
+
+[2024-12-03T15:58:16.343619] U04AGQD0K8D: ^asking because AWS based runners are the only few things which are blocking the compliance part for services hosted on gitlab.cee( rest runners are hosted on MP+ & maintained by IT) so no additional steps are required there
+[2024-12-03T16:02:12.434589] U04JRTQ4LHK: &gt; If we do not need this token anymore we can remove it.
+If you remove the news thing on the atc dashboard, up to you
+[2024-12-03T16:19:32.532189] U02JHD5HMGC: In <#C04JDFLHJN6|> bookmarks we have links to ATC dashboard and the news page.
+I don't think we have so many people using the dashboard, so for me, it appears to be a better option to  remove news from dashboard
+[2024-12-03T21:26:32.627669] U020YLADEKA: I think part of having a dashboard is being able to post issues/news clearly there , no?
+I think it’s very useful and teams look there for updates and status changes.( we can ask in next open toolchain meetup as well) 
+
+Can’t we change the password and keep the news important dashboard feature?
+
+About not many folks using it I think it’s up to us to point other teams to check the dashboard first or keep it updated instead of announcing in multiple channels but if this password change is not possible then it’s a different story.
+[2024-12-03T21:28:53.435769] U04N9LTR47M: one is internal (dashboard webserver) the other public (source), right?
+[2024-12-04T05:28:32.672699] U020YLADEKA: The news section is on the Red Hed source page (which is internal to Red Hat folks, no public AFAIK)
+[2024-12-04T16:12:26.270639] U04JRTQ4LHK: Hi, can I get a reviewers eye on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/392> and <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/391> ?
+[2024-12-04T19:12:36.617189] U04AGQD0K8D: Hi All,
+From next week we'll scrap p-l-p repo and use test-console, which means the ESS assessments for VHCL-004 are not needed anymore.
+We can avoid unnecessary ESS related efforts &amp; policy exceptions if we can get a list of services which will be scraped before the prod date July 2025.
+
+Please let me know, if there any other services <https://spaces.redhat.com/pages/viewpage.action?pageId=363407648|listed here> which you think is not worth the ESS effort.  :slightly_smiling_face:
+[2024-12-04T19:20:14.193669] U02F2L89YTS: I think Sea-Bridge was mention that we don't need it, right?
+And I wonder why we have `Pipelines as Code` in the services section and then each one of the pipelines (autosd and rhivos) in the pipelines section.
+Isn't it a duplication or we need to declare them as both?
+[2024-12-04T19:24:05.926449] U04AGQD0K8D: Yes sea-bridge, &amp; both volumes are N/A,
+I am now also marking p-l-p as N/A
+[2024-12-04T19:24:48.780979] U02F2L89YTS: Sorry, I mixed the infra repo and the pipelines repo :see_no_evil:
+[2024-12-04T19:24:54.227359] U04AGQD0K8D: &gt; And I wonder why we have `Pipelines as Code` in the services section and then each one of the pipelines (autosd and rhivos) in the pipelines section.
+Do you mean Infra-as-code?
+[2024-12-04T19:25:17.924589] U02F2L89YTS: Yes, never mind, I misread it
+[2024-12-04T19:25:40.109289] U04AGQD0K8D: hehe, yeah I ll update the STI related page now.
+[2024-12-05T15:49:24.939309] U04JRTQ4LHK: Hi, could I get some reviews here please? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/391>
+[2024-12-06T08:36:50.430719] U04Q4USRZTM: Hi good morning,
+I saw some gating request in Test Console yesterday and Simon pointed out those are against the "nightly" image.
+We should update it to use the latest-RHIVOS-1
+[2024-12-06T08:37:52.421419] U04Q4USRZTM: Moreover I was thinking on adding a job at the gating, before the testing to build glibc from source for all the hws, so we don't have to do that in all our testing.
+Probably other packages need the same, but I want to know other opinions about that.
+[2024-12-06T08:46:35.349509] U04Q4USRZTM: <https://gitlab.cee.redhat.com/automotive/fences/gating/dummy-trigger/-/blob/main/lib/test-console.sh?ref_type=heads#L22>
+[2024-12-06T08:46:40.848669] U04Q4USRZTM: I'll fix it
+[2024-12-06T11:46:53.153449] U04Q4USRZTM: <https://gitlab.cee.redhat.com/automotive/fences/gating/gator/-/merge_requests/62>
+<https://gitlab.cee.redhat.com/automotive/fences/gating/dummy-trigger/-/merge_requests/30>
+[2024-12-06T11:53:43.121699] U03PV3B9Q7K: Shouldn't this come from a config? :thinking_meow:
+[2024-12-06T11:59:28.793089] U03PV3B9Q7K: It seems we don't have it there yet. But this needs to match the right image, no? So when running tests against Tech Preview we need `RHIVOS-1.0-TechPreview`.
+[2024-12-06T12:57:16.307489] U04Q4USRZTM: This is package gating, that happen against the nightly build that now is named latest-RHIVOS-1
+[2024-12-06T12:57:42.602859] U04Q4USRZTM: so on a new glibc version, we install the new glibc on top of latest because we don't have yet an image coming with that glibc version
+[2024-12-06T13:00:37.257569] U011CBYSALV: ...and it doesn't matter that it's going to take 3 days to run on S4 ?
+[2024-12-06T13:41:06.541269] U04Q4USRZTM: May I ask a review/merge to <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/395>
+[2024-12-09T20:55:41.055349] U04AGQD0K8D: Hi <@U04MGT65NQJ> <@U0171SJF00H> :
+Can you please confirm for self-hosted gitlab runner registration :
+1. We are using auth token as stated <https://docs.gitlab.com/runner/register/>
+2. We are auto-rotating those token on regular basis
+FYI - <@U020YLADEKA>
+[2024-12-12T14:21:39.382359] U04MGT65NQJ: Hi <@U04AGQD0K8D>, sorry - totally missed this message. We are using an auth token but not rotating it. I added a <https://issues.redhat.com/browse/VROOM-25098|task> to the epic. Also commented on <https://redhat.service-now.com/surl.do?n=INC3278825|INC3278825>
+[2024-12-12T15:29:36.955819] U0171SJF00H: :howdy: can we get one more review for Lev here? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/400>
+[2024-12-12T15:42:30.793459] U02F2L89YTS: ```instance_type = "m7i.xlarge"```
+:astonished:
+[2024-12-12T15:46:19.985599] U02F2L89YTS: <@U0171SJF00H> I'm curious, do you know where the repo for that dashboard is? I can't find it :thinking_face:
+[2024-12-12T15:46:55.549819] U0171SJF00H: <@U04LP69FP6X> <@UJJV82KRP> <@UFB1TK0Q7>  can probably point us to it :sweat_smile:
+[2024-12-12T16:14:30.055979] U0171SJF00H: need to run a quick errand but I'll check on the deployment and update the DNS in ~30 mins
+[2024-12-12T17:33:27.515069] U0171SJF00H: Quick review from anyone here pls: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/403>
+cc <@UFB1TK0Q7>
+[2024-12-12T17:33:32.012379] U0171SJF00H: <@U04LP69FP6X>
+[2024-12-12T17:52:39.269199] U0171SJF00H: <@U04AXB4GK52> are you around perhaps ^^?
+[2024-12-12T17:53:33.250259] U0171SJF00H: thanks <@U02DXVBD5CP>!
+[2024-12-12T17:59:23.872319] U0171SJF00H: for you dashboard folk, `10.60.4.157` is the new IP address
+[2024-12-12T18:02:45.387489] U0171SJF00H: Actually, hat's the same as the old one, it picked up the same IP address :sweat_smile:  (that doesn't happen all the time)
+[2024-12-12T18:04:03.016729] U04LP69FP6X: Yes I was surprised.
+[2024-12-12T20:59:16.939609] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/404>
+[2024-12-12T20:59:22.434319] U0171SJF00H: whoops merge request not found
+[2024-12-12T20:59:46.837879] U0171SJF00H: this should create the iam policies for dashboard people (sorry I need to find a new name for you folks :p)
+[2024-12-12T21:00:18.358509] U0171SJF00H: once that's merged <@U04MGT65NQJ> can you log into the AWS UI and enable console login? so that they can stop/start the instance through the UI?
+[2024-12-12T21:00:34.000289] U0171SJF00H: that will be available regardless through the CLI once we generate the aws access key/secret pair
+[2024-12-17T23:23:59.155269] U02F2L89YTS: In case anyone is still around. I have this MR fox fixing one job for the nightly build downstream.
+It's an interesting case, as the job only work downstream when it uses our runner (the `release` runner), when it uses the instance runners it fails. Even if they have the `docker` tag :thinking_face:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/merge_requests/431>
+The job uses buildah for pulling some images and create a multiarch manifest. I think it fails because the userspaces are not enabled.
+[2024-12-17T23:24:56.968609] U02F2L89YTS: For this case:
+• our runner: 1
+• cee runners: 0
+:stuck_out_tongue:
+[2024-12-18T10:03:12.710359] U03PV3B9Q7K: yeah, that think does not work with cee runners. Year ago it made our efforts of building multi-arch container a real pain.
+[2025-01-09T18:22:21.384509] U04AXB4GK52: Anyone around that can bestow a second ACK <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/413|here>? This project was already archived so this is just getting the terraform plan up-to-date
+[2025-01-10T09:41:02.605729] U04JRTQ4LHK: Can we get another ACK on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/412> ? Would be nice to have this project.
+[2025-01-10T09:56:04.108779] U0171SJF00H: <@U04JRTQ4LHK> happy to approve, but I think you don't want capitilized path names :wink:
+[2025-01-10T09:56:24.337869] U0171SJF00H: the good o'l project name -> path name keeps capitilization, so you'll end up with `gitlab.cee/Binary-Analysis`
+[2025-01-10T10:10:48.520339] U04JRTQ4LHK: nooo
+[2025-01-10T12:54:16.662949] U04AXB4GK52: I don't think this is true
+[2025-01-10T12:55:00.746199] U04AXB4GK52: Either way it won't hurt to put the desired path there explicitly, I'll fix that later
+[2025-01-10T12:55:08.950099] U0171SJF00H: Is that for the terraform provider or for gitlab docs?
+[2025-01-10T12:55:37.903939] U04AXB4GK52: GitLab API
+[2025-01-10T12:55:38.080099] U0171SJF00H: IIRC the terraform behaviour didn't match that of gitlab itself
+[2025-01-10T12:55:49.992159] U04AXB4GK52: Why terraform :facepalm:
+[2025-01-10T12:55:56.628529] U0171SJF00H: terrorform
+[2025-01-10T12:56:03.049009] U04AXB4GK52: Fr
+[2025-01-10T12:56:48.423519] U04AXB4GK52: I'll add the path explicitly, safer that way anyways
+[2025-01-10T13:33:22.075529] U04JRTQ4LHK: We should always set the path explicitly.. so if we copy+paste from another one, we won't forget this again..
+[2025-01-10T14:15:36.221839] U04AXB4GK52: I actually copy/pasted this from one :sweat_smile:
+[2025-01-10T14:16:18.193629] U04AXB4GK52: <http://project_code-review.tf|project_code-review.tf>
+[2025-01-10T14:17:26.600399] U04JRTQ4LHK: Yeah that's what I expected :sweat_smile: cause this happened to me last time from copy+paste
+[2025-01-10T14:18:52.240229] U04AXB4GK52: Path added :muscle:
+[2025-01-10T14:19:05.663869] U04AXB4GK52: !412 is ready for another look
+[2025-01-15T13:11:36.696289] U04AXB4GK52: <@U0171SJF00H> or <@U02DXVBD5CP> have either of you (or anyone else here I didnt tag) seen anything from IT w.r.t. automatic log forwarding to Splunk on MPP coming to an end?
+[2025-01-15T13:18:24.588179] U0171SJF00H: <@U04AXB4GK52> this is the only mention of it i've seen, other than that I wasn't made aware of any changes
+[2025-01-15T13:34:31.110179] U04AXB4GK52: Many thanks HubeGPT - I didn't catch this thread
+[2025-01-15T13:47:34.202799] U0171SJF00H: :meow_salute: at your service
+[2025-01-15T13:48:21.314659] U04AXB4GK52: "Hey HubeGPT, will I ever hit it big with meme coins?"
+[2025-01-20T16:07:15.154879] U04JRTQ4LHK: Hey HubeGPT, can you code review this MR for me? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/420/diffs#note_14181184>
+[2025-01-21T08:35:51.800539] U0171SJF00H: Whoops, Sorry I dropped off already by that time, approved
+[2025-01-21T08:37:05.925629] U0171SJF00H: &gt;  "Hey HubeGPT, will I ever hit it big with meme coins?"
+Unfortunately as a small language model, I can only provide 8-ball level answers, but since I don't want to disappoint, chose one of "Yes", "No" or "Ask again later"
+[2025-01-21T08:38:42.773759] U04JRTQ4LHK: Thanks, HubeGPT! HubeGPT, please message <@U04P10NE5A5> and notify him that the MR was merged
+[2025-01-21T09:26:20.076549] U0171SJF00H: Hey <@U04P10NE5A5>, your merge request in the Infrastructure repository was merged!!
+[2025-01-21T09:27:17.392489] U04JRTQ4LHK: I hope HubeGPT is an approved AI helper in the Red Hat AI Policy
+[2025-01-21T09:41:24.081269] U0171SJF00H: For AI to be considered AI it must have some aspect of Artificial, and Intelligence, the latter is missing in HubeGPT
+[2025-01-22T15:34:19.062439] U04JRTQ4LHK: Hi, I'm still considered the application owner of auto-toolchain-dashboard, but can I hand this off to someone? <@U04AGQD0K8D>? The context is I'm being emailed double checking I'm still the owner:
+```App Name: Auto Toolchain Dashboard
+App ID: VHCL-005
+App Owner: Steve Loranz
+App Delegate: Michael Ho ```
+cc <@U04NHTDFS6P> <@U0171SJF00H> <@U020YLADEKA>
+[2025-01-22T15:37:39.371379] U0171SJF00H: delegate that to me please
+[2025-01-22T15:43:59.186339] U04JRTQ4LHK: Ack
+[2025-01-22T15:44:21.500239] U04JRTQ4LHK: Can I set you as the owner+delegate?
+[2025-01-22T16:36:47.613979] U04AGQD0K8D: Hi Michael, that field was not changed, I ll update it in  catalog , once merged &amp; synced you should be good
+[2025-01-22T16:37:26.722099] U04AGQD0K8D: Are there any more services where delegate needs to be updated?
+[2025-01-22T16:37:43.230929] U04JRTQ4LHK: I only had that one
+[2025-01-23T07:46:49.401339] U02DXVBD5CP: FYI
+[2025-01-23T11:12:48.807379] U020YLADEKA: Thanks for adding it here <@U02DXVBD5CP> !
+I hope it will not break anything.
+
+I so for ATC the  group name is the same with updated folks to who we have today in the team to reflect that .
+<@U0171SJF00H> do we have any service/automation that require someone specific to be on the toolchain rover group to work that might hint of possible breakage from this change?
+
+[2025-01-23T11:14:12.020779] U0171SJF00H: We should be fine, the groups that affect things are in Shawn's "will not be touching" section, so we're good
+[2025-01-29T10:29:35.450389] U0171SJF00H: :howdy: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/421> for anyone willing review, ty :raised_hands:
+I'm trying to configure renovate to get the ESS control remediation resolved
+[2025-01-29T12:13:11.593239] U0171SJF00H: whoops, wrong repo link <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/423> this one should fix it :sweat_smile:
+[2025-01-30T15:45:20.817409] U0171SJF00H: ^^ if someone could take a look at !423 :meow_peek:
+[2025-02-03T12:31:53.144919] UFB1TK0Q7: <@U04MGT65NQJ> You need to request access here
+[2025-02-04T16:30:32.872979] U02F2L89YTS: <@U04MGT65NQJ> <@U0171SJF00H> Do you know why this upstream runner takes so long to initiate the job?
+<https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/jobs/9039451502>
+I stopped it and retried because 8 min in it wasn't even starting the job :confused:
+I've seen this a few times in the past.
+[2025-02-05T14:21:25.669189] U04JRTQ4LHK: <@U0171SJF00H> Do you have some guidance/experience with setting up a bot account on <http://gitlab.com|gitlab.com>?
+[2025-02-05T14:21:41.090909] U04JRTQ4LHK: I'd like one to use to generate access tokens for contcert usage.
+[2025-02-05T14:25:03.598599] U0171SJF00H: I'm not sure if this is a "prodsec approved" method, but what I did for the ATC bots was to use one of our team mailing lists with email capabilities enabled to create the account.
+
+Then we just store the password in bitwarden (and you can also enable 2FA through it)
+[2025-02-05T14:25:46.638549] U0171SJF00H: If you wanna go real fine-grained you can set up a rover group for only those that can access it and enable the email capability on that
+[2025-02-05T14:26:00.602809] U0171SJF00H: ATC has a blanket access for upstream auto-bot for all of auto-toolchain-devel
+[2025-02-05T14:43:14.177229] U04JRTQ4LHK: I wonder if we can piggyback on you?
+[2025-02-05T14:43:22.128089] U04JRTQ4LHK: Would you be against letting us share your bot?
+[2025-02-05T14:43:34.669019] U04JRTQ4LHK: It's mainly for read-only purposes
+[2025-02-05T14:48:13.094069] U0171SJF00H: I've nothing against it, just make sure to name the access tokens something that won't easily be deleted :sweat_smile:
+[2025-02-05T14:48:22.297499] U0171SJF00H: you've got access to that BW group still, right?
+[2025-02-06T07:43:32.650509] U04JRTQ4LHK: Let me check
+[2025-02-06T07:44:27.256259] U04JRTQ4LHK: Seems so!
+[2025-02-06T07:46:20.785279] U04JRTQ4LHK: ```You are signed in as auto-gitlab-bot. For added security, you'll need to verify your identity. We've sent a verification code to au***************@r*****.com```
+I might need your help here
+[2025-02-06T08:27:36.817239] U0171SJF00H: Can anyone see that email in their inbox? i've also tried to log in and it doesn't appear in any of my mailing lists... :grimacing:
+[2025-02-06T08:29:22.420949] U0171SJF00H: apparently it was registered on <mailto:automotive-a-team@redhat.com|automotive-a-team@redhat.com>, but nothing there
+[2025-02-06T08:31:16.640809] U04JRTQ4LHK: Oh no :D
+[2025-02-06T08:32:50.820849] U0171SJF00H: I'll see if I can switch the email address
+[2025-02-06T09:13:25.234839] U0171SJF00H: For everyone's situational awareness: I switched the email address from `<mailto:automotive-a-team@redhat.com|automotive-a-team@redhat.com>` to `<mailto:automotive-toolchain-devel@redhat.com|automotive-toolchain-devel@redhat.com>` and the subsequent e-mails were Michael logging in and setting up some tokens for the Follow-On-Activities team, so no need to worry about the emails on `<mailto:automotive-toolchain-devel@redhat.com|automotive-toolchain-devel@redhat.com>`
+[2025-02-06T09:32:35.844129] U04JRTQ4LHK: Thanks for the help, Hubert!
+[2025-02-10T08:30:45.489209] U04JDAPLMSN: Hey folks, is there a central place, where we collect information like this? So that the next person, that hasn't inherited that tribal knowledge already, can take a look there and figure out what to do and where to look?
+[2025-02-10T08:32:05.141879] U0171SJF00H: How will I keep myself employed if I don't act the only source of truth?
+[2025-02-10T08:32:23.062099] U0171SJF00H: ^ sarcasm if anyone didn't catch it :p
+[2025-02-10T08:32:35.237349] U0171SJF00H: I think our confluence pages had quite a bit of that info
+[2025-02-10T08:32:42.004609] U0171SJF00H: I'll check to see what's up to date
+[2025-02-10T08:38:44.204519] U04JDAPLMSN: Awesome. Thanks a lot!
+[2025-02-10T08:44:23.965099] U04JRTQ4LHK: <@U0171SJF00H> I got some feedback today that the auto-bot account can't seem to access <https://gitlab.com/redhat/rhel/src/kernel/rhel-8.git> - I might need to log in to check manually
+[2025-02-10T08:46:18.445059] U04JRTQ4LHK: Ah yes.... it's in the Red Hat org but not in the rhel group...
+[2025-02-10T08:47:02.287259] U0171SJF00H: any idea what we need to do to join it? or who can add us there?
+[2025-02-10T08:47:09.900259] U04JRTQ4LHK: I have no idea
+[2025-02-10T08:47:30.754839] U04JRTQ4LHK: Maybe Don?
+[2025-02-10T08:47:49.640329] U04JRTQ4LHK: Do you have access to <https://gitlab.com/redhat/rhel/> ?
+[2025-02-10T08:48:06.002679] U04JRTQ4LHK: It appears to be done via SAML
+[2025-02-10T08:49:23.984849] U0171SJF00H: I guess not, since I get a 404 on that page
+[2025-02-10T08:49:49.549769] U04JRTQ4LHK: Maybe it's by getting package maintainer rights
+[2025-02-10T08:51:41.260109] U0171SJF00H: Do you need access to just one or more repos there?
+[2025-02-10T08:53:04.656689] U04JRTQ4LHK: Would be good to just get the broad rhel access since we might need to access the source repo of any package there
+[2025-02-10T08:55:48.488519] U04JRTQ4LHK: I'm guessing it's because I'm in the <https://rover.redhat.com/groups/group/bugzilla-redhat|bugzilla-redhat> rover group
+[2025-02-10T08:55:54.573759] U04JRTQ4LHK: And I bet you're not
+[2025-02-10T08:56:35.103539] U04JRTQ4LHK: Ah yes, they even documented it: <https://gitlab.com/redhat/rhel/gitlab#user-content-membership>
+[2025-02-10T08:57:25.456889] U04JRTQ4LHK: I'm not sure if we should try sign up the mailing list auto-toolchain-devel in the bugzilla or find another way... but probably it would be fine...
+[2025-02-10T09:05:13.503869] U04JRTQ4LHK: <@U0171SJF00H> Michael Hofmann authored some of that doc, maybe you could ask him for some help? :sweat_smile:
+[2025-02-10T09:05:37.968449] U04JRTQ4LHK: The other authors are Stephen Gallagher, and Veronika Kabátová
+[2025-02-10T09:20:52.542649] U0171SJF00H: Luckily <@U01TD879DV5>  is already in this channel :sweat_smile:
+[2025-02-10T09:21:03.956899] U0171SJF00H: Michael, can you help us out here?
+[2025-02-10T15:36:09.339699] U0171SJF00H: <@U04JRTQ4LHK> once you get the password reset can you update <https://spaces.redhat.com/display/Automotive/General+Purpose+LDAP+Service+accounts> with the bitwarden entry?
+[2025-02-10T15:38:06.711429] U04JRTQ4LHK: of course
+[2025-02-11T15:18:48.606099] U0171SJF00H: Hey folks, Heads up, we got an abuse report from aws
+
+&gt;  Hello,
+&gt; 
+&gt;  We've received a report(s) that your AWS resource(s)
+&gt; 
+&gt;  AWS ID: 587138297281    Region: us-east-1    EC2 Instance ID: i-088a197c07574e738
+&gt;  AWS ID: 587138297281    Region: us-east-1    EC2 Instance ID: eni-07071fe262c03fd85
+&gt; 
+&gt;  has been implicated in activity which resembles attempts to access remote hosts on the internet without authorization. Activity of this nature is forbidden in the AWS Acceptable Use Policy (<https://aws.amazon.com/aup/>). We've included the original report below for your review.
+&gt; 
+&gt;  Please take action to stop the reported activity and reply directly to this email with details of the corrective actions you have taken. If you do not consider the activity described in these reports to be abusive, please reply to this email with details of your use case.
+&gt; 
+&gt;  If you're unaware of this activity, it's possible that your environment has been compromised by an external attacker, or a vulnerability is allowing your machine to be used in a way that it was not intended.
+&gt; 
+&gt;  The logs provided in the report(s) indicate your instance has attempted to deliver a malicious payload to our trusted third party reporter.
+&gt; 
+&gt;  * The "Payload_class" section of the report indicates a known vulnerability your instance attempted to exploit.
+&gt;  * The "Payload_data" section contains the base64 encoded malicious payload your instance attempted to deliver.
+&gt;  Based on the report, we believe your instance has most likely been compromised or is being exploited by a bad actor.
+&gt; 
+&gt;  We require one of the following actions to resolve this case:
+&gt; 
+&gt;  1. If your instance has been compromised we recommend you investigate for any malware, malicious scripts or backdoors, and respond to us confirming that malicious items have been identified and removed.
+&gt;  2. If you cannot identify the source of the reported activity the best course of action is to migrate your applications to a new, secured instance, and terminate the reported one.
+&gt;  3. If you believe this traffic is intended we will require a use-case that explains why your instance attempted to deliver this payload to the reported target.
+&gt; 
+&gt;  Please remember that you are responsible for ensuring that your instances and all applications are properly secured. If you require any further information to assist you in identifying or rectifying this issue, please let us know in a direct reply to this message.
+[2025-02-11T15:19:41.818789] U0171SJF00H: Please DO NOT, delete this instance, or touch it, I've stopped it for the time being
+[2025-02-11T15:20:35.552719] U0171SJF00H: From what I can see, the instance was started with <@U02F2L89YTS> keys, but I'm sure Juanje wouldn't be trying to brute force other instances
+[2025-02-11T15:21:06.798509] U0171SJF00H: &gt;  Details of the abusive activity:
+&gt; 
+&gt;  Amazon resource identifier: arn:aws:ec2:us-east-1:587138297281:instance/i-088a197c07574e738
+&gt;  Report begin time: 2025-02-11 03:57:15 UTC
+&gt;  Report end time: 2025-02-11 03:57:15 UTC
+&gt; 
+&gt;  Remote IP/Ports:
+&gt;  35.159.195.2 222 Protocol: TCP
+&gt; 
+&gt; 
+&gt;  It appears the instance(s) may be compromised and triggered an attack. It is advisable to update all applications and ensure the most current patches are applied.
+&gt;  It is recommended that no ports be open to the public (<http://0.0.0.0/0|0.0.0.0/0> or ::0). Opening ports with vulnerable applications can cause abusive behavior.
+&gt; 
+&gt;  ---------------------------
+&gt;  {
+&gt;  "destination_ip": "35.159.195.2",
+&gt;  "destination_port": 222,
+&gt;  "payload_class": "exploit:gen/ssh_intrusion",
+&gt;  "payload_data": "dW5hbWUgLXMgLW0=",
+&gt;  "protocol": "tcp",
+&gt;  "source_domain": "<http://ec2-184-72-188-233.compute-1.amazonaws.com|ec2-184-72-188-233.compute-1.amazonaws.com>",
+&gt;  "source_ip": "184.72.188.233",
+&gt;  "timestamp": 1739246235
+&gt;  }
+[2025-02-11T15:21:11.220259] U02F2L89YTS: Is it one instance or two?
+[2025-02-11T15:21:24.776679] U0171SJF00H: an instance and a network interface
+[2025-02-11T15:22:16.368879] U02F2L89YTS: Hmmmm... that's from today?
+[2025-02-11T15:22:29.017119] U0171SJF00H: It was started on Sunday Feb 9th
+[2025-02-11T15:22:39.065639] U0171SJF00H: assuming you don't work on Sundays :wink:
+[2025-02-11T15:22:44.441919] U02F2L89YTS: :see_no_evil:
+[2025-02-11T15:23:12.052839] U04JRTQ4LHK: Sun Feb 09 2025 15:35:23 GMT+0100 (Central European Standard Time) (2 days)
+[2025-02-11T15:23:20.029159] U04JRTQ4LHK: Instance type
+t3.micro
+[2025-02-11T15:23:20.618779] U02F2L89YTS: I think I started the instance. But I thought I destroyed it. Maybe I didn't :disappointed:
+I created another one, but I'm sure I destroyed that other one
+[2025-02-11T15:23:30.398869] U04JRTQ4LHK: auto-osbuild-qemu-rhivos-fusa-minimal-ostree-x86_64-10743603.1e9584d3
+[2025-02-11T15:23:39.344309] U02F2L89YTS: Yep, that's the second one I created :confused:
+[2025-02-11T15:23:47.952049] U04JRTQ4LHK: One bad thing: <https://us-east-1.console.aws.amazon.com/vpcconsole/home?region=us-east-1#NetworkAclDetails:networkAclId=acl-81df36fd>
+[2025-02-11T15:23:56.503329] U04JRTQ4LHK: the firewall is set to literally open everything
+[2025-02-11T15:23:58.534649] U02F2L89YTS: I guess I didn't terminated properly :confused:
+[2025-02-11T15:24:34.907229] U04JRTQ4LHK: <@U02F2L89YTS> does that image have a default password set?
+[2025-02-11T15:24:41.250149] U04JRTQ4LHK: i.e. the root password is password?
+[2025-02-11T15:24:55.084209] U04JRTQ4LHK: I thought we disabled awhile back the default open ssh state of these images...
+[2025-02-11T15:25:06.508499] U02F2L89YTS: yes
+[2025-02-11T15:25:39.539539] U02F2L89YTS: They shouldn't be able to modify the image (ostree, composefs, signed modules, etc), but they could access with root
+[2025-02-11T15:25:58.123879] U0171SJF00H: yes == we disabled it, or yes == it uses `password`? :sweat_smile:
+[2025-02-11T15:26:26.735349] U02F2L89YTS: the second line answer that. Yes is uses password
+[2025-02-11T15:26:42.727369] U04JRTQ4LHK: :meow_crying:
+[2025-02-11T15:27:15.243639] U04JRTQ4LHK: That's a pity.. I know QE found it annoying to not be able to ssh into systems easily but it is such a dangerous thing to do..
+[2025-02-11T15:28:34.484569] U02F2L89YTS: the idea was to have the image manifest to be very explicit and avoid to pass many options during build time, to make the images more predictable and reproducibles
+[2025-02-11T15:29:15.861759] U02F2L89YTS: Before we add it only for the boards, and not for the AMI. But now that it's in the image definition, the option is for all the images :confused:
+[2025-02-11T15:29:28.105959] U02F2L89YTS: Maybe we need to move it back to the build time
+[2025-02-11T15:29:34.714559] U04JRTQ4LHK: :sweat_smile: This could be making the testing-farm open for security attacks
+[2025-02-11T15:30:38.617669] U02F2L89YTS: I mean, normally it's not that unsafe, as the instance will be up for a few minutes. But the problem was that I left the instance running a couple of days by mistake :confused:
+[2025-02-11T15:31:00.169759] U04JRTQ4LHK: Yeah but sometimes QE might trigger an instance and leave it running for debug, or long running tests..
+[2025-02-11T15:31:10.635409] U04JRTQ4LHK: And you might be able to jump from one open instance to something else
+[2025-02-11T15:31:29.604849] U04JRTQ4LHK: Even if it's only a few minutes, once someone figures out these instances are coming up and down regularly, they can target them
+[2025-02-11T15:31:47.934889] U0171SJF00H: We'll be moving the specific conversation to <#C08CL3Y7GF8|>, that was set up by the infosec folks for this incident
+[2025-02-11T15:31:56.032119] U04JRTQ4LHK: ack
+[2025-02-11T15:33:19.470279] U02F2L89YTS: &gt; Yeah but sometimes QE might trigger an instance and leave it running for debug, or long running tests..
+Not really, they don't have aws credentials, so they can't.
+[2025-02-11T16:27:35.555419] U02F2L89YTS: Sorry for the incident and for the noise with the MR to fix the images.
+Here is an updated MR for removing the access to the ssh via password. It still allow access as root, because it's how TF access and the public ssh keys are set for that user. But the only way to access to the EC2 instances will be as before, via public ssh keys.
+<https://gitlab.com/redhat/edge/ci-cd/pipe-x/custom-images/-/merge_requests/59/diffs>
+[2025-02-11T16:42:43.407159] U04JDAPLMSN: Thanks for the quick fix!
+[2025-02-11T16:50:05.899629] U02F2L89YTS: The good thing is that this wasn't used in production yet. We weren't building the fusa-minimal in the pipeline, it was just in a MR, so the impact was minimal (:sweat_smile:).
+But at least we detect it before we started to use it for ALL the pipelines every day :sweat_smile:
+[2025-02-11T20:02:14.575829] U011CBYSALV: yay cloud. That's the public ranch? With rhivos image??
+[2025-02-12T00:38:19.774859] U02F2L89YTS: It wasn't a public ranch, it wasn't in TF. I create an ec2 instance out of the AMI from the pipeline to test why the smoke-test weren't working on those images.
+But it was an autosd fusa-iminimal image.
+[2025-02-12T06:35:58.851329] U011CBYSALV: We still call autosd rhivos? Ok. Best to build as without pwd indeed, but I still think we either should remove it only for aws or remove it for all and e.g. have a devel key documented at sigdocs. 
+Otherwise it really is a horrible experience
+[2025-02-13T12:22:43.307039] U02F2L89YTS: <@U04MGT65NQJ> did anything change with the rhivos webserver's ssl cert?
+From CKI they reported me this error, which they think wasn't before:
+```requests.exceptions.SSLError: HTTPSConnectionPool(host='<http://rhivos.auto-toolchain.redhat.com|rhivos.auto-toolchain.redhat.com>', port=443): Max retries exceeded with url: /in-vehicle-os-9/RHIVOS-1/latest-RHIVOS-1/test_images_info.json (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate in certificate chain (_ssl.c:1006)'))```
+[2025-02-13T14:25:40.026809] U02F2L89YTS: <@U04MGT65NQJ> Is anything going on right now with that URL. It's on and off all the time
+[2025-02-13T14:25:58.417139] U02F2L89YTS: <https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/>
+[2025-02-14T09:59:27.719679] U0171SJF00H: Hey, small review here for anyone :) <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/434>
+[2025-02-14T09:59:35.811049] U0171SJF00H: I yet again, failed to provide the correct url
+[2025-02-14T09:59:41.370719] U0171SJF00H: this one _should_ work
+[2025-02-17T11:52:59.130149] U0171SJF00H: Hi folks, regarding `[AWS-ATEAM-STAGE] Your Amazon Web Services Multi-Factor Authentication (MFA) Has Been Deactivated External` Was this anyone here? If not I need to escalate this somewhere, that MFA was in our bitwarden, so I'm quite concerned how this could have happened
+[2025-02-17T13:02:38.087409] U0171SJF00H: <https://redhat.service-now.com/surl.do?n=CHG0106915>
+this was an expected removal, but I didn't catch any of the communication leading up to it, my inbox has no mention of it.
+And apparently we were one of the few accounts that actually enabled MFA for ourselves, so nothing to be concerned about in the end :phew-obama:
+[2025-02-18T15:20:51.778869] U0171SJF00H: <@U04MGT65NQJ>, in your time, could we onboard the gator repo to our custom runners? right now one of the test run pipelines is taking a bit of time, and i'm 99% confident it'll reach a timeout before we get a response from test console with all the results we need <https://gitlab.cee.redhat.com/automotive/fences/gating/gator/-/jobs/31582407>  I believe currently we're limited by the shared runners to 4 hours
+[2025-02-18T15:58:53.011169] U0171SJF00H: ^^ actually, hold on that, I think there might be a better way
+[2025-02-25T15:14:44.240379] U04AGQD0K8D: Hi All, looks like we have 2 CMDB IDs for the same service Test Console. Can someone confirm which one should be used? VHCL-015 was created as part of the SOA &amp; ESS coverage. I am not sure when TCA-001 was created.
+Cc : <@U04Q4USRZTM>, <@U04QNH25QA1>, <@U02F2L89YTS>, <@U04NHTDFS6P>, <@U020YLADEKA> , <@U04N9LTR47M>
+Background: The delegate-owner was updated as part of <https://gitlab.cee.redhat.com/catalog/catalog/-/merge_requests/7147/diffs#252c6481726b7fc1970762c2e6a999df0a50183c|MR!7147> in Jan, whereas I am still getting Test-Console email notifications. When I checked with the CMDB team they told we have 2 test console applications.
+[2025-02-25T17:20:16.566579] U020YLADEKA: I vaguely remember <@U04QNH25QA1> asking for slack or mailing list to notify TC announcements and he might have created another CMDB ID , not sure why.
+Maybe <@U04Q4USRZTM> knows more 
+[2025-02-25T19:59:44.122629] U04Q4USRZTM: I'm only aware about the TCA-001
+[2025-02-25T19:59:53.509789] U04Q4USRZTM: I'll take a look tomorrow and I'll let you know
+[2025-02-26T08:12:30.680839] U04AGQD0K8D: <@U04Q4USRZTM>: VHCL-015 was created as part of RHIVOS services. The epic <https://issues.redhat.com/browse/VROOM-24606|VROOM-24606> covers all the RHIVOS services &amp; the <https://docs.google.com/spreadsheets/d/1J6KqIrTH5aLMhsHKJrXlIm-MfPV_NZgG-ldaSAs0IDQ/edit?gid=0#gid=0|spreadsheet> covers all the details of ESS &amp; SOA. IMHO if the TCA-001 has not started any work then we can remove that &amp; continue to use VHCL-015 because that has all the prodSec work tracked. WDYT?
+[2025-02-26T09:55:48.096929] U02DXVBD5CP: Are we pulling a lot from Docker Hub? seems they are going to lower the limit per hour
+<https://docs.docker.com/docker-hub/usage/>
+[2025-02-26T09:57:06.788669] U02DXVBD5CP: already hitting the issue here: <https://gitlab.cee.redhat.com/automotive/services/supply-chain-webserver/-/jobs/31822893>
+[2025-02-26T10:03:27.433979] U0171SJF00H: I _think_ we can mitigate at least part of that by shifting more jobs to the runners that <@U04MGT65NQJ> is provisioning
+[2025-02-26T10:03:48.991799] U0171SJF00H: but, 10 pulls PER HOUR, is insanely low...
+[2025-02-26T10:04:10.380739] U0171SJF00H: I guess we could add docker auth to our runners somehow, and increase that to 100
+[2025-02-26T10:04:34.507819] U0171SJF00H: Which we'd probbaly be good with for quite a while since we don' use dockerhub all that much in our pipelines
+[2025-02-26T10:04:43.490919] U0171SJF00H: except for some lint jobs i.e this one
+[2025-02-26T11:01:19.074109] U02JHD5HMGC: There was a mail on 10 January with subject "[REMINDER - ACTION REQUIRED] Cease use of Docker Desktop and Docker Hub" and a link to <https://docs.google.com/document/d/17rJ8x57ao8wZ3Twyyr3zpBQHStceZXMoLFKfiuBYQw8/preview?tab=t.0#heading=h.v94vn0afrs7p>
+Could that be a factor here?
+[2025-02-26T11:41:40.897939] U02DXVBD5CP: yeah it seems that we might have to migrate from Docker Hub
+[2025-02-26T11:41:52.533129] U02DXVBD5CP: thanks <@U02JHD5HMGC> for sharing!
+[2025-02-26T12:16:44.983199] U02F2L89YTS: We did move away from DockerHub some time ago. We have some copies of those images in quay. For example, for that job we have this image container instead:
+```<http://quay.io/automotive-toolchain/hadolint|quay.io/automotive-toolchain/hadolint>```
+[2025-02-26T12:18:11.535659] U02F2L89YTS: I guess we forgot about that repo :thinking_face:
+[2025-02-26T12:18:45.120229] U02DXVBD5CP: yeah I guess so
+[2025-02-26T12:19:08.818589] U02DXVBD5CP: anyway, we can also use google cache, it was recommended in that doc so I updated
+[2025-02-26T12:20:49.419619] U02F2L89YTS: I'd use our own images in quay as much as possible. We have more control there and the images are scanned.
+[2025-02-26T13:48:04.131689] U0171SJF00H: ezpz review for anyone :) <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/441>
+[2025-02-27T08:05:43.928299] U011CBYSALV: eh, anything going on with aws? dowloading image from <http://rhivos.auto-toolchain.redhat.com|rhivos.auto-toolchain.redhat.com> at 200-400KB/s, from within RH internal network...bleh
+[2025-02-27T08:33:00.520469] U0171SJF00H: Haven't seen anything on my outage/announce lists, must be the server itself...
+[2025-02-27T08:33:38.781479] U0171SJF00H: there's an epic that I want to pick up in the next sprint or two to replace this with a geo-based edge cache through cloudfront
+[2025-02-27T08:34:11.589739] U0171SJF00H: that should be much faster and not rely on any self-managed web servers
+[2025-02-27T12:45:32.703959] U04NNGY4QQ2: Rhivos download mirror seems offline :disappointed: <https://dashboard.auto-toolchain.redhat.com/overview>
+[2025-02-27T12:53:07.585059] U0171SJF00H: <@U04MGT65NQJ> any ideas?
+[2025-02-27T12:53:42.769639] U02F2L89YTS: I can log in :thinking_face:  (ssh)
+[2025-02-27T12:54:41.008369] U0171SJF00H: What's the instance IP?
+[2025-02-27T12:54:57.981159] U02F2L89YTS: 10.30.77.218
+[2025-02-27T12:55:38.865689] U02F2L89YTS: did it have a container? I don't see any running
+[2025-02-27T12:56:51.068499] U0171SJF00H: yeah, it should be running one, but I can't find the instance in our account :thinking_face:
+[2025-02-27T12:57:30.614749] U02F2L89YTS: I don't see anything weird in the logs, but I don't see the container running...
+[2025-02-27T12:58:47.474179] U02F2L89YTS: I started it
+[2025-02-27T13:00:23.860879] U02F2L89YTS: It's running, but I can't reach the web yet :thinking_face:
+[2025-02-27T13:02:37.725509] U02DXVBD5CP: wait <@U02F2L89YTS> download mirror doesn't need container
+[2025-02-27T13:04:03.104809] U02F2L89YTS: I thought so :sweat_smile:
+I remember having the same doubts some time ago
+[2025-02-27T13:04:10.162189] U02F2L89YTS: I stopped it
+[2025-02-27T13:04:31.719139] U02DXVBD5CP: so it's not our side, we can't reach this now <https://download.hosts.prod.upshift.rdu2.redhat.com/>
+[2025-02-27T13:04:43.469179] U02F2L89YTS: There is some container image there and some commands related to it in the history, but I think someone was testing a container there
+[2025-02-27T13:04:54.765419] U02F2L89YTS: Ahhhhhhh
+[2025-02-27T13:05:21.828979] U02DXVBD5CP: let's remove that container to avoid confusion
+[2025-02-27T13:05:29.700049] U02F2L89YTS: yep
+[2025-02-27T13:38:30.149029] U02F2L89YTS: Is Test Console down? <https://test-console.corp.redhat.com/>
+[2025-02-27T13:40:18.533299] U0171SJF00H: 
+[2025-02-27T13:40:37.177009] U0171SJF00H: I'll address it real quick
+[2025-02-27T13:41:53.551509] U02F2L89YTS: Yep, the container image tag is not in quay
+[2025-02-27T13:42:44.232039] U0171SJF00H: hmm, I was checking if the docker auth config got expired or something
+[2025-02-27T13:43:07.569279] U0171SJF00H: yeah, the build is stuck
+[2025-02-27T13:43:09.120589] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/services/test-console/-/jobs/31871179>
+[2025-02-27T13:44:36.167849] U02F2L89YTS: Ouch :confused:
+We merged too soon the infra MR :confused:
+Next time we need to make sure the TC image is already in quay
+[2025-02-27T13:46:13.394869] U02F2L89YTS: It looks like the RH infra problems made the previous job to build the image. It couldn't reach `<http://repository-basic.engineering.redhat.com|repository-basic.engineering.redhat.com>` :confused:
+[2025-02-27T13:46:49.381219] U02F2L89YTS: ```NFO[0110] Running: [/bin/sh -c curl -X GET <https://repository-basic.engineering.redhat.com/nexus/repository/dno-raw/droute-client/1.2.2/droute-linux-386>          -o "${DROUTE_PATH}" &amp;&amp;  chmod +x "${DROUTE_PATH}"] 
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:--  0:02:07 --:--:--     0
+curl: (28) Failed to connect to <http://repository-basic.engineering.redhat.com|repository-basic.engineering.redhat.com> port 443: Connection timed out
+error building image: error building stage: failed to execute command: waiting for process to exit: exit status 28```
+[2025-02-27T13:47:23.600249] U02F2L89YTS: I think it's better to come back to the previous tag until this start to work again and we can build the image
+[2025-02-27T13:48:38.538529] U02F2L89YTS: Or we could even use (for now) the tag from the MR: `ride4-inventory-change`
+[2025-02-27T13:48:49.013839] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/443>
+[2025-02-27T13:48:52.425169] U0171SJF00H: if you want to revert
+[2025-02-27T13:49:32.565319] U02F2L89YTS: Let's revert it. It's the safest bet for now
+[2025-02-27T13:49:45.089479] U02F2L89YTS: <@U02DXVBD5CP> <@U04NNGY4QQ2> could you approve that MR?
+[2025-02-27T13:52:01.640129] U0171SJF00H: back now
+[2025-02-27T13:52:13.041679] U0171SJF00H: IaC doing what it does best :)
+[2025-02-27T13:55:47.299449] U02F2L89YTS: I wonder why that job was still looking for a runner. I cancel it because it was 16 min in and nothing :thinking_face:
+I restarted it again, to see if now it pick a runner.
+[2025-02-27T13:57:33.179599] U02DXVBD5CP: I have MR that has been pending for awhile as well
+[2025-02-27T14:03:45.509089] U0171SJF00H: a future improvement we can use openshift image streams to build on the cluster and have it available in the local registry
+[2025-02-27T14:03:51.227399] U0171SJF00H: on top of the quay build we do
+[2025-02-28T11:57:57.479139] U04Q4USRZTM: May I ask a review at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/444>
+[2025-02-28T12:53:28.037739] U0171SJF00H: merged ^^
+[2025-02-28T13:08:56.033079] U04Q4USRZTM: thanks
+[2025-03-04T13:01:56.577379] U04QNBZUT2R: Hi <@U0171SJF00H>
+I've created a patch for introducing a python313-pdm image in <https://gitlab.com/redhat/edge/ci-cd/pipe-x/tools/auto-toolchain-containers/-/merge_requests/85>
+IIUC, I need an image registry to upload the image to.
+Can you please create one for it?
+[2025-03-04T13:07:19.919719] U0171SJF00H: Yeah, I'll create the repo for it now
+[2025-03-04T13:07:52.950669] U0171SJF00H: <@U04JRTQ4LHK> you want this public right? ^^
+[2025-03-04T13:37:31.510119] U04AXB4GK52: Yes, as the other ones are
+[2025-03-04T13:39:24.066669] U04JRTQ4LHK: <@U0171SJF00H> Why don't you manage the toolchain container images in IaC like Ryan set up for FoA? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/tree/main/quay/auto-fusa?ref_type=heads>
+[2025-03-04T13:40:17.917169] U0171SJF00H: We'd like to, but given the lack of interns in toolchain I haven't found the time myself :wink:
+[2025-03-04T13:40:53.140159] U0171SJF00H: but it is absolutely something I'd like to have
+[2025-03-05T11:53:00.998939] U02F2L89YTS: I didn't know <@U04AXB4GK52> has done that. It looks really good. Did you share it before? I don't remember seeing anything about it.
+We definitively should use it for toolchain's containers :slightly_smiling_face:
+[2025-03-06T12:23:16.615339] U02F2L89YTS: <@U02DXVBD5CP> I was checking the TC and confirming with Roni that we're not using the mirror anymore. We had the mirror to avoid the test failing due to long downloads for the images, but it seems like that's no longer an issue.
+Should we remove the the mirror? Less traffic and one infra piece less to maintain.
+WDYT?
+[2025-03-06T12:24:24.808099] U02DXVBD5CP: I think the performance and scale team might use it
+[2025-03-06T12:25:49.438119] U02DXVBD5CP: there's not much thing to maintain there, I would keep it until we have better solution for rhivos webserver
+[2025-03-06T12:26:27.299149] U02DXVBD5CP: since right now, we have plan on regularly maintaining webserver host and updating container
+[2025-03-06T12:31:01.714129] U02F2L89YTS: Well, we do a lot of transfer there and we need to update it every time we do a release. Not a lot of maintenance, but some. And costs.
+[2025-03-06T12:32:04.972069] U02F2L89YTS: We can ask P&amp;S. I'm not sure which URL are they using :thinking_face:
+[2025-03-06T12:40:58.327489] U02DXVBD5CP: yes, let's make sure nobody will use it
+[2025-03-06T12:42:19.613759] U02DXVBD5CP: always better to not maintaining many services but onece we give back the resources(volume) it's a bit time consuming to ask back again
+[2025-03-06T16:18:14.915299] U02F2L89YTS: <@U04MGT65NQJ> <@U02DXVBD5CP> the rhivos webserver is down :disappointed:
+I'm chekcing but I still don't see anything. The container is running, but I don't see anything from the container logs
+[2025-03-06T16:19:35.021999] U02DXVBD5CP: has there any changes?
+[2025-03-06T16:19:52.415759] U02F2L89YTS: None that I can see
+[2025-03-06T16:20:41.921539] U02DXVBD5CP: Status: up 2 days
+[2025-03-06T16:20:47.254009] U02DXVBD5CP: maybe there is recent change
+[2025-03-06T16:21:12.336449] U02DXVBD5CP: maybe try restarting for now?
+[2025-03-06T16:21:45.323749] U02DXVBD5CP: oh it's back
+[2025-03-06T16:21:45.583329] U02F2L89YTS: Maybe it's me, I see the keepalive doing fine. Could you check the web?
+[2025-03-06T16:21:48.726089] U02DXVBD5CP: lol
+[2025-03-06T16:21:52.202869] U02F2L89YTS: Maybe it's my vpn
+[2025-03-06T16:21:58.777509] U02F2L89YTS: Oh
+[2025-03-06T16:22:03.007999] U02DXVBD5CP: no it was down for me too
+[2025-03-06T16:22:06.149469] U02DXVBD5CP: but now it's back
+[2025-03-06T16:22:10.848679] U02F2L89YTS: magic
+[2025-03-06T16:22:18.559009] U02F2L89YTS: weird
+[2025-03-06T16:22:42.936919] U02F2L89YTS: do we have a splurk logs we can check?
+[2025-03-06T16:23:27.463919] U02DXVBD5CP: maybe but I don't know where to find
+[2025-03-06T16:23:39.043489] U02DXVBD5CP: <@U04MGT65NQJ> ^^
+[2025-03-06T16:26:43.748219] U04MGT65NQJ: look for a dashboard with the name `rhivos-webserver-10.33.77.220` on <https://rhcorporate.splunkcloud.com/en-US/app/launcher/home>
+[2025-03-06T16:28:22.951279] U02DXVBD5CP: thanks <@U04MGT65NQJ>
+[2025-03-06T16:32:48.970249] U04MGT65NQJ: but I think it would be easier to search journalctl on the machine, the splunk logs are horrible to navigate unless you are familiar with its DSL
+[2025-03-07T10:11:29.188259] U011CBYSALV: ```curl -kO <https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/RHIVOS-1/latest-RHIVOS-1/raw-images/auto-osbuild-qemu-rhivos-qa-regular-aarch64-10969896.dc98bc06.raw.xz>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  8  512M    8 44.3M    0     0   379k      0  0:23:03  0:01:59  0:21:04  335k```
+this is so slooow...
+[2025-03-07T10:17:54.042329] U011CBYSALV: bah, it's 4x faster to rebuild it myself than to download it
+[2025-03-07T10:32:29.985649] U02DXVBD5CP: I'll take a look into the issue
+[2025-03-07T10:46:24.389629] U02DXVBD5CP: ```aws ec2 describe-instance-types     --filters "Name=instance-type,Values=t2.*"     --query "InstanceTypes[].[InstanceType, NetworkInfo.NetworkPerformance, NetworkInfo.NetworkCards[0].BaselineBandwidthInGbps] | sort_by(@,&amp;[2])"     --output table
+--------------------------------------------
+|           DescribeInstanceTypes          |
++-------------+-------------------+--------+
+|  t2.nano    |  Low to Moderate  |  0.032 |
+|  t2.micro   |  Low to Moderate  |  0.064 |
+|  t2.small   |  Low to Moderate  |  0.128 |
+|  t2.medium  |  Low to Moderate  |  0.256 |
+|  t2.large   |  Low to Moderate  |  0.512 |
+|  t2.xlarge  |  Moderate         |  0.75  |
+|  t2.2xlarge |  Moderate         |  1.0   |```
+rhivos webserver is t2.large
+I think we can try to update the instance type
+[2025-03-07T15:11:16.678559] U02DXVBD5CP: I updated to t3.xlarge, hope it's better
+```--------------------------------------------
+|           DescribeInstanceTypes          |
++-------------+-------------------+--------+
+|  t3.nano    |  Up to 5 Gigabit  |  0.032 |
+|  t3.micro   |  Up to 5 Gigabit  |  0.064 |
+|  t3.small   |  Up to 5 Gigabit  |  0.128 |
+|  t3.medium  |  Up to 5 Gigabit  |  0.256 |
+|  t3.large   |  Up to 5 Gigabit  |  0.512 |
+|  t3.xlarge  |  Up to 5 Gigabit  |  1.024 |
+|  t3.2xlarge |  Up to 5 Gigabit  |  2.048 |
++-------------+-------------------+--------+```
+[2025-03-07T15:16:16.294199] U011CBYSALV: let's see next friday:) thanks!
+[2025-03-11T16:22:13.517129] U02F2L89YTS: <@U04MGT65NQJ> <@U0171SJF00H> did we changed anything in the runners for the d-p-a-c project?
+The pipeline got stuck in this job: <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/32239775>
+[2025-03-14T12:45:41.864159] U0171SJF00H: pretty easy review for anyone around <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/455>
+[2025-03-14T12:45:47.431609] U0171SJF00H: <@U04NLT3HY3Y> ^^ this onboards bos2
+[2025-03-17T10:56:02.148879] U0171SJF00H: Hey <@U04MGT65NQJ>, <@U04MUFF92JZ> was wondering if you could help out getting a runner up for <https://gitlab.cee.redhat.com/automotive/functional-safety/kernel-test-sufficiency>
+[2025-03-17T16:30:18.993569] U02F2L89YTS: <@U04MGT65NQJ> Any idea why this jobs is not picking up the runner? :thinking_face:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/32417456>
+The `release` runner seems to be online :thinking_face:
+[2025-03-19T15:53:55.037029] U02F2L89YTS: I just wanted to say that I'm very happy that we have new runners and that they seem to work fine and faster :slightly_smiling_face:
+The last pipeline took `155 minutes`  ~ 2.5 hours :thinking_face: :slightly_smiling_face:
+[2025-03-19T15:54:45.411619] U02F2L89YTS: Thanks, <@U04MGT65NQJ> for all the work and <@U0171SJF00H> for all the help there :clap:
+[2025-03-20T10:23:25.467649] U020YLADEKA: Great news ! Thank you both <@U04MGT65NQJ> and <@U0171SJF00H> :clap: :clap: :clap:
+
+[2025-03-28T12:52:29.332479] U0171SJF00H: Any reviews welcome here:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/435/diffs>
+simple MR to configure renovate for our repositories
+[2025-03-28T12:52:51.956459] U0171SJF00H: You'll also see it sending out merge requests for renovate.json, to enable dependency updates for the relevant groups
+[2025-03-28T12:53:19.375279] U0171SJF00H: <@U04AXB4GK52> if you'd like to have contcert included here as well, feel free to extend: `RENOVATE_EXTRA_FLAGS: --autodiscover=true --autodiscover-namespaces=automotive/pipe-x,automotive/fences,automotive/services`
+[2025-03-31T08:01:18.897989] U0171SJF00H: ^^ one approval remaining, if anyone would be so kind :meow_pwettyplease:
+[2025-03-31T11:48:42.692679] U04AXB4GK52: Any idea why Im not able to run manual deploy jobs on the latest infrastructure pipeline?
+[2025-03-31T11:49:00.876059] U04AXB4GK52: Do I have to submit an empty MR for contcert in order to run those jobs?
+[2025-03-31T11:50:59.561329] U04AXB4GK52: Looks like I can do manual run against the main branch
+[2025-03-31T12:02:41.909579] U0171SJF00H: What I usually do is take the latest pipeline and run the relevant job manually from there
+[2025-03-31T12:15:28.131389] U04AXB4GK52: yeah that's what I mean is I cant do that
+[2025-03-31T12:15:35.814529] U04AXB4GK52: It says Im not authorized to run those jobs
+[2025-03-31T12:48:28.281389] U0171SJF00H: oh, :thinking_face:  alright let me run that one for you, preprod or prod?
+[2025-03-31T12:48:44.895419] U0171SJF00H: I didn't remove you from any of those groups, and I'm pretty certain you had those permissions before
+[2025-03-31T12:56:44.177539] U04AXB4GK52: Id like to run these two in order:
+• `deploy-ansible-mpp-contcert-admin-prod`
+• `deploy-ansible-mpp-contcert-prod`
+[2025-03-31T13:13:13.402609] U0171SJF00H: done
+[2025-03-31T13:22:09.032889] U04AXB4GK52: :thinking_meow:
+[2025-03-31T13:23:11.061469] U04AXB4GK52: I must not have the limit ranges up to date in the playbook then
+[2025-03-31T13:24:20.210879] U04AXB4GK52: I do, so why didn't it apply correctly
+[2025-03-31T13:24:20.769859] U0171SJF00H: are you exceeding the limit ranges or the appliedResourceQuota for the tenant?
+[2025-03-31T13:24:35.437899] U04AXB4GK52: No those should match preprod already
+[2025-03-31T13:24:42.188609] U0171SJF00H: not sure if you've requested a resource increase already
+[2025-03-31T13:24:48.573269] U0171SJF00H: if not, it's quite easy, if yes, then ignore me
+[2025-03-31T13:25:48.163809] U04AXB4GK52: Yeah I had both clusters get a boost at the same time, they match
+[2025-03-31T13:26:13.750979] U04AXB4GK52: Trying to bring to limit ranges up-to-speed, I suspect something with my use of include means the task didn't actually get run
+[2025-03-31T13:26:21.265879] U04AXB4GK52: Going to try this locally
+[2025-03-31T13:52:28.976659] U04AXB4GK52: okay, figured out what's going on there. Since the tasks in `limits.yml` don't have tags the include task runs, but none of the included tasks are run
+[2025-03-31T13:52:32.622979] U04AXB4GK52: Submitting an MR to fix
+[2025-03-31T14:24:28.148009] U02F2L89YTS: <@U0171SJF00H> do you know why are we getting this error in the ansible validator for deploying a new TC release?
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/jobs/32940049>
+I just changed the container image tag, but I see more changes in the ansible output. I don't see any errors, but the job fails :thinking_face:
+Sounds familiar?
+[2025-03-31T14:25:19.621359] U04AXB4GK52: Ive seen this before and usually solved it by re-running the job
+[2025-03-31T14:25:26.606149] U04AXB4GK52: It seems to be a transient thing
+[2025-03-31T14:25:40.125869] U02F2L89YTS: Never mind, it seems like someone retried it and now passed
+[2025-04-01T09:52:48.382549] U0171SJF00H: Howdy, can anyone take a look at  <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/419>? looks like it's been running stable on preprod
+[2025-04-01T11:35:00.401519] U0171SJF00H: <@U04AXB4GK52> <@U04JRTQ4LHK>
+I'm taking a look at the renovate config, it seems to be running stuff for:
+```automotive/fences/manual-reviews
+automotive/fences/contcert
+automotive/fences/cc-kpi-scripts
+automotive/fences/uas-middleware
+automotive/fences/contcert-in-action
+automotive/fences/certified-nvras```
+Can we archive any of these? I'll submit an MR to do so if you're not using these anymore :meow_thx:
+[2025-04-01T11:35:45.250329] U04JRTQ4LHK: afaik, these can be archived - but can't renovate just be configured to ignore automotive/fences?
+[2025-04-01T11:53:49.544579] U0171SJF00H: we've got other things in automotive/fences that we want it to run for
+[2025-04-01T11:55:22.827499] U04JRTQ4LHK: ack
+[2025-04-01T11:55:32.683219] U04JRTQ4LHK: then yeah, should be fine to archive
+[2025-04-01T12:05:51.295699] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/472> for reviews ;)
+[2025-04-01T13:12:14.383339] U0171SJF00H: <@U02F2L89YTS> <@U04Q4USRZTM> <@U04QNH25QA1> can we get <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/445> merged?
+[2025-04-01T13:12:47.599379] U0171SJF00H: I'll create followup tickets to  resolve the SSL issue and the eventual preprod migration to the new UI (that requires a bit more work)
+[2025-04-01T16:15:24.333599] U04NNGY4QQ2: jobs in scheduled-jobs seem to be stuck <https://gitlab.cee.redhat.com/automotive/pipe-x/scheduled-jobs/-/pipelines> :disappointed:
+[2025-04-01T16:21:06.835229] U02F2L89YTS: The group runners weren't enabled for that project and they probably couldn't find any runner because the `docker` tag. I've just enabled the group runners
+[2025-04-01T16:21:56.480909] U02F2L89YTS: I stopped the stuck pipelines and I retried the last one
+[2025-04-01T16:22:05.668599] U02F2L89YTS: Now is running
+[2025-04-02T11:36:01.353569] U0171SJF00H: Easy review for someone <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/474>
+[2025-04-02T11:36:09.323859] U0171SJF00H: just re-arranging variables for easier readability
+[2025-04-02T13:04:38.548749] U02F2L89YTS: <@U04MGT65NQJ> <@U04NNGY4QQ2> <@U0171SJF00H> we should create a ticket to increase the size for the volume used in the autosd webserver. With the new policy retention we definitively will need more space.
+Here is were is defined right now: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blob/main/openshift/managed-platform+/autosd-webserver/vars/common.yml?ref_type=heads#L10|https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blob/main/openshift/ma[…]-platform+/autosd-webserver/vars/common.yml?ref_type=heads>
+[2025-04-02T13:07:48.771829] U02F2L89YTS: Question about `Renovate` : does anyone knows if it's possible to group the updates?
+I see a lot of individual MRs with a single update instead a single one with all the updates. I kinda remember seeing MRs with multiple updates in the past. Or maybe I imagined :thinking_face:
+[2025-04-02T15:02:06.821699] U04Q4USRZTM: I see the most of the pipelines in gitlab are paused. any issue there?
+[2025-04-02T16:00:34.767319] U02F2L89YTS: <@U04MGT65NQJ> we have a problem with the runners used by the Test Console. They were having the issue with the `docker`  tag...
+I made a change so they use the tag `shared-podman` and they seemed to work, but I'm seeing other issues now. I don't think those runners are very reliable...
+Would it be possible to use our pool of runners for TC and TC-frontend? Or to add another pool for them?
+That service is critical for us and they need their pipelines working.
+[2025-04-02T20:40:52.516429] U04AGQD0K8D: Hi All, there seems to be a misconfigured CMDB ID for autosd webserver here it should be AUTO-001
+[2025-04-03T08:10:47.029249] U04Q4USRZTM: Hi everyone,
+I still see gitlab pipelines in pause. Any updates on that side?
+Thanks
+[2025-04-03T09:11:46.763599] U020YLADEKA: Which ones <@U04Q4USRZTM> ? DPAC or test console one?
+[2025-04-03T09:12:09.096719] U04Q4USRZTM: Test console
+[2025-04-03T09:12:29.808999] U04Q4USRZTM: I'm referring to the code repositories
+[2025-04-03T09:18:18.477749] U020YLADEKA: Is this related to the docker runners issue from yesterday?
+
+<https://redhat.enterprise.slack.com/archives/C05BYR06B0V/p1743609634767319|https://redhat.enterprise.slack.com/archives/C05BYR06B0V/p1743609634767319>
+[2025-04-03T09:19:35.113529] U020YLADEKA: <@U02F2L89YTS> <@U04MGT65NQJ> <@U0171SJF00H> can we have a quick mitigation here?
+[2025-04-03T09:24:36.797289] U04Q4USRZTM: We need it working if we want to run we CTC as well
+[2025-04-03T09:29:55.956909] U02JHD5HMGC: 2 of the 3 smoke tests failed in DPAC nightly.  The successful job has just completed.
+I'll push retry on the DPAC pipeline...
+[2025-04-03T09:46:14.405189] U0171SJF00H: I think Eitan is going to provision some more runners that should cover TC pipelines as well,
+[2025-04-03T09:46:20.889779] U0171SJF00H: did you update the tags to run on shared-podman?
+[2025-04-03T09:49:45.787669] U04Q4USRZTM: yes we merged that changes
+[2025-04-03T09:50:40.865809] U04Q4USRZTM: some pipeline there restarted but the one I need that is the one related to the patterfly-ui branch
+[2025-04-03T09:51:21.009559] U04Q4USRZTM: and this one in the frontend project <https://gitlab.cee.redhat.com/automotive/services/test-console-frontend/-/merge_requests/8>
+[2025-04-03T09:53:22.989469] U04Q4USRZTM: I'm trying to cancel them and to restart again let see
+[2025-04-03T09:54:01.189029] U04Q4USRZTM: oh I think I have to change the tag in the branch as well right?
+[2025-04-03T09:58:52.149469] U04Q4USRZTM: that's the problem, now the pipeline are running
+[2025-04-03T12:48:52.820879] U04Q4USRZTM: guys what about this error: <https://gitlab.cee.redhat.com/automotive/services/test-console/-/jobs/33081961>
+[2025-04-03T13:13:37.860999] U04AXB4GK52: Retried it, very strange
+[2025-04-03T14:24:44.611079] U02F2L89YTS: Oh, I saw that error in another repo yesterday. It's related with the runners config and the image specify in the job.
+If the runner doesn't set any pattern for accepting images, it'll use the format:
+`*/*:*` which means: `registry_name+namespace/image_name:tag`
+In this case, the image is missing the tag. We need to put some tag to the image there.
+[2025-04-03T14:26:12.856869] U02F2L89YTS: That change I see in the MR should fix it:
+```-  image: <http://quay.io/automotive-toolchain/prettier|quay.io/automotive-toolchain/prettier>
++  image: <http://quay.io/automotive-toolchain/prettier:latest|quay.io/automotive-toolchain/prettier:latest>```
+[2025-04-03T14:27:13.120759] U02F2L89YTS: But maybe the problem is because there is some conflict with the main branch. <@U04Q4USRZTM> you should rebase fixing those conflicts and you should be fine.
+[2025-04-03T15:42:53.071409] U0171SJF00H: I peed myself a little with excitement
+[2025-04-03T15:42:54.150679] U0171SJF00H: <https://d1ewg8xlqy08zb.cloudfront.net/?p=autosd9-202504030201/>
+[2025-04-03T15:43:12.848079] U0171SJF00H: autosd downloads edge-replicated through cloudfront
+[2025-04-03T15:43:37.137539] U0171SJF00H: still a few small issues, but I've been fighting getting the index and configuration all day today
+[2025-04-03T15:45:00.264019] U0171SJF00H: now to get the file download working :)
+[2025-04-03T18:19:38.377489] U02F2L89YTS: I was testing it and everything was great until I realized what you just said in this last comment :sweat_smile:
+[2025-04-03T18:24:23.978969] U0171SJF00H: I think it's close, this access denied stuff I think is just the bucket ACL
+[2025-04-04T07:53:45.201469] U04JRTQ4LHK: <@U0171SJF00H> Is that a javascript rendered web ui? Probably will break recursive wget users..
+[2025-04-04T07:59:17.990379] U0171SJF00H: It is, and it will, but since the path is actually a url param, you can drop the param and use the full path to hit cloudfront directly circumventing the UI
+I still need to test that theory though
+i.e for Web UI views:  <https://d1ewg8xlqy08zb.cloudfront.net/?p=autosd9-202504030201/integration-testing/fusa-minimal/> -&gt; for wget: <https://d1ewg8xlqy08zb.cloudfront.net/autosd9-202504030201/integration-testing/fusa-minimal/>
+[2025-04-04T08:00:14.530009] U0171SJF00H: by navigating through the web UI you never really leave the top level index.html
+[2025-04-04T08:00:49.711789] U0171SJF00H: anyhow, all theory until proven in practice, so I'm trying to figure out what hidden permissions are causing the access denied
+[2025-04-04T08:07:10.238799] U04JRTQ4LHK: Not sure wget recursive/spider handles that (I think it parses out all anchor tags in a html page to find links)
+[2025-04-04T08:07:39.673579] U04JRTQ4LHK: I mean, up to you guys, just saying that you might break wget recursive users which to me is a useful/expected thing to use when downloading releases etc
+[2025-04-04T08:10:12.642909] U0171SJF00H: hmm, It might still be possible _I think_ if the underlying s3 bucket has static web hosting enabled, that usually worked for recursive wgets? cloudfront has the ability to "front" s3 static websites as opposed to the s3 itself, so still experimenting
+[2025-04-04T08:40:59.282319] U04Q4USRZTM: May I ask for a review at <https://gitlab.cee.redhat.com/automotive/services/test-console/-/merge_requests/343>
+It is to configure this weekend CTC, thanks
+[2025-04-04T08:45:07.813829] U04JRTQ4LHK: <@U0171SJF00H> Can you give me access to the rhivos-dashboard ec2 instance (ssh key) just so I can take a quick look? There's a high prio item going on that could be resolved easily but the Israeli's are on their weekend and Sameera is some hours away from starting
+[2025-04-04T11:50:48.058059] U04Q4USRZTM: To trigger weekend CTC <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/479>
+[2025-04-07T14:00:48.742989] U02F2L89YTS: <@U02DXVBD5CP> do you know if we need this repo anymore? <https://gitlab.cee.redhat.com/automotive/services/build-manifest-producer>
+I see a few MRs from renovate, but I think we're not using that repo anymore, correct?
+Maybe we should archive the repos we're not using. It'll avoid some noise from renovate and makes easy to find things.
+WDYT?
+[2025-04-08T14:11:37.367449] U02F2L89YTS: <@U04MGT65NQJ> <@U02DXVBD5CP> any reason not to use ubi9 instead of fedora for this? <https://gitlab.cee.redhat.com/automotive/services/supply-chain-webserver/-/merge_requests/44/diffs>
+[2025-04-08T14:13:33.564819] U02DXVBD5CP: probably goofys was not available there
+[2025-04-08T14:14:20.012539] U02DXVBD5CP: I was thinking if we should use this instead in the future <https://docs.aws.amazon.com/AmazonS3/latest/userguide/mountpoint-installation.html>
+[2025-04-08T14:19:22.730599] U02F2L89YTS: Good question :thinking_face:
+I saw some benchmarks comparing goofys with s3fs, and goofys was way better, but I guess this one from AWS should work fine :thinking_face:
+[2025-04-08T14:19:28.736469] U02F2L89YTS: &gt; probably goofys was not available there
+Well, it's not available on fedora either. We download and install it from the tarball :thinking_face:
+[2025-04-08T14:38:39.020569] U02DXVBD5CP: we can update to ubi if it's preferred, maybe let's try to switch to amazon mountpoint since goofys has not many activities recently
+[2025-04-08T14:40:51.665109] U02F2L89YTS: I think ubi is preferred by Prod&amp;Sec as it's RH maintained supposed to be production ready.
+[2025-04-08T14:43:18.302569] U02F2L89YTS: I did some basic tests with mountpoint and it's easy to setup and seems to be working fine. But I'm not sure about the performance.
+```# time find /mnt/RHIVOS-1/latest-RHIVOS-1/repos/ &gt; /dev/null
+
+real	0m24.306s
+user	0m0.012s
+sys	0m0.063s```
+vs goofys:
+```# time find /mnt/buckets/in-vehicle-os-9/RHIVOS-1/latest-RHIVOS-1/repos/ &gt; /dev/null
+
+real	0m9.347s
+user	0m0.008s
+sys	0m0.018s```
+I need to configure locally the goofys, so it's a fair comparison, but my laptop should be equally or more powerful than the webserver :thinking_face:
+[2025-04-08T14:43:54.183389] U02F2L89YTS: And the results are almost 3 times slower.
+[2025-04-08T14:44:13.664729] U02DXVBD5CP: yeah last time, I tried it was also pretty slow
+[2025-04-08T14:51:47.117429] U02F2L89YTS: I repeated the goofys in my machine and it was a bit slower, but still much faster than mountpoint:
+```# time find /mnt/RHIVOS-1/latest-RHIVOS-1/repos/ &gt; /dev/null
+
+real	0m11.446s
+user	0m0.005s
+sys	0m0.019s```
+And the second time it took now time at all. I guess it was cached.
+I need to try that with mountpoint :thinking_face:
+[2025-04-16T12:29:45.320749] U04JRTQ4LHK: Hi, I need to do an SIA for auto-toolchain-dashboard, does someone know if I can change the owner of that and who that might be in toolchain now?
+[2025-04-16T12:30:15.228759] U04JRTQ4LHK: (afaik, we're still using auto-toolchain-dashboard)
+[2025-04-16T12:31:58.562859] U04JRTQ4LHK: <@U04AGQD0K8D> Do you know?
+[2025-04-16T12:36:15.721579] U0171SJF00H: Do we need SIA for internal tooling? That dashboard has no "functional" purpose for the product itself
+[2025-04-16T12:36:18.358359] U04AGQD0K8D: Hi Michael, yes we can change the owner & delegate. It needs to go through the catalog team Or if this is urgent you can just email `<mailto:techresilience@redhat.com|techresilience@redhat.com>` with below details:
+1. *Application Name* (as it appears in the ServiceNow CMDB)
+2. *Application ID* (as it appears in the ServiceNow CMDB) 
+3. *SIA Respondent* (the full name and Red Hat email address of the person that will complete the survey)
+[2025-04-16T12:50:31.999529] U02DXVBD5CP: <@U02JHD5HMGC> could you be the owner of dashboard?
+[2025-04-16T13:06:02.573739] U04JRTQ4LHK: &gt; Hi Michael, yes we can change the owner &amp; delegate. It needs to go through the catalog team Or if this is urgent you can just email
+It's not urgent, I can close up the current SIA as it has a deadline but would be good to handover this after that
+[2025-04-16T13:08:50.409769] U04JRTQ4LHK: I see you did it, <@U04AGQD0K8D>! Thank you!
+[2025-04-17T14:59:31.191919] U0171SJF00H: Heads up, i'll be doing some work on the preprod instance of the autosd webserver, don't think anyone will notice, but just wanted to FYI it for clarity
+[2025-04-17T18:40:02.529699] U04NNGY4QQ2: <@U04MGT65NQJ> is there an issue with runners maybe no space on disk :good_question: <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/33575776>? It is blocking the TPU release respin :confused:
+[2025-04-18T07:19:11.982099] U04MGT65NQJ: <@U04NNGY4QQ2> yes, 2 out of 4 instances reached no space on disk despite the regular podman prune cron. Currently cleared, I will look into it. Was there an extreme load of pipelines invoked around this time?
+[2025-04-21T12:50:13.335969] U03NPDKU3S8: Hi all! <https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/> is dead - returns 500:
+```An error occurred.
+
+Sorry, the page you are looking for is currently unavailable.
+Please try again later.
+
+If you are the system administrator of this resource then you should check the error log for details.
+
+Faithfully yours, nginx.```
+Known issue? Thanks
+
+Copied from:
+
+<https://redhat-internal.slack.com/archives/C0659G4HAF9/p1745232911037999>
+[2025-04-24T08:23:54.701089] U02DXVBD5CP: <@U04MGT65NQJ> could you check this runner's log `#52629 (wJ4-rL4ms) gating_aws_docker_runner_pool`? I think it's a bit stuck/slow
+[2025-04-24T10:48:57.728959] U02F2L89YTS: Do we know if there is something going on lately in GitLab CEE?
+I've seen a couple of nights the pipeline failing then restarting and passing, But when you see the link for the failure notification, it points to the GitLab CEE Staging :thinking_face:
+[2025-04-24T10:50:04.192049] U04JRTQ4LHK: I also got emails about something from a GitLab CEE Staging instance
+[2025-04-24T10:50:37.531059] U04JRTQ4LHK: I think they're running a staging instance to do tests and we're seeing pipeline runs from it. Tbh, pretty scary, what if those pipeline runs did something bad...
+[2025-04-24T10:58:51.634389] U02F2L89YTS: yeah... they are producing false negatives and it's a bit confusing. Also, not sure if/when they run our stuff in prod vs staging...
+[2025-04-24T11:08:00.185569] U04JRTQ4LHK: Someone should ask in <#C04HGR58KKL|> to find out what this staging instance is doing
+[2025-04-24T11:12:32.892069] U02DXVBD5CP: <@U02F2L89YTS> could you share the notification or detail? probably easier to ask with some context
+[2025-04-24T11:13:39.319819] U02F2L89YTS: <https://redhat-internal.slack.com/archives/C04QLT849KN/p1745373619644459>
+[2025-04-24T11:14:32.122169] U02F2L89YTS: I commented there the link thing
+[2025-04-24T11:15:40.296239] U02F2L89YTS: Hmmm it didn't link the thread :thinking_face:
+[2025-04-24T11:18:44.587599] U02DXVBD5CP: other people also hit the same issues <https://redhat-internal.slack.com/archives/C04HGR58KKL/p1745397244166879>
+[2025-04-24T15:06:56.891299] U04JRTQ4LHK: In case someone read the above messages but didn't follow the thread in <#C04HGR58KKL|>, they fixed it by disabling all scheduled pipelines in staging... <https://redhat-internal.slack.com/archives/C04HGR58KKL/p1745501334974399?thread_ts=1745397244.166879&amp;cid=C04HGR58KKL>
+[2025-04-30T09:59:52.811769] U0171SJF00H: I just stumbled across <https://github.com/GoogleCloudPlatform/terraformer>, wish I found it sooner... I'll share some thoughts once I start using it
+[2025-04-30T10:00:14.531529] U0171SJF00H: &gt; CLI tool that generates `tf`/`json` and `tfstate` files based on existing infrastructure (reverse Terraform).
+[2025-04-30T10:00:42.891729] U0171SJF00H: Would have been useful a dozen times or so already :meow_angery2:
+[2025-04-30T12:24:38.501589] U0171SJF00H: Small update, it's pretty cool... I had some dependency issues setting it up locally, but that seems to be more of an effect of my smoothbrain than it is of the tool itself.
+With some minimal config and one command run, it generated the entire terraform file for the autosd cloudfront deployment in not even 5 seconds
+[2025-04-30T12:25:51.756709] U0171SJF00H: This is super impressive, and useful, which now means in theory we can fully deploy stuff manually on the staging AWS account, capture it with terraformer, and then move it over to auto-prod with some minimal config alterations
+[2025-04-30T12:26:27.905289] U0171SJF00H: The supported modules are also quite impressive, i.e <https://github.com/GoogleCloudPlatform/terraformer/blob/master/docs/gitlab.md> would have been useful when I imported our entire gitlab.cee configuration by hand, one-by-one :swear:
+[2025-04-30T12:28:16.643259] U04JRTQ4LHK: You should blog post this to share the knowledge :)
+[2025-04-30T12:29:14.508359] U0171SJF00H: <https://github.com/GoogleCloudPlatform/terraformer/blob/master/docs/kubernetes.md> would also be nice, but this seems to struggle from the fact that the upstream module provider isn't that well fleshed out in the first place, so it's really limited to the base k8s API, without any CRDs (custom resource definitions)
+[2025-04-30T12:29:53.655059] U0171SJF00H: Not that I'd want to use it, I think helm is much better for handling k8s deployments anyways, but the option is there, which is nice enough by itself
+[2025-04-30T12:31:08.208269] U0171SJF00H: &gt;  You should blog post this to share the knowledge :)
+I've been meaning to blog about more things, need to set up a blog page first :sweat_smile:  I now refuse to "the source" :sick-8411:  on principle
+[2025-04-30T13:07:59.823259] U04AXB4GK52: I have used <http://dev.to|dev.to> for personal blog posts
+[2025-04-30T13:08:09.968939] U04AXB4GK52: I like it pretty well if you want one out of the box instead of building your own solution
+[2025-04-30T14:35:59.401419] U0171SJF00H: I think I'll self-host mine in the end, but <http://dev.to|dev.to> might be a good place to throw stuff into until i get around to it
+[2025-05-02T14:47:08.756779] U04Q4USRZTM: may I ask a review to <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/503>?
+[2025-05-05T09:48:40.139569] U04JRTQ4LHK: <@U04MGT65NQJ> Hey, I hear you've set up the GitLab runners for toolchain on a set of ec2 instances that auto-scale, are configured per group, etc. Can you set up a small pool for FoA to try out again? Prefereably with a large ec2 instance to back it so we can develop at speed :)
+[2025-05-05T11:22:12.482219] U02F2L89YTS: <@U04JRTQ4LHK> any preference about the region? We have deployed lately the runners on US, so they are closer to the service that generates the composes and other stuff we heavily use. Not sure if you have this sort of constraints.
+[2025-05-05T11:29:19.614149] U04JRTQ4LHK: No constraints
+[2025-05-05T13:26:12.570949] U0171SJF00H: Anyone for reviews <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/505>
+[2025-05-06T08:52:40.706699] U02DXVBD5CP: <@U04MGT65NQJ> I'm seeing this pipeline is taking very long again <https://gitlab.cee.redhat.com/automotive/fences/gating/gator/-/merge_requests/143/pipelines>
+maybe something is wrong there
+[2025-05-06T09:27:08.466209] U0171SJF00H: Can I get some reviews here?
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/486>
+
+the pipelines won't pass and that's expected, I'll need to do some manual cleanup on the namespace prior to deploying this new instance
+[2025-05-06T14:21:12.263229] U02F2L89YTS: I'm not sure why the <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/34249244|generate-compose job> takes 90 mins to finish. It was so much faster after we moved to the new runners.
+Most of the time is uploading the rpms, which supposed to be faster now :thinking_face:
+I see the job running here `pipe-x-ds-gitlab-docker-runner-pool-us-east-2` so it should be in the right region.
+cc <@U04MGT65NQJ> <@U04NNGY4QQ2>
+[2025-05-06T14:24:38.394659] U011CBYSALV: <@U0171SJF00H> / <@U04JDAPLMSN> do we still run any OCP cluster ourselves or everything has been moved to MP+ and ITUP ? Any with admin privileges?
+[2025-05-06T14:27:44.010219] U0171SJF00H: yep, only MP/ITUP
+[2025-05-06T14:27:59.116609] U0171SJF00H: What do you need from it?
+[2025-05-06T14:35:55.299499] U011CBYSALV: for devspaces deployment we're still pondering where to run that. ideally hosted by _someone_. But the deployment needs privileged pods and custom CRDs so....IIUC MP+ is out, and admin on the cluster is needed
+[2025-05-06T14:38:40.248989] U011CBYSALV: if that _someone_ is toolchain that is still better than building and managing yet another complete cluster
+[2025-05-06T14:46:45.359929] U0171SJF00H: I complain about this regularly, but the platform tooling (i.e Ready to go Openshift clusters, CDNs, web servers, etc. etc.) is abysmall in RH
+[2025-05-06T14:47:14.559709] U0171SJF00H: I really wish it wasn't the case that we had to look to deploy and manage stuff ourselves from scratch every time
+[2025-05-06T14:47:47.923189] U0171SJF00H: Why can't we just have an IT-provided ansible playbook/terraform config etc. for a specific bit of technology and just use that on our own Cost Centre based AWS accounts
+[2025-05-06T14:49:51.976639] U011CBYSALV: <@U0171SJF00H> so in a separate thread they mentioned "a Single Tenant Cluster (STC), perhaps with a hosted control plan, that gives you more of a hosted experience, but you have cluster admin".
+I'll add you to the thread. We wanna find something reasonable so that the devspaces people don't have to manage the cluster, and sure, ideally not even toolchain would have to.
+[2025-05-07T08:54:00.523969] U0171SJF00H: &gt;  &gt;&gt; * Give you a Single Tenant Cluster (STC), perhaps with a hosted control plan, that gives you more of a hosted experience, but you have cluster admin
+Ah, in the context of the email you CC'd this makes much more sense
+[2025-05-07T08:54:24.576139] U0171SJF00H: I think that's probably the best solution out of the ones they've listed
+[2025-05-07T08:55:16.842609] U0171SJF00H: That _should_ give free reign over the node to admin level, while also not caring about the entire cluster
+[2025-05-07T08:55:33.970319] U0171SJF00H: (Hosted Control Planes are just :chefs-kiss-blob:)
+[2025-05-07T09:40:16.634749] U0171SJF00H: Any reviewers available for: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/507>?
+This adds the nightly cache invalidation policy for AutoSD builds on cloudfront
+<@U04MGT65NQJ> I see the plan is attempting to change some QE IAM policies, I'm wondering why that is, I thought we merged them already?
+[2025-05-07T09:55:34.280919] U04MGT65NQJ: <@U0171SJF00H> I played around with the qe policy yesterday manually due to a new request from Rachel and restored the settings back. probably missed sth. I'll fix it, also looking at !507
+[2025-05-07T09:58:22.662319] U0171SJF00H: ah, cool, just wanted to know I wasn't messing something up if I got this merged :sweat_smile: thanks for clarifying
+[2025-05-07T11:08:59.333469] U02F2L89YTS: <@U0171SJF00H> excuse my ignorance, but I always get lost with the cache configs. Which would be the effect of this config?
+```  default_ttl = 43200 # 12 hours default TTL for nightly builds
+  min_ttl     = 3600  # 1 hour minimum TTL
+  max_ttl     = 43200 # 12 hour maximum TTL```
+[2025-05-07T11:13:55.799889] U0171SJF00H: Basically:
+
+min_ttl - the minimum amount of time the objects will be retained in the cloudfront cach, so in our case at least 1 hour before cloudfront will reach out to the s3 bucket for a refresh
+max_ttl - the maximum of  ^^ so at most our objects will live for 12 hours in the cache, then cloudfront will forward the next "out of TTL" request to the s3 bucket for a refresh
+default - the one we really care about, so halving the default cache time from cloudfront itself, which IIRC is 24hrs
+[2025-05-07T11:14:19.432109] U0171SJF00H: The reason for that is users can pass headers in the request to circumvent the cache and force a refresh from the s3 bucket
+[2025-05-07T11:14:49.942239] U0171SJF00H: min is the one that will say "it's too early" and will reject that request with the cache request headers
+[2025-05-07T11:15:19.150119] U02F2L89YTS: I see :thinking_face:
+[2025-05-07T11:17:06.110399] U02F2L89YTS: What  would happen if the nightly change at 11 am and a user try to access it at that time or a bit earlier? Will it get the old nightly for 12 hours? (unless it forces to avoid the cache or something like that?
+[2025-05-07T11:17:45.273129] U0171SJF00H: hmm, perhaps I should drop it down a bit more
+[2025-05-07T11:18:05.347389] U0171SJF00H: Ideally, the pipeline would send a cache invalidation to the distribution once it completes the nightly
+[2025-05-07T11:18:16.533229] U0171SJF00H: but I saw that as additional functionality for the future, and didn't want to bother the pipeline
+[2025-05-07T11:18:33.087249] U02F2L89YTS: Oh, that's interesting
+[2025-05-07T11:19:29.754909] U02F2L89YTS: That would solve the issue, but maybe dropping it a bit more for now, it's good enough
+[2025-05-07T11:19:32.864849] U0171SJF00H: so, basically once the pipeline completes we should be able to add a new step:
+```aws cloudfront create-invalidation \
+  --distribution-id DISTRIBUTION_ID \
+  --paths "/AutoSD-9/nightly"```
+
+[2025-05-07T11:20:45.203379] U02F2L89YTS: Looks easy enough :thinking_face:  We could try to add it once the pipelines are working again :ok_hand:
+[2025-05-07T11:21:48.170209] U0171SJF00H: yep, didn't wanna throw that :wrench:  into the :gear:  prior to the RC :sweat_smile:
+[2025-05-07T11:22:16.686759] U02F2L89YTS: Good call! :wink:
+[2025-05-07T17:16:11.407299] U0171SJF00H: <@U02F2L89YTS> <@U04NNGY4QQ2> if you're still around:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/509>
+mind taking a look at ^^?
+[2025-05-07T17:16:49.149019] U0171SJF00H: ahhh, nvm
+[2025-05-07T17:16:54.391779] U0171SJF00H: give me 2 more minutes :sweat_smile:
+[2025-05-07T17:17:01.606239] U0171SJF00H: I was about to say something worked but it doesn't
+[2025-05-07T17:21:53.136439] U02F2L89YTS: These changes looks good. I see how it can improve what we had.
+Did you finish what you were changing or we do wait for approving?
+[2025-05-07T17:22:13.106629] U0171SJF00H: please wait
+[2025-05-07T17:50:48.433259] U0171SJF00H: Can you take a look now please?
+[2025-05-07T17:51:32.992709] U0171SJF00H: I didn't change much from the last time you looked, just some volumemount paths
+[2025-05-07T17:52:00.199309] U02F2L89YTS: I was about to ask you that. It looks very similar. What I should focus on?
+[2025-05-07T17:53:02.223349] U0171SJF00H: It's the same since last time,  I just reverted a mountpath change that broke something
+[2025-05-07T17:53:33.654059] U0171SJF00H: <https://autosd.stg.sig.centos.org/AutoSD-9/autosd9-202505020201/test_images_info.json>
+Should redirect to:
+<https://download.autosd.sig.centos.org/AutoSD-9/autosd9-202505020201/info.txt>
+[2025-05-07T17:53:56.392149] U0171SJF00H: I copied two different paths.. but you get the point
+[2025-05-07T17:54:29.571139] U0171SJF00H: <https://autosd.stg.sig.centos.org/AutoSD-9/autosd9-202505020201/test_images_info.json>  -&gt; <https://download.autosd.sig.centos.org/AutoSD-9/autosd9-202505020201/test_images_info.json>
+[2025-05-07T17:54:52.043079] U0171SJF00H: Then the Terraform plan updates should put the builds under /AutoSD-9
+[2025-05-07T17:54:57.245399] U0171SJF00H: they currently throw it into the root dir
+[2025-05-07T17:55:06.383399] U0171SJF00H: but they'll be applied after merging
+[2025-05-07T17:55:07.067869] U02F2L89YTS: Hmmm...
+```&lt;Error&gt;
+&lt;Code&gt;NoSuchKey&lt;/Code&gt;
+&lt;Message&gt;The specified key does not exist.&lt;/Message&gt;
+&lt;Key&gt;AutoSD-9/autosd9-202505020201/test_images_info.json&lt;/Key&gt;
+&lt;RequestId&gt;KSCZGPNXAJJ9R3SP&lt;/RequestId&gt;
+&lt;HostId&gt;VTFAFCObf7txNKBlJ4eV5t5s9dfsbndhnzSg2Z8ZmL/13/OVJWMSkFdTQ4zCAOuy0w8kBnXjkVc=&lt;/HostId&gt;
+&lt;/Error&gt;```
+[2025-05-07T17:55:19.641669] U0171SJF00H: that's because cloudfront still has them in the root dir
+[2025-05-07T17:55:38.177669] U0171SJF00H: the .tf files in this MR will make that work
+[2025-05-07T17:56:02.564979] U02F2L89YTS: Let me check the MR
+[2025-05-07T17:56:03.195889] U0171SJF00H: specifically this line:
+
+```
+    origin_id           = "auto-product-build-origin"
+    origin_path         = "/AutoSD-9" # Add origin path to make all content serve from /AutoSD-9```
+
+[2025-05-07T17:56:13.242369] U0171SJF00H: says "from this origin, put everyting under /AutoSD-9"
+[2025-05-07T17:57:19.816779] U02F2L89YTS: Approved
+[2025-05-07T17:57:36.379719] U0171SJF00H: Thank you, I'll merge it and do some more tests
+[2025-05-07T18:00:06.480499] U0171SJF00H: aaand terraform plans failed :cry-laugh:
+[2025-05-07T18:05:03.015939] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/510>
+[2025-05-07T18:05:05.600299] U0171SJF00H: typo
+[2025-05-07T18:18:43.608639] U0171SJF00H: ... one more issue :cry:
+[2025-05-07T18:30:11.070069] U02F2L89YTS: Life... :shrug:
+[2025-05-07T19:05:42.798529] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/511>
+[2025-05-07T19:05:46.664349] U0171SJF00H: if you're still around
+[2025-05-07T19:06:08.793619] U0171SJF00H: To summarise:
+1. we add the key so it exists so the user can make a request
+2. we strip the key so it doesn't exist so that CDN/s3 can actually find it
+
+[2025-05-07T19:06:59.842389] U0171SJF00H: mind blown
+[2025-05-07T19:07:44.048039] U02F2L89YTS: What is in the lambda.zip file? :thinking_face:
+[2025-05-07T19:08:15.067489] U0171SJF00H: &gt; So... why the lambda@edge function? Basically....
+&gt; 1. We need to have the /AutoSD-9 prefix in the key for backward compatibility
+&gt; 2. That key doesn't exist on s3 or CDN
+&gt; 3. Since that Key doesn't exist, we need to insert it everywhere so that it retains the same format, but.... since that key DOESN"T exist, we need to strip it out before we actually hit the CDN and s3 so that the request can actually find that key....
+&gt; 
+[2025-05-07T19:08:27.655279] U0171SJF00H: it's just the lambda function script zipped
+[2025-05-07T19:09:10.466329] U0171SJF00H: actually I need to fix the reference for it :sweat_smile:
+[2025-05-07T19:09:46.019529] U0171SJF00H: I look forward to 10 years down the line someone tracking me down in the bahamas where I'll live my nomad lifestyle
+[2025-05-07T19:09:57.140469] U0171SJF00H: to ask what this ancient lambda function does and why it's there
+[2025-05-07T19:10:07.853399] U0171SJF00H: because people hardcoded that URL for autosd
+[2025-05-07T19:10:59.988939] U0171SJF00H: and i'll stare silently into their eyes
+[2025-05-07T19:11:01.286829] U0171SJF00H: nod
+[2025-05-07T19:11:07.507809] U0171SJF00H: and walk off into the sunset without saying a word
+[2025-05-07T19:22:32.874849] U02F2L89YTS: So, it's ready or are you going to change the reference?
+[2025-05-07T19:22:52.658379] U0171SJF00H: should be ready now
+[2025-05-07T19:25:49.282589] U02F2L89YTS: Approved. LGTM
+[2025-05-07T19:25:56.010029] U0171SJF00H: thank you
+[2025-05-07T19:25:59.451359] U0171SJF00H: back to testing now
+[2025-05-07T19:26:03.417059] U02F2L89YTS: Good idea to use the lambda@edge
+[2025-05-07T19:26:41.727079] U0171SJF00H: that single /AutoSD-9 is currently the bane of my existence
+[2025-05-07T19:27:43.571529] U0171SJF00H: literally, soo much effort to add it for requests and then drop it again so it actually resolves :see_no_evil:
+[2025-05-07T19:27:48.872639] U0171SJF00H: why do people hard code things
+[2025-05-07T19:27:54.248319] U0171SJF00H: why :crycat:
+[2025-05-07T19:29:45.217069] U02F2L89YTS: well... the problem is not the hardcoding... the autosd repositories were defined for very long time with that URL, and it's used in the documentation, configs, etc, because it's not expected to change, like the CentOS and RHEL repos.
+[2025-05-07T19:31:49.434259] U0171SJF00H: okay, well I messed something up :cry:
+[2025-05-07T19:32:08.129819] U0171SJF00H: I didn't catch the renaming of the cloudfront distribution :facepalm:
+[2025-05-07T19:32:19.241619] U0171SJF00H: I'll need to update the DNS tomorrow morning
+[2025-05-07T19:33:34.000099] U02F2L89YTS: Is it possible to revert the process and testing again in staging (now that we know the main issues we can find), or it harder than moving forward at this point?
+[2025-05-07T19:34:07.128759] U0171SJF00H: oh ,wait I think it might have retained the domain name
+[2025-05-07T19:34:51.749849] U0171SJF00H: nope, nevermind it bork
+[2025-05-07T19:36:16.109129] U0171SJF00H: yeah I'll deploy the old version
+[2025-05-07T20:10:10.393719] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/513>
+[2025-05-07T20:10:17.830049] U0171SJF00H: this should revert it
+[2025-05-07T20:21:32.294129] U02F2L89YTS: <https://autosd.sig.centos.org/AutoSD-9/autosd9-202504011405/info.txt> :partying_face:
+[2025-05-07T20:22:06.285969] U02F2L89YTS: Still syncing the nightlies, but it does work :slightly_smiling_face:
+[2025-05-08T10:40:34.101059] U0171SJF00H: Fresh new day, new attempts:
+
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/514>
+
+reviews here please ^^ Setting up cloudfront to point to my test bucket
+[2025-05-09T15:00:22.517889] U0171SJF00H: Hey folks, Happy Friday, hope y'all learnt something
+
+Just an update on the AutoSD webserver situation
+<https://autosd.stg.sig.centos.org>
+I've set up the staging instance that I hope has resolved all of the issues we've seen when I pushed the change to production. If people could take a look at this one, and run any scripts/automation they have against it, I'd be super thankful.
+Or if you can point me to something that broke last time around so that I can run a test myself, please do.
+[2025-05-11T13:31:49.400989] U020YLADEKA: <@U0171SJF00H> please consider posting this at the  <#C0801T4TEQP|> channel to get AIB folks testing on the new stage instance and have awarness of your new AIB fixes.
+The one that knows more about aib in this wg is <@U02F2L89YTS> .
+[2025-05-12T12:39:47.907389] U0171SJF00H: Thank you <@U02F2L89YTS> for testing out the stage deployment of the new CDN :thanks-ty:
+
+Based on this, I'd like to plan out the deployment for something non-stage, Currently I'm on the fence between two options:
+
+1. *Request a new DNS entry for <http://summit.autosd.sig.centos.org|summit.autosd.sig.centos.org> - that will host the new deployment specifically for the summit demo*
+    a.  *Con:* It doesn't work out of the box with AIB and would require the URL to be updated in the configs
+    b. *Pro:* Worst case scenario, bringing down <http://autosd.sig.centos.org|autosd.sig.centos.org> won't happen since this willbe a separate deployment
+2. *Deploy  the changes to  prod*
+    a. *Con:* Fairly evident based on my previous attemp, but seeing as Juanje tested our "currently known" cases, it might not yield any complaints, this also needs the `auto-product-build` bucket to be updated to nest all existing builds under `AutoSD-9` (not a big deal since we'll still retain the root-directory location, if anyone else is still using that )
+    b. *Pro:* No config changes anywhere for the summit demo,
+[2025-05-12T12:40:18.289469] U0171SJF00H: Option 2: will happen inevitably anyway, but the question is whether before or after summit
+[2025-05-12T12:52:28.511119] U01CA50VC3C: <@U0171SJF00H> no need to request a new DNS entry, we can not do any changes on our side anymore as the lab infra code is frozen now
+[2025-05-12T12:54:45.932689] U0171SJF00H: So option 2 is the only option? :sweat_smile:
+[2025-05-12T12:55:39.378799] U01CA50VC3C: not if it eventually breaks some things - i guess our best hope now is to pray to the demo gods :wink:
+[2025-05-12T12:56:30.616879] U01CA50VC3C: i suggest that we do option 2 but the right way with proper testing etc. even if that means we can not do it before summit
+[2025-05-12T13:01:39.224719] U0171SJF00H: Based on Juanje's testing here: <https://redhat-internal.slack.com/archives/C05BYR06B0V/p1746802822517889> We think we're covered for the use cases
+[2025-05-12T13:06:58.841179] U020YLADEKA: Also, I believe Summit Demo will use AIB for building the images(correct me if I'm wrong here <@U01CA50VC3C>), and as AIB is pretty impossible to change from <http://autosd.sig.centos.org|autosd.sig.centos.org> to something else, option 2 seems like our only option here.
+
+About proper testing - I'll leave it to <@U02F2L89YTS> to decide, one note I have is:
+If all the testing are done on our ATC side(as mentioned by Juanje) I think it's also good to get more feedback fast and a heads-up to the <#C0801T4TEQP|> we plan to roll out our deployment after they test or confirm Juanje's testing are enough.
+WDYT <@U02F2L89YTS> ?
+
+As you <@U0171SJF00H> are on PTO May15-May19 we do not have much time to test or rollback.
+BTW, in the case we'll need to roll back, can you have <@U04MGT65NQJ> in the loop if needed on how to do that when you are in PTO?
+[2025-05-12T13:10:34.991619] U0171SJF00H: I can get those changes out today, looking at our staging deployment it seems to be fairly stable, might have a bit of downtime in-between, worst case scenario we roll back like we did last week and keep it as-is for summit
+[2025-05-12T13:10:37.417349] U02F2L89YTS: &gt; I believe Summit Demo will use AIB for building the images(correct me if I'm wrong here <@U01CA50VC3C>), and as AIB is pretty impossible to change from <http://autosd.sig.centos.org|autosd.sig.centos.org> to something else, option 2 seems like our only option here.
+Agreed.
+[2025-05-12T13:11:30.523299] U0171SJF00H: Though, our webserver doesn't really do much apart from redirecting to cloudfront, In any case, I would refrain from redeployments from the infra repo during that time :sweat_smile:
+[2025-05-12T13:12:43.869429] U02F2L89YTS: When we need this change to be done?
+Because we need to build and deliver the RC2 between today and tomorrow. I'd be nice if we could do the change after the RC2 is out.
+it shouldn't affect the release, but it would be easier to focus on just one important change a the time, and to avoid blocking possible changes in the pipeline, if needed.
+[2025-05-12T13:14:53.954179] U020YLADEKA: As Hubert is on PTO on May15-19 we need this done latest May14 and for someone to be ready to rollback it it fails in production.
+[2025-05-12T13:19:25.988289] U020YLADEKA: We can use the time till May14 for you Juanje to work only on the 1.0RC2 build planned for May13 and in that time give a heads up to <#C0801T4TEQP|> folks already ASAP and let them also test against our staging ENV to get more tests by then and if they find anything on stage they can raise it or at least be aware of this incoming change. WDYT <@U02F2L89YTS><@U0171SJF00H>?
+[2025-05-12T13:35:00.344719] U011CBYSALV: I see the links in directory listing of e.g. <https://autosd.stg.sig.centos.org/AutoSD-9/nightly/> points to <http://download.autosd.sig.centos.org|download.autosd.sig.centos.org> but a direct request to e.g.  <https://autosd.sig.centos.org/AutoSD-9/nightly/info.txt> works fine. is it going to be pointing to `download.`?
+[2025-05-12T13:37:31.058149] U0171SJF00H: I'm sorry I'm having a hard time understanding the question
+[2025-05-12T13:38:37.837549] U0171SJF00H: <https://autosd.stg.sig.centos.org/AutoSD-9/nightly/info.txt> should also redirect to download, if that's what you're asking
+[2025-05-12T13:41:59.993399] U011CBYSALV: it doesn't do 301 redirect...so i hope that's going to be fine.
+[2025-05-12T13:43:18.625239] U020YLADEKA: Maybe related to last implementation that broke from May7 that mentioned redirect to `<http://download.autosd.sig.centos.org|download.autosd.sig.centos.org>` :
+<https://redhat-internal.slack.com/archives/C05BYR06B0V/p1746640413654059>
+
+`It's the same since last time,  I just reverted a mountpath change that broke something`
+`[8:53 PM] hstefans`
+
+`<https://autosd.stg.sig.centos.org/AutoSD-9/autosd9-202505020201/test_images_info.json>`
+`Should redirect to:`
+`<https://download.autosd.sig.centos.org/AutoSD-9/autosd9-202505020201/info.txt>`
+`[8:53 PM] hstefans`
+
+`I copied two different paths.. but you get the point`
+`[8:54 PM] hstefans`
+
+`<https://autosd.stg.sig.centos.org/AutoSD-9/autosd9-202505020201/test_images_info.json>  -&gt; <https://download.autosd.sig.centos.org/AutoSD-9/autosd9-202505020201/test_images_info.json>`
+`[8:54 PM] hstefans`
+
+`Then the Terraform plan updates should put the builds under /AutoSD-9`
+[2025-05-12T13:44:33.374689] U011CBYSALV: i think in some of the tURLs in tests are parsed from the listing...i wouldn't be sure it handles redirects fine, but this way it should work...the paths are the same
+[2025-05-12T13:47:29.436419] U0171SJF00H: &gt;  it doesn't do 301 redirect...so i hope that's going to be fine.
+Ahh, as in it goes a 404 then redirects?
+[2025-05-12T13:48:48.052599] U02F2L89YTS: So, I get this:
+```$ curl <https://autosd.stg.sig.centos.org/AutoSD-9/nightly/info.txt>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+&lt;html&gt;&lt;head&gt;
+&lt;title&gt;302 Found&lt;/title&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;h1&gt;Found&lt;/h1&gt;
+&lt;p&gt;The document has moved &lt;a href="<https://download.autosd.sig.centos.org/AutoSD-9/nightly/info.txt>"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;```
+because of the redirection. Maybe it should be a 301 and not 302 redirection? :thinking_face:
+But it works fine with this `-L`:
+```$ curl -L <https://autosd.stg.sig.centos.org/AutoSD-9/nightly/info.txt>
+Started: 2025-05-08T02:01:55Z
+Project: redhat/edge/ci-cd/pipe-x/pipelines-as-code
+Branch: main
+Commit: c543cede503b7ecaa6c892a508222d4b12584a24
+Release ID: AutoSD-9-202505080201
+Upstream distro: centos-9
+UUID: 1806481067.c543cede
+Config REF: main
+Pungi REF: main
+OSBUILD REF: main
+Custom Images REF: main
+Pipelines-as-code REF: 
+Pipeline_URL: <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/pipelines/1806481067>
+Pipeline_ID: 1806481067```
+And from our Python code (or dnf, osbuild, etc). So, unless someones uses a `curl` with no "follow redirections", it should be fine.
+[2025-05-12T13:50:17.319959] U0171SJF00H: I think that's just a one liner:
+
+```&lt;VirtualHost *:8080&gt;
+    ServerAdmin root@localhost
+    DocumentRoot "/var/www/html"
+
+    &lt;Directory "/var/www/html"&gt;
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+        DirectoryIndex index.html
+
+        RewriteEngine On
+        # If file or directory does not exist, redirect to external fallback
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^(.*)$ <https://download.autosd.sig.centos.org/$1> [R=302,L] &lt;------ here
+    &lt;/Directory&gt;```
+[2025-05-12T13:50:44.020149] U0171SJF00H: so shouldn't be a big deal
+[2025-05-12T13:50:46.201479] U02F2L89YTS: Yep, that I think will avoid issues
+[2025-05-12T13:51:05.809489] U0171SJF00H: alright, 2 secs and ill push the change to stage
+[2025-05-12T13:57:25.831009] U020YLADEKA: `i think in some of the tURLs in tests are parsed from the listing...i wouldn't be sure it handles redirects fine, but this way it should work...the paths are the same`
+Are the mentioned tests the new AIB CTC tests added also to test console that failed last time after deployment <@U011CBYSALV>?
+If so is there any way we can run those on our staging ENV from test console before deploying to prod to make sure they also work and won't fail in CTC.
+[2025-05-12T14:07:20.596569] U011CBYSALV: yeah i think it's likely there is a curl without -L somewhere
+[2025-05-12T14:07:35.849349] U02F2L89YTS: Oh, I forgot about that package test for the aib :facepalm:
+It works fine
+[2025-05-12T14:07:36.742539] U020YLADEKA: <@U0171SJF00H> in the meantime, can you please inform <#C0801T4TEQP|> about the changes we did and ask for feedbacks or tests they want to run on our staging ENV?
+[2025-05-12T14:07:45.830409] U02F2L89YTS: ```$ ./automotive-image-builder compose --distro autosd --dump-variables --fusa empty.aib.yml empty.json | jq -c '.denylist_rpms // []'
+["dosfstools","e2fsprogs","erofs-utils","libbpf","xfsprogs"]```
+[2025-05-12T14:07:58.812479] U02F2L89YTS: Using the staging URL.
+[2025-05-12T14:08:34.172999] U02F2L89YTS: Basically, it ueses aib, which works fine with that URL, so it works.
+[2025-05-12T14:08:47.598189] U011CBYSALV: you'll see once you roll it out:) that's why it's so much fun!
+[2025-05-12T14:10:57.023099] U02F2L89YTS: In any case, we had a discussion last week about changing that test to use rhivos instead of autosd. I still think we should change it.
+[2025-05-12T14:17:20.478599] U011CBYSALV: for the above denylist?
+[2025-05-12T14:29:47.556019] U0171SJF00H: that 301 change should be deployed now, got sidetracked and forgot to msg here
+[2025-05-12T15:25:02.105169] U02F2L89YTS: <@U020YLADEKA> <@U0171SJF00H> it looks like we're not going to build the RC2 today, and probably not tomorrow either. I'd say that we should move forward with the CDN migration, so we can have more time for fixing stuff before Hubert goes to PTO.
+WDYT?
+[2025-05-12T15:44:17.011889] U0171SJF00H: Sure thing, I can get working on that tomorrow morning if it suits? I'd just send out a warning email to auto-devel and auto-sig
+[2025-05-12T15:46:16.691769] U0171SJF00H: It shouldn't take long, but there are a few things that we need to do, the main one being to merge your <@U02F2L89YTS> MR that moves the product builds into X_STREAM directories
+[2025-05-12T15:56:58.386669] U02F2L89YTS: BTW, I did anther check. Not sure if it's useful or if anyone is using this, but I tried to download recursively the whole compose.
+From the current webserver, this command works:
+```wget2 -m -e robots=off --max-threads 8 -np -nH --cut-dirs=3 -R index.html* <https://autosd.sig.centos.org/AutoSD-9/nightly/repos/AutoSD/>```
+But the same command using the staging (`<https://autosd.stg.sig.centos.org/AutoSD-9/nightly/repos/AutoSD/>`), only download the structure, but not the actual files.
+[2025-05-12T18:19:13.002849] U0171SJF00H: I still need to figure that out, It's not ideal that that doesn't work, but I haven't found a way to make it work thus far...
+The main issue blocking that is the fact that these files don't actually exist on the webserver, and the ones you see through the web UI are generated in a single index.html based on the bucket contents
+[2025-05-12T18:19:30.463429] U0171SJF00H: Upgrade announcement sent btw!
+I'll set up the merge requests for a merge train tomorrow morning
+[2025-05-12T18:30:45.090329] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/515> &lt;- Need some reviews here
+[2025-05-12T18:32:13.344839] U0171SJF00H: The pipelines will keep on failing until the migration begins. The current failure is because the playbook is trying to provision 525 gigs in total of volumes, and we're at a 500gb limit, but I'll manually clean up the namespace to drop that previous volume before deploying
+[2025-05-12T20:04:04.411059] U020YLADEKA: Maybe <@U01CA50VC3C> can add some insights about what the Demo Summit session is actually going to use for image downloads and building (is it using automotive image builder and if so how ?) so we can know we’re testing the main usage at least for Summit sake.
+
+<@U02F2L89YTS> thanks for the extra testing and going the extra mile!
+Just so we’ll know the impact of your latest test, Do we have something (tool, pipeline,script) that tries to do what you tested that might be broken?
+[2025-05-12T22:18:58.305059] U02F2L89YTS: Ohhhh... <@U0171SJF00H> thanks for this -&gt; <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blob/5e8a0f9c89474b93d0c705d5cc1061ed90082522/openshift/managed-platform+/autosd-webserver/README.md|https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blob/5e8a0f9c89474b93d[…]522/openshift/managed-platform+/autosd-webserver/README.md>
+:clap:
+[2025-05-13T08:40:11.878159] U0171SJF00H: One approval here please <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/515> Juanje's approval got reset by a rebase
+[2025-05-13T08:48:21.177009] U0171SJF00H: <@U04MGT65NQJ> if you're around? :sweat_smile:
+[2025-05-13T09:01:18.426149] U0171SJF00H: and <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/394>
+[2025-05-13T10:12:48.930459] U0171SJF00H: <@U01CA50VC3C> when is this demo going to take place exactly?
+[2025-05-13T10:13:02.799429] U0171SJF00H: just so we know when to pay extra attention
+[2025-05-13T10:13:58.170059] U01CA50VC3C: May 20th, 10:30 AM EST
+[2025-05-13T10:15:10.174389] U0171SJF00H: <@U020YLADEKA> in that case I'll be back from PTO already, to keep an eye out
+[2025-05-13T10:40:44.946249] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/517> or one small fix, but not time sensitiv
+[2025-05-13T10:41:04.941589] U0171SJF00H: Overall I would say the migration is finished, but still keeping an eye and ear out for any issues
+[2025-05-13T10:47:25.712819] U04NNGY4QQ2: There are 3 MRs in rhivos.git and I guess, these MRs allocates disk space and cause failures in generate-compose job.
+
+• update for rhivos-1.0.0 config: <https://gitlab.cee.redhat.com/automotive/rhivos/-/merge_requests/554>
+• sync rhivos-1.0 config: <https://gitlab.cee.redhat.com/automotive/rhivos/-/merge_requests/556>
+• update rhivos-1.1.0 config: <https://gitlab.cee.redhat.com/automotive/rhivos/-/merge_requests/553>
+
+[2025-05-13T11:38:43.583969] U02F2L89YTS: <@U0171SJF00H> what's the current status for the migration. I get errors for these URLs. Is that expected at this moment?
+• <https://autosd.sig.centos.org/AutoSD-9/>
+• <https://autosd.sig.centos.org/AutoSD-9/nightly/>
+[2025-05-13T11:46:12.176639] U0171SJF00H: It should be completed... :thinking_face:
+[2025-05-13T11:46:35.622319] U0171SJF00H: weirdly enough it works when I navigate form the root domain
+[2025-05-13T11:46:50.209259] U0171SJF00H: ahhh, I think I know what's wrong
+[2025-05-13T11:47:06.829009] U0171SJF00H: I might need to drop a rewrite condition for directories
+[2025-05-13T11:47:13.052909] U0171SJF00H: and only keep it for files
+[2025-05-13T11:47:48.154519] U0171SJF00H: actually, wait, it works on <http://autosd.stg.sig.centos.org/AutoSD-9/nightly/|autosd.stg.sig.centos.org/AutoSD-9/nightly/> for me
+[2025-05-13T11:48:12.047439] U02F2L89YTS: But that's staging
+[2025-05-13T11:48:23.401979] U02F2L89YTS: What about production?
+[2025-05-13T11:51:54.681869] U02F2L89YTS: <@U0171SJF00H> ^
+[2025-05-13T11:52:37.263169] U0171SJF00H: oh :facepalm:
+[2025-05-13T11:53:23.941739] U0171SJF00H: Thankfully seems like programatic access works for folks, this is just a frontend issue
+[2025-05-13T11:53:31.591889] U0171SJF00H: looking into it
+[2025-05-13T11:57:00.820989] U04NNGY4QQ2: <@U0171SJF00H>, <@U04MGT65NQJ> i don't know why but I am having runner system failure issue in this job <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/34510176>
+[2025-05-13T12:47:49.219079] U04JRTQ4LHK: <@U0171SJF00H> is <https://autosd.sig.centos.org/AutoSD-9/> and <https://autosd.sig.centos.org/> meant to be like this?
+[2025-05-13T14:04:06.817329] U02F2L89YTS: So, it looks like it works fine now, unless you tested before and your browser kept the config :thinking_face:
+[2025-05-13T14:31:32.983529] U0171SJF00H: Mind taking a look again now?
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/517>
+[2025-05-13T14:31:37.077429] U0171SJF00H: just increasing the replica count
+[2025-05-13T14:32:06.908219] U0171SJF00H: ah, it didn't push...
+[2025-05-13T14:33:04.509219] U0171SJF00H: now it's ready
+[2025-05-13T14:33:25.121779] U02F2L89YTS: I'm testing again with the production URL the aib test, building an image using aib and installing a package with the character `+` from inside an autosd image to be sure that all the main features work and they worked :slightly_smiling_face:
+[2025-05-13T14:39:09.350379] U02F2L89YTS: I've also checked the <https://gitlab.com/redhat/edge/tests/base-image/-/blob/main/.gitlab-ci.yml?ref_type=heads#L41|smoke-test triggers from the base-image's pipeline> that failed at some point and it works as well :partying_face:
+[2025-05-13T15:57:55.010089] U0171SJF00H: <@U04AXB4GK52> Do you have a contact or anywhere we can look into that?
+[2025-05-13T17:03:21.671369] U0171SJF00H: I hope this is the last update in this migration saga:
+
+I just cleaned up the root directory of the bucket, (it's backed up to a different one just in case), so now the root of the <http://autosd.sig.centos.org|autosd.sig.centos.org> only has one folder, as expected
+[2025-05-13T17:03:29.857779] U0171SJF00H: ^^ <@U04JRTQ4LHK>
+[2025-05-13T17:04:45.108829] U0171SJF00H: <@U04MGT65NQJ> If you could hold off on merging your <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/518> until tomorrow, until I merge <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/517>
+[2025-05-13T17:05:26.259649] U0171SJF00H: This one fixes the origin reference to point to the s3 static website, to make those fancy packages with `+` signs in their names work properly
+[2025-05-14T07:45:33.925749] U04NNGY4QQ2: Hi all! We're currently experiencing issues with downstream runners — they're failing, and the nightly pipeline hasn't started. This is blocking the RC2 respin we planned to kick off today.
+Could someone please take a look as soon as possible?
+[2025-05-14T07:45:50.157759] U0171SJF00H: Yep I just opened up 517 to merge my changes
+[2025-05-14T07:45:54.804789] U0171SJF00H: and will then merge Eitans right after
+[2025-05-14T07:48:10.213449] U020YLADEKA: Got it, thank you all for jumping on it in the hope of a quick resolution!
+[2025-05-14T07:59:19.643199] U0171SJF00H: <@U04MGT65NQJ> are you happy with this comment? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/518#note_15739783>
+[2025-05-14T07:59:32.871269] U0171SJF00H: Juanje tested it so I guess it's fine
+[2025-05-14T07:59:40.659439] U0171SJF00H: but wanted to make sure before I merged anything
+[2025-05-14T09:01:14.210349] U0171SJF00H: I'll resolve the comment and merge it
+[2025-05-14T09:17:59.146139] U04NNGY4QQ2: I am still seeing some instabilities, for example this job <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/34555852>
+[2025-05-14T09:18:16.579039] U0171SJF00H: ahhh, the plan failed to apply...
+[2025-05-14T09:18:18.697189] U0171SJF00H: fixing it now
+[2025-05-14T09:22:51.746069] U0171SJF00H: This one is hiting the very issue it's trying to fix :see_no_evil:
+[2025-05-14T09:23:09.634879] U0171SJF00H: Off-topic:
+*AutoSD Web Server Emergency Protocol:*
+<https://docs.google.com/document/d/1ZAUlY_VOTeQMhpd0p6p-qSBBRY8EW2GYVmkKFfrtEVg/edit?usp=sharing>
+[2025-05-14T09:24:15.680129] U0171SJF00H: Use the rollback as a last ditch effort, however, I'll be back before the summit demo, so it shouldn't come to that
+[2025-05-15T09:46:32.140979] U04JRTQ4LHK: <@U04MGT65NQJ> Can you please take a look at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/521> ? This should fix our gitlab-runner artifacts issue :)
+[2025-05-15T12:18:56.305949] U02F2L89YTS: <@U04MGT65NQJ> <@U02DXVBD5CP> does anyone know the upstream gitlab-runner host and ssh key? I'm checking in BitWarden but there is a bunch of old stuff and it's not clear to me which one it is.
+[2025-05-15T13:20:04.370169] U020YLADEKA: About this <https://redhat-internal.slack.com/archives/C04JDFLHJN6/p1747301801310779|thread>...
+<@U0171SJF00H> is on PTO till May20 so this is not ideal to change anything right now unless it's urgent or breaking urgent stuff I know.
+
+IIUC the root cause is due to CloudFront cache issues.
+This was mitigated manually for now due to Kanitha invalidating the cache for the repodata.
+
+Just so we do not need to do it in summit time(May20) or daily going forward, the CentOS infra folks(<@U013NFL4MN0>  <https://redhat-internal.slack.com/archives/D04RWM2D1M2/p1747310211956939|message>) mentioned they use a 5 min TTL caching policy for metadata files (as we have in the /repodata compose folder).
+
+Is there a way we can add this new custom cache policy to avoid manually needing to invalidate the cache daily?
+
+<@U02F2L89YTS> <@U02DXVBD5CP> <@U04MGT65NQJ> WDYT?
+
+Maybe use something like below at our <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blob/main/aws/terraform/toolchain/upstream/autosd_cloudfront.tf?ref_type=heads|IaC cloudfront config file>:
+
+```# Define a CloudFront cache policy with 5-minute TTL for repodata
+resource "aws_cloudfront_cache_policy" "repodata" {
+  name        = "RepodataCachePolicy"
+  comment     = "Cache repodata files with short TTL"
+  default_ttl = 300
+  max_ttl     = 300
+  min_ttl     = 0
+
+  parameters_in_cache_key_and_forwarded_to_origin {
+    cookies_config {
+      cookie_behavior = "none"
+    }
+    headers_config {
+      header_behavior = "none"
+    }
+    query_strings_config {
+      query_string_behavior = "none"
+    }
+  }
+}
+
+# Example CloudFront distribution (partial) using the policy
+resource "aws_cloudfront_distribution" "example" {
+  # ... (origins, logging, etc.) ...
+
+  # Cache behavior for repodata files
+  ordered_cache_behavior {
+    path_pattern           = "repodata/*"
+    target_origin_id       = "MyOrigin"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD"]
+    cache_policy_id        = aws_cloudfront_cache_policy.repodata.id
+    # (You can also specify an origin_request_policy_id if needed)
+  }
+
+  # ... (default_cache_behavior, etc.) ...
+}```
+[2025-05-15T13:23:51.584959] U04NNGY4QQ2: <@U04MGT65NQJ> gator-container-build job in RC2 pipeline takes longer time <https://gitlab.cee.redhat.com/automotive/fences/gating/gator/-/jobs/34627259>, can you check what is going on this runner?
+[2025-05-15T18:40:22.774929] U02F2L89YTS: <@U04MGT65NQJ> <@U04NNGY4QQ2> I changed the upstream pipeline's nightly trigger, so it starts an hour earlier, to avoid having the bucket syncing when ppl is already using it.
+I also changed the cache policy for the nightly directory, so it refresh every 3 hours, instead of every 12. If that new policy works and allow us to avoid the issue from this morning, we should move it to the infra repo, so we don't override it on the next deployment.
+I think those two things should avoid any issues during the summit. I'll be checking on Monday anyway.
+[2025-05-16T12:02:32.806549] U04Q4USRZTM: Can I have some eyes at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/523>? thanks in advance
+[2025-05-19T11:48:56.874329] U02F2L89YTS: The nightly clean up has been failing for a few days, it turns out that it was caused by the new AutoSD's bucket structure. The cleaning job was looking at the root of the bucket and not under `AutoSD-9/`. This made the command fail, which made the script fail and exit the job. So, it wasn't cleaning up the upstream nightlies, nor the downstream ones.
+Here is a MR for fixing that. I tested it locally (without running the actual `aws s3 mv ..`) and it fox the issue:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/scheduled-jobs/-/merge_requests/61>
+[2025-05-19T12:48:56.415349] U02F2L89YTS: <@U04MGT65NQJ> Autosd's last night had some issue related with the runners. A bunch of jobs failing with this error:
+```ERROR: Job failed (system failure): aborted: terminated```
+Here is one of he job: <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/jobs/10070624703>
+Any idea what could have happened?
+[2025-05-19T16:31:17.834609] U020YLADEKA: Hi <@U02F2L89YTS> <@U04MGT65NQJ>,
+Thanks for raising and taking care of AutoSD runners issue. 
+Let’s be extra careful with AutoSD and keep a close eye out especially as tomorrow on Red Hat summit demo event <https://events.experiences.redhat.com/widget/redhat/sum25/SessionCatalog2025/session/1731489950376001pjgw|h><https://events.experiences.redhat.com/widget/redhat/sum25/SessionCatalog2025/session/1731489950376001pjgw|ere>  schedulaed Tuesday, May 20 10:30 AM - 12:00 PM EDT(US time) will heavily depend on AutoSD.
+If the are any planned maintenance or work/changes that might risk AutoSD server functionality let’s postpone it after the summit tomorrow’s event.
+
+CC: <@U0171SJF00H> 
+[2025-05-20T07:34:33.778149] U0171SJF00H: :howdy:  back from PTO
+Any immediate fires that need putting out?
+[2025-05-20T07:46:38.232379] U020YLADEKA: Welcome back <@U0171SJF00H> :partydoge:
+We just need to make sure AutoSD is ready for today's Summit Demo 10:30 AM - 12:00 PM EDT.
+The main use case that's relevant to us/ATC is the building image via AIB part mentioned <https://github.com/rhpds/lab2255-software-templates/blob/main/templates/autosd-app-template/skeleton/src/images/build.sh#L22|here> as it points AIB to our <https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/blob/main/distro/autosd9.ipp.yml#L6|autosd URL> (which is the usual way AIB is working).
+We should be fine but just to be on the safe side to check AIB related tasks are working well and we do not have any caching issues.
+
+I did see an<https://redhat-internal.slack.com/archives/C05BYR06B0V/p1747724323814859?thread_ts=1747672277.834609&amp;cid=C05BYR06B0V| issue via UI (>does not seem related to the Demo as Demo/AIB is using curl) - not sure if it's a new/old issue.
+If AIB is working well for the Demo, we can wait until we're changing anything else.
+[2025-05-20T10:00:41.758319] U0171SJF00H: Hey <@U02DXVBD5CP>
+Are those autosd volumes still in use somewhere?
+[2025-05-20T10:01:49.272189] U0171SJF00H: the AutoSD one might be out-of-date with our cloudfront approach
+[2025-05-20T10:02:00.423159] U0171SJF00H: not sure if the RHIVOS one was ever used, but my memory is blurry
+[2025-05-20T10:05:45.755639] U02DXVBD5CP: Nope, they both are not in used anywhere
+[2025-05-20T10:06:34.205369] U0171SJF00H: Cool, ty, just checking in case
+[2025-05-20T10:24:14.176789] U020YLADEKA: Yep , <https://dnf.readthedocs.io/en/latest/conf_ref.html> ^^
+[2025-05-20T11:50:22.224129] U0171SJF00H: I'll be watching this page with great interest
+[2025-05-20T12:18:16.951049] U01CA50VC3C: This in general is an interesting dashboard to watch … is there a way to drill this down to locations? For example would it be possible to see an uptick in India or Japan ?
+[2025-05-20T12:24:41.360629] U0171SJF00H: yep
+[2025-05-20T12:33:07.839839] U01CA50VC3C: How can I get access to this view?
+[2025-05-20T12:44:03.725179] U0171SJF00H: We don't have a way for non-admins to access that account, it would be quite a bit of work to set up for essentially a one-time thing
+[2025-05-20T12:44:10.026299] U0171SJF00H: I can send a report later on though
+[2025-05-20T12:57:34.315779] U01CA50VC3C: Nah, it’s not worth doing if it’s too much work. But its a nice derived metric to track adoption/usage 
+[2025-05-20T14:05:40.408609] U020YLADEKA: <@U01CA50VC3C> I was asked if there where a live or a recording link to the Demo .. do you know of any?
+If you can share with the team it will be great!
+
+All I'm aware of is <https://events.experiences.redhat.com/widget/redhat/sum25/SessionCatalog2025/session/1731489950376001pjgw|this formal link>.
+
+<@U02F2L89YTS> ^^
+[2025-05-20T14:06:56.541189] U020YLADEKA: Good luck <@U01CA50VC3C> <@U04JMECPXLZ> <@UEFFLKJAJ> :fingers_crossed::fingers_crossed::fingers_crossed:
+[2025-05-20T14:10:41.910999] U01CA50VC3C: I am not aware of a video stream or a recording <@U04JMECPXLZ>, are you?
+[2025-05-20T14:10:43.024389] U01CA50VC3C: <https://redhat-scholars.github.io/course-template/modules/index.html|https://redhat-scholars.github.io/course-template/modules/index.html>
+[2025-05-20T14:10:44.062389] U01CA50VC3C: The link above should provide detailed instructions of the lab
+[2025-05-20T14:14:02.061869] U02F2L89YTS: <@U01CA50VC3C>
+[2025-05-20T14:17:18.728229] U01CA50VC3C: <https://rhpds.github.io/showroom-lb2255-jumpstarter/modules/intro-jmp.html|https://rhpds.github.io/showroom-lb2255-jumpstarter/modules/intro-jmp.html>
+[2025-05-20T15:01:31.731399] U04JDAPLMSN: Hey folks, can this email be ignored? `[AWS-A-Team] Your AWS CloudShell data is scheduled for deletion on May 30, 2025 [AWS Account: 339712814647]`
+[2025-05-20T15:03:14.498449] U0171SJF00H: Yep, as far as I'm aware no one in ATC uses that
+[2025-05-20T15:20:31.596009] U04JDAPLMSN: Great. Thanks!
+[2025-05-20T19:04:27.387589] UEFFLKJAJ: Thank you all, it wen <@U020YLADEKA> <@U02F2L89YTS> <@U01CA50VC3C> everything well very very smooth. :slightly_smiling_face:
+[2025-05-20T19:05:47.068299] UEFFLKJAJ: Sadly we didn't have as many participants as we wanted, I guess it was too niche for the conference, we had people from lockheed martin, amazon kuiper, NXP, ... <@U04JMECPXLZ> am I forgetting some?, also I guess we will probably get access to the list of participants.
+[2025-05-21T02:00:34.255809] U04JMECPXLZ: Corellium ...
+[2025-05-21T02:01:44.134969] U04JMECPXLZ: ... and we could follow up with NXP, Intel and Corellium later in the day, during our Automotive round table in the Boston office ...
+[2025-05-21T11:07:36.945049] U02F2L89YTS: <@U04MGT65NQJ> <@U0171SJF00H> <@U02DXVBD5CP> <@U04NNGY4QQ2> This job is failing in a post-merge pipeline. It doesn't have anything to do with the change. I retried and it failed again.
+I've seen this in the past in some repos and normally is related to the credentials. Although, I don't think anyone has changed them in the CI/CD, right?
+Any ideas?
+```$ git push origin main:gitlab-ci
+fatal: could not read Username for '<https://gitlab.com>': No such device or address```
+<https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/jobs/10103463775>
+[2025-05-21T11:10:36.798129] U02F2L89YTS: Ok, I think it was it. The token has expired.
+[2025-05-21T11:11:51.430789] U02F2L89YTS: Oh, that's another token, but `PIPELINE_GIT_TOKEN` has also expired.
+A few of them has expired. We should check them to avoid other stuff failing.
+[2025-05-21T15:46:12.358319] U02F2L89YTS: <@U0171SJF00H> should we merge this? Or should we wait? I think you need to do something before merging it, right?
+Feel free to change it to "Ready" and merge it when you are ready.
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/527>
+[2025-05-27T10:00:01.136589] U0171SJF00H: Hey <@U04MGT65NQJ>, <@U04HK2W8NGL> noticed some differences in network performance on FoA validator repositories, we're wondering whether we could move these closer to us-east?
+[2025-05-27T17:03:20.366619] U04NNGY4QQ2: <@U04MGT65NQJ> I am having weird error in this <https://gitlab.com/redhat/edge/ci-cd/pipe-x/autosd/-/merge_requests/54|MR> pipeline, it can't trigger the p-a-c and initiate-workspace job fails <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/jobs/10166780990> with
+```ERROR: Job failed (system failure): Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running? (docker.go:1041:0s)```
+[2025-05-28T08:35:40.493429] U02JHD5HMGC: <@U04NLT3HY3Y> <@U0171SJF00H> I was trying to find a good home for some ansible playbooks that I've been working on for BOS2 setup and also thinking ahead for new hardware platforms.  I was thinking of a new subgroup under <https://gitlab.cee.redhat.com/automotive/testing-farm/>
+For example
+<https://gitlab.cee.redhat.com/automotive/testing-farm/infrastructure/flasher-vm/>
+<https://gitlab.cee.redhat.com/automotive/testing-farm/infrastructure/sidekicks/>
+There are some playbooks in personal repos that could be included here for transparency and re-use.
+Not something to do today, but soon.
+WDYT?
+[2025-06-02T14:34:59.934979] U04JRTQ4LHK: <@U04MGT65NQJ> Do you have some documentation explaining the set up of the custom runner pools? i.e. what machine/s are involved and how they're scaled?
+[2025-06-03T10:48:03.211519] U02F2L89YTS: <@U04MGT65NQJ> <@U0171SJF00H> did something change on the downstream runners?
+The last two days, the nigthly has been failing downstream because it can't find a runner :confused:
+[2025-06-03T10:50:08.359419] U04MGT65NQJ: link?
+[2025-06-03T10:50:34.554809] U02F2L89YTS: <https://gitlab-prod-west.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/35337654>
+[2025-06-03T10:51:32.711589] U02F2L89YTS: it's been happening since Sunday night:
+<https://gitlab-prod-west.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/pipelines>
+Maybe it's related with the update?
+[2025-06-03T10:52:30.813959] U04MGT65NQJ: the update of the gitlab instace? could be. lemme check one more thing
+[2025-06-03T10:53:28.150179] U02F2L89YTS: Sorry, it seems like CEE did it again. It redirected me to a different instance. The URL there is not the normal one.
+The normal one, has the pipeline fine, but that one is failing.
+[2025-06-03T10:53:41.683919] U02F2L89YTS: <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/pipelines>
+[2025-06-03T10:55:52.887219] U04MGT65NQJ: IIUC IT moved the gitlab prod instance last weekend. maybe this is why you are getting the redirect
+[2025-06-03T10:56:10.831839] U04MGT65NQJ: from aws side - the pool has been up since 28 May with no issues documented in the activity log
+[2025-06-03T10:56:19.447239] U02F2L89YTS: <@U04MGT65NQJ> sorry about the noise, I got login into that instance somehow and I saw a few nights with a failing pipeline, so I got worried
+[2025-06-03T10:56:37.151169] U04MGT65NQJ: sure NP
+[2025-06-03T11:28:01.161599] U04NNGY4QQ2: <@U04MGT65NQJ> we have also issue with the post merge pipeline <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/commit/4e8e9ac52f9721cb8e4fa9aba73bae6a68ac6743> do you have what is going on?
+[2025-06-03T11:28:52.812059] U04NNGY4QQ2: <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/jobs/10237248408> This is strange :confused:
+```remote: You are not allowed to upload code.
+fatal: unable to access '<https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/>': The requested URL returned error: 403```
+[2025-06-03T13:33:12.016929] U04JRTQ4LHK: <@U04MGT65NQJ> Do you know how we can raise the timeout on the foa runners? Apparently ours is set to 1h. Is this just to be done in the project level ci-cd settings or do the runners also have a number that needs adjusting?
+[2025-06-05T11:14:41.947749] U04JRTQ4LHK: <@U04MGT65NQJ> Hey Eitan, we're seeing lots of fluctuating performance with the ec2 based runners. I want to see if shifting from r5.xlarge to r5d.xlarge changes something. This would change the runner block device from ebs backed (affected by network usage and location) to local storage (nvme).
+[2025-06-05T14:00:34.336319] U02F2L89YTS: <@U04MGT65NQJ> <@U0171SJF00H> I believe this is what I saw that ppl was using for the case we were talking about, using Cloudfront for internal network:
+<https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html>
+<https://medium.com/vectoscalar/use-cloudfront-for-api-gateway-s3-both-cc0e30e0962a>
+[2025-06-05T15:04:49.604549] U0171SJF00H: <@U02F2L89YTS> <@U04MGT65NQJ> <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/544/diffs>
+[2025-06-07T11:33:19.227919] U04JRTQ4LHK: <@U04MGT65NQJ> Not sure yet if this is a real problem but a heads up for you on Sunday: The aws terraform apply job failed with the script being terminated at the end:
+```Apply complete! Resources: 0 added, 10 changed, 0 destroyed.
+Outputs:
+account_alias = [
+  {
+    "account_alias" = "it-cloud-aws-internal-ateam"
+    "id" = "it-cloud-aws-internal-ateam"
+  },
+]
+rhel9_ami_id_ds_runner_us_east_2 = "ami-008cdd3e57e8995a2"
+rhel9_ami_id_release_runner_us_east_2 = "ami-008cdd3e57e8995a2"
+Saving cache for successful job 00:07
+Creating cache aws-internal-protected...
+aws-internal/.terraform/: found 15 matching artifact files and directories 
+Terminated
+ERROR: Failed to cleanup volumes
+ERROR: Job failed (system failure): aborted: terminated```
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/jobs/35701258>
+And also this happened now when I was testing the new runners (but in the middle of the script):
+```TASK [synchronise-scripts : chmod all scripts to executable] *******************
+ok: [localhost]
+TASK [synchronise-scripts : create merge-request (if needed)] ******************
+Terminated
+WARNING: after_script failed, but job will continue unaffected: context canceled
+ERROR: Failed to cleanup volumes
+ERROR: Job failed (system failure): aborted: terminated```
+<https://gitlab.cee.redhat.com/automotive/contcert/foa-validators/ci-selbstrenovierung/-/jobs/35701596>
+I'm going to give it some time to stabilise in case the instances are still coming up properly.
+[2025-06-09T10:17:25.312449] U02JHD5HMGC: Could I get some eyes on a big-ish MR that relate to <https://dashboard.auto-toolchain.redhat.com/overview> ?   Python code.
+I will be on PTO tomorrow morning and from Thursday for about 10 days.
+The MR removes duplicate code from 2 features: nightly pipelines and metrics, DUT pool monitoring.
+Also working on the webserver code (autosd, rhivos and download mirror) which may be added to MR today.
+<https://gitlab.cee.redhat.com/automotive/services/auto-toolchain-dashboard/-/merge_requests/31/diffs>
+[2025-06-09T13:55:44.294409] U0171SJF00H: Hey <@U02JHD5HMGC> <@U04NLT3HY3Y> I've got this <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/548/diffs#83d339ca4da28d00335a8b5d4cd788440f860a19> to provision the VM on BOS2, I'm still a bit confused on how to deploy and configure flasher with tftp and other services that it relies on, do you have any existing playbooks or scripts that you use for it?
+
+Ideally we can just drop them in at the end of this playbook to configure all of it via automation
+[2025-06-12T09:48:08.914199] U04JRTQ4LHK: <@U04MGT65NQJ> Can you take a look at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/551> please?
+[2025-06-12T15:20:43.683709] U04AGQD0K8D: Hi SMEs,
+With the conditional SOA period ending soon(14-21 July 2025), renewal tickets have been created and assigned.
+*Your action is required:*
+1. Please follow *Step 9* <https://spaces.redhat.com/pages/viewpage.action?pageId=599001420|on this document> to generate the required SOA attachments.
+2. Upload those attachments to your assigned JIRA ticket &amp; mark "Pending Approval".
+You may also refer to a completed renewal ticket: <https://issues.redhat.com/browse/SOAR-3622>.
+Please reach out to me if you have any questions.
+[2025-06-17T11:58:38.598089] U02F2L89YTS: <@U0171SJF00H> <@U04MGT65NQJ> did anyone changed the downstream workspace s3 bucket policy for the static website? it looks like now it's trying to redirect to https and failing due lack of proper cert:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/36132306>
+Or can you think on another reason for that error?
+[2025-06-17T13:48:44.411939] U0171SJF00H: :howdy: <@U04MGT65NQJ>, <@UFB1TK0Q7> reached out to me requesting a new ec2 instance for the rhivos dashboard, since you're more in the loop around the VPCs and subnets, which one can I use to create that ec2 in? and how many addresses do we have left in it? I don't want to consume one from the already strained runner pool is all
+[2025-06-18T09:09:31.076869] U04JRTQ4LHK: <@U04MGT65NQJ> I'd like to try switch the FoA runners to the general compute ec2 type, m6a. Can you take a look at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/561> please? Thank you.
+[2025-06-18T13:09:01.382619] U04NNGY4QQ2: <@U04MGT65NQJ> <@U0171SJF00H> I have created <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/564|MR> according to our e-mail thread. Is it enough to add rhivos.git to terraform?
+[2025-06-18T14:03:59.452019] U04JRTQ4LHK: <@U0171SJF00H> I need to remount <https://rhivos.auto-toolchain.redhat.com/evidence-warehouse/> to a different bucket. Can you help?
+[2025-06-19T09:54:06.475879] U0171SJF00H: :howdy:  <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/567> straightforward review for anyone willing, this just adds cost center tags, we don't have an immediate use for them ourselves, but they're synced back to some centralized service somwhere that I'm now forgetting the name for
+[2025-06-19T13:05:19.564229] U0171SJF00H: <@U04MGT65NQJ> Do we have anything to discuss on todays Infra call? Think we got most of the current issues discussed during yesterdays 1:1?
+[2025-06-19T13:06:33.201379] U0171SJF00H: <@U04JRTQ4LHK> <@UFB1TK0Q7> <https://gitlab.cee.redhat.com/automotive/services/supply-chain-webserver/-/merge_requests/47/diffs>
+I caught up on our rhivos webserver situation, seems like this is the only change we need to do :)
+[2025-06-24T21:51:07.901669] U04AXB4GK52: Hi everyone, Could I get some ACKs <https://gitlab.com/redhat/edge/ci-cd/pipe-x/tools/auto-toolchain-containers/-/merge_requests/90|here> as you have time?
+[2025-06-30T10:16:58.776329] U04NNGY4QQ2: <@U04JRTQ4LHK> do you have any idea about who created `CBS_ATCBOT_SSL_CERT`  certificate for cbs koji? We are having certificate expired error in upstream pipeline, so we should renew the certificate <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/jobs/10509117358>. I am trying to get some information about how to renew this certificate. I will be glad, if you have any idea about this :smile:
+[2025-07-08T16:26:18.591839] U02F2L89YTS: Can I have some reviews here? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/579>
+[2025-07-08T16:40:24.516679] U02F2L89YTS: <@U0171SJF00H> qq, how do we manage the users/members in projects for gitlab.cee?
+I added a project to pipe-x, but I need to add a maintainer that is not in our ldap group :thinking_face:
+Do I do it manually or do we manage those cases with tf as well. I didn't see anything in other projects, but maybe I missed it.
+[2025-07-08T16:42:42.591669] U0171SJF00H: It's in <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blob/main/gitlab/cee/modules/toolchain/group_pipe-x.tf?ref_type=heads>
+
+the common name (cn) corresponds to the rover group name, so whatever group level you need to add users, either add them to the respective group in rover, or create a new rover group and refer to it in a new `gitlab_group_ldap_link` for the specific gitlab project, or gitlab repo you want
+[2025-07-08T16:48:01.468479] U02F2L89YTS: I wanted to add them just to that project, which is under pipe-x, but I didn't want to add them to our rover group, just to that project.
+[2025-07-08T16:54:46.960349] U0171SJF00H: <https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs/resources/project_membership>
+Then this would be the way to do it, refer to the project (through the terraform module with dot notation) and the user ID and their access level
+[2025-07-08T17:05:13.656399] U04JRTQ4LHK: Did you try asking AI first before asking Hubert???
+[2025-07-08T17:05:19.978219] U04JRTQ4LHK: We need to optimise
+[2025-07-08T17:07:24.296819] U0171SJF00H: Real Stupidity &gt; Artifical Intelligence :think_1:
+[2025-07-08T17:08:04.964549] U0171SJF00H: Actually there is a notebookLM with the infra repo loaded in
+[2025-07-08T17:08:19.045869] U0171SJF00H: so Maybe it would work? but maybe it also needs to have context of the terraform provider as a whole
+[2025-07-08T17:10:24.152999] U02F2L89YTS: > Did you try asking AI first before asking Hubert???
+I didn't, but I doubt the AI knows about our conventions. Maybe that NotebookLM does :thinking_face:  But as we didn't have any examples, it probably doesn't
+[2025-07-08T17:15:45.368979] U04JRTQ4LHK: We should put the notebooklm with the infra repo loaded in into the readme for that repo
+[2025-07-08T17:15:50.604819] U04JRTQ4LHK: As in linked there I mean
+[2025-07-08T17:16:00.753619] U04JRTQ4LHK: So someone who jumps into that repo can quickly head off to the notebooklm to ask it questions
+[2025-07-08T17:21:47.011189] U02F2L89YTS: This should work, right? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/580>
+[2025-07-08T17:23:03.347709] U0171SJF00H: Should, let's see what the terraform plan says
+[2025-07-08T17:23:21.821279] U02F2L89YTS: does that notebook has also the terraform docs? that would make it more powerful
+[2025-07-08T17:26:27.986729] U0171SJF00H: I think those documents are directly compiled from git repos for each provider, so maybe we could repomix it
+[2025-07-08T17:26:36.525479] U0171SJF00H: I tried adding the URL directly but that failed
+[2025-07-08T17:27:01.451949] U04JRTQ4LHK: :brainintensifies: :notebooklm:
+[2025-07-08T17:28:14.130679] U02F2L89YTS: I asked notebooklm and answered me kinda the same as the first response from hubes, but a bit more verbose :thinking_face:
+[2025-07-08T17:28:44.666599] U04JRTQ4LHK: s/but a bit more verbose/but better/g :sweat_smile:
+[2025-07-08T17:28:50.260469] U04JRTQ4LHK: jk
+[2025-07-08T17:40:19.814169] U02F2L89YTS: It worked :slightly_smiling_face: Thanks
+[2025-07-10T12:09:19.666469] U0171SJF00H: Does anyone have experience with sonarqube?
+For context: <https://sonarqube.corp.redhat.com/account/projects> was set up by Eitan on the infra repo, i'm trying to merge a change that technically has a security violation (not really, it's fully reasonable in my opinion) but I need admin privileges for the project (pipe-x/infra) in order to review the security concern and make it pass gating
+Eitan is on PTO today, so he'll probably answer me on Sunday, but just thought to pop this question out there to see if anyone encountered this before
+[2025-07-10T12:10:32.733679] U04JRTQ4LHK: me puts on leadership hat: "Could we somehow give AI the privileges??"
+[2025-07-10T12:11:32.094999] U0171SJF00H: If AI makes browsing "The Source" less infuriating, i'm all for it
+[2025-07-10T12:12:34.540249] U0171SJF00H: :tableflip:
+[2025-07-10T12:13:14.936699] U0171SJF00H: 1. Query for a topic in the Source
+2. Find somethjing that sounds exactly like what you need
+3. Click the link and it's 50/50 on permissions denied or not found
+
+[2025-07-10T12:14:57.928089] U0171SJF00H: For those using slack in the future to find something actually useful:
+<https://source.redhat.com/groups/public/sonarqubecorp/user_documentation/getting_started_guide>
+[2025-07-11T11:52:44.325349] U04AXB4GK52: Hi everyone, could I get some ACKs on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/585|this MR> to un-break infra pipelines?
+[2025-07-14T08:05:05.753579] U0171SJF00H: Hey <@U020YLADEKA> or <@U02F2L89YTS> I'm trying to get access to sonarqube
+According to the response I got here: <https://redhat.service-now.com/help?id=rh_ticket&amp;table=incident&amp;sys_id=121a25ab3322a618c8c5abb13d5c7be4>  either of you two should have ownership, I'm not aware if either of you set it up in the first place, I thought it inherited permissions from gitlab, but apparently not (since I would have them as an owner of infra repo and the parent namespace)
+[2025-07-14T09:13:30.629999] U020YLADEKA: Hi <@U0171SJF00H> , 
+Juanje is on on leave till mid Aug.
+I believe <@U04MGT65NQJ> or <@U04QNH25QA1> might know more around Sonarqube (I did not set it up)
+[2025-07-14T10:21:14.842949] U020YLADEKA: Let me check the ticket as well ...
+I was not aware I was the owners of this project as I did not do anything with Sonarqube but as manager someone might have wrote my as owner which is OK :slightly_smiling_face:
+
+<@U0171SJF00H> Let me know how can I assist or what to change to help you out.
+Can you send me the URL to SonarQube and I'll give it a shot
+[2025-07-14T12:35:53.481759] U04JRTQ4LHK: Hi <@U04MGT65NQJ>, how can we move the registration of our self hosted runners from <https://gitlab.cee.redhat.com/automotive/contcert/foa-validators/> to <https://gitlab.cee.redhat.com/automotive/contcert> ?
+[2025-07-14T15:02:22.409799] U04MGT65NQJ: <@U04JRTQ4LHK> you need to:
+• change the group reference of the <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blob/main/gitlab/cee/runners.tf?ref_type=heads#L77|foa runner registration>  to the concert group and push a new commit
+• after `tf apply` is executed by the merge, download the app-state and extract the runner token (according to the runner name) [1]
+• replace the new token in the <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/settings/ci_cd|ci-cd> variable named CONFIG_TF_VAR of the `aws-internal` environment (this variable contains a map. replace the value of the `foa_validators_ds_pool_runner_token` entry). This is for future redeployments via terraform.
+• ssh to each FoA ec2s and unregister the runner [2]
+• re-register the runners to concert using the new token[3] then check that the runner <https://gitlab.cee.redhat.com/groups/automotive/contcert/-/runners> shows the registrations
+• if you need to enlarge the <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/blame/main/aws-internal/main.tf?ref_type=heads#L221|number of instances> in the pool please do so via an MR and not manually. please note that there are currently only 6 free IPs available on the subnet where the pool is deployed so you cannot add more instances than that. I am working on <https://issues.redhat.com/browse/VROOM-30683|enlarging> it.
+[1] aws s3api get-object --bucket "toolchain-tfstate" --key "gitlab-app-state" "./app-state"
+[2] sudo gitlab-runner unregister --all-runners
+[3] cat /tmp/log.txt | grep 'gitlab-runner register' and using the new token run the command with sudo
+[2025-07-15T06:12:47.168169] U04QDQYQ0SF: Sorry, <@U020YLADEKA>. I couldn't find information about `give me a summery of this thread`. I've saved your query so I can continue to learn. Here are a couple things you can try right now:
+
+1.) Type `/feedback` to provide Shadowbot feedback
+2.) Type `concierge` to talk with some humans
+3.) Click *<https://source.redhat.com/?search=give+me+a+summery+of+this+thread|here>* to search on source
+[2025-07-24T14:30:39.112929] U0171SJF00H: <@U04MGT65NQJ> Do you want to mvoe our Pipeline-Infra office hours to now? if you're around?
+[2025-07-24T14:30:53.273529] U04MGT65NQJ: sure, let's
+[2025-07-24T14:30:58.780429] U04MGT65NQJ: 2 minutes
+[2025-07-30T12:35:47.296819] U04NNGY4QQ2: <@U04MGT65NQJ> <@U0171SJF00H> do you know what happened to webserver <https://rhivos.auto-toolchain.redhat.com/> ? The builds are not mounted
+[2025-07-30T12:48:20.470789] U04MGT65NQJ: Fixed
+[2025-07-30T12:50:54.379609] U04NNGY4QQ2: thanks Eitan, what was the issue?
+[2025-07-30T13:26:12.020959] U04MGT65NQJ: I can't find a reason why the container failed. But the keepalive service failed to restart it due to missing execute permissions on the keepalive script. This is very strange, because journalctl shows keepalive worked 8 days ago, which is after the server migration to the new subnet.
+[2025-07-30T14:22:38.650459] U0171SJF00H: I think this is ready for a review: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/581>
+Setting the groundwork for a near-future RHIVOS artifact server through cloudfront
+[2025-07-31T12:16:02.864969] U04NNGY4QQ2: <@U04MGT65NQJ> I guess container failed again, <https://rhivos.auto-toolchain.redhat.com/> we can't see the product builds
+[2025-07-31T12:23:25.614159] U04MGT65NQJ: up and running. for some reason the keepalive service is not picking the failure up on its own, only when invoked manually. i will investigate
+[2025-07-31T12:26:58.200329] U04AXB4GK52: Just wanted to raise that the intermittent availability of the web server has been causing issues in FoA validator runs while we're trying to prepare our milestone submission report.
+[2025-07-31T14:27:56.892129] U04JRTQ4LHK: The server is having issues again
+[2025-07-31T14:28:03.031639] U04JRTQ4LHK: This is really hampering our 3.5 submission...
+[2025-07-31T14:49:18.456289] U04JRTQ4LHK: It appears to have been restarted just now - Sergei is proceeding with validator re-runs for submission 3.5 - we will ping here if the server goes down again.
+[2025-07-31T14:49:55.445389] U04JRTQ4LHK: <@U020YLADEKA> FYI
+[2025-07-31T14:59:48.594219] U020YLADEKA: <@U04MGT65NQJ> <@U0171SJF00H> can we drop all the rest of the work and give the RHIVOS webserver attention and priority so it's fixed for good ?
+All the rest can wait until this is resolved.
+[2025-07-31T15:00:55.243319] U020YLADEKA: I know you are busy with many other incoming requests as well and thank you both Eitan and Hubert for all your hard work so far :pray:
+[2025-07-31T15:01:56.017489] U04MGT65NQJ: I think the container is facing a load issue with both FoA accessing it and a heavy load from QE download right now (the one Priyanka asked to help me with). I am trying to figure out where the bottleneck is exactly
+[2025-07-31T15:04:25.105529] U0171SJF00H: can we increase the size? i hope the bottleneck isn't the s3 fs mount from goofys
+[2025-07-31T15:05:23.344479] U04MGT65NQJ: the size of?
+[2025-07-31T15:09:00.640959] U04JRTQ4LHK: Please don't touch it right now as Sergei is running validators
+[2025-08-03T21:04:52.581289] U0171SJF00H: <@U04AXB4GK52> <@U04JRTQ4LHK> there's an email CC'd to you in your inboxes, looks like a contcert token for JIRA created in the auto-cki-bot account is about to expire, double-messaging just in case, also thanks <@U04MGT65NQJ> for spotting it (my filters are too good and it got thrown away into a labeleld drawer)
+[2025-08-04T08:39:05.776569] U04JRTQ4LHK: Aha, thank you.
+[2025-08-05T11:21:20.377649] U0171SJF00H: <@U04MGT65NQJ> <https://docs.google.com/spreadsheets/d/1NN1dFDUh789_u1qV7afXROAXiLdfD1AiGmZymligKO0/edit?usp=sharing>
+[2025-08-05T11:21:40.215429] U0171SJF00H: Looks like a bulk of the work was done for us WRT IAM auditing
+[2025-08-05T11:22:20.480219] U0171SJF00H: Tab 3  "Access Key Issues" even highlights best guess owners
+[2025-08-05T11:22:35.718849] U0171SJF00H: We still need to send this out to a wider audience to have people self-report ownership before we start the rotation
+[2025-08-06T13:10:13.915099] U0171SJF00H: Vibe coded rhivos-cloudfront <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/602/diffs> (at least the first part of it, there's other MRs) (<@U04MGT65NQJ> if you can take a look)
+[2025-08-06T13:10:23.965189] U0171SJF00H: overall the approach here makes sense, but I might be echo chambering myself, so LMK
+[2025-08-07T09:03:34.715589] U0171SJF00H: :wave:<@U04MGT65NQJ>, <@U04QNH25QA1> wants to add a new project in our gitlab terraform config, but seems like his plan is overwriting some of your recent changes <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/jobs/38397638> thought you might want to check on those before we merge it
+[2025-08-07T14:21:51.742799] U04NNGY4QQ2: <@U04MGT65NQJ> <@U0171SJF00H> I was checking monthly builds for AutoSD and I cannot see the monthly build in webserver <https://autosd.sig.centos.org/AutoSD-9/monthly/>, although I can see it in S3 bucket. Do you have any idea?
+[2025-08-07T14:23:13.368619] U04NNGY4QQ2: I mean `autosd9-202508010003` is missing in webserver
+[2025-08-07T14:30:15.387459] U0171SJF00H: I'll put that on my todo list
+[2025-08-07T15:37:10.302469] U03PV3B9Q7K: <@U04MGT65NQJ> Do you still need this one or can we close it? <https://gitlab.cee.redhat.com/automotive/contcert/foa-validators/dbus-broker-tests/-/merge_requests/23>
+[2025-08-08T11:42:40.619919] U04NNGY4QQ2: Hey <@U0171SJF00H> I guess there is an issue with the cloudfront. Since I can see today's nightly build in S3  but it is not available in webserver <https://autosd.sig.centos.org/AutoSD-9/>
+[2025-08-11T09:57:31.197379] U04NNGY4QQ2: Hi <@U0171SJF00H> <@U04MGT65NQJ>, is there any update regarding to builds in <https://autosd.sig.centos.org/AutoSD-9/>. I still see the last build from Aug 1st, although there are builds for Aug 9th, 10th and 11th in S3 bucket
+[2025-08-11T10:00:25.853409] U0171SJF00H: Fighting fires, looking into that now though.
+[2025-08-12T07:45:03.613439] U0171SJF00H: Can we get one more review/approval here please? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/617>
+[2025-08-12T09:39:22.795629] U0171SJF00H: And another one for reviews
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/616>
+This one cleans up orphaned directories (ones that don't exist in s3 anymore) so they won't be indexed on the webserver and cause confusion when they get redireted to a non-existent clodfront artifact
+[2025-08-12T09:44:44.903639] U04NNGY4QQ2: I can see the latest builds in <https://autosd.sig.centos.org/AutoSD-9/> thanks <@U0171SJF00H> for fixing it.
+[2025-08-12T10:25:20.207649] U04NNGY4QQ2: <@U04MGT65NQJ>, <@U0171SJF00H> any idea why this job couldn't be started <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/38598477>?
+[2025-08-12T10:37:34.580019] U0171SJF00H: initially, no idea why, we might need to look into the runner logs
+[2025-08-12T10:42:48.543219] U04NNGY4QQ2: I was checking EC2 instances for us-east-2 region and there is only one instance and the status is stopped <https://us-east-2.console.aws.amazon.com/ec2/home?region=us-east-2#Instances>:
+[2025-08-12T10:50:36.405279] U0171SJF00H: Those runners are served from the aws-internal account
+[2025-08-12T10:50:46.640109] U0171SJF00H: think you might be looking at the "public" one
+[2025-08-12T10:51:30.357349] U0171SJF00H: <@U04MGT65NQJ> are these instances plugged into splunk in any way? just wondering if I need to ssh into them to see the logs, or if theres a splunk index for it
+[2025-08-12T10:56:47.795179] U04MGT65NQJ: there are splunk indexes for them. see <https://dashboard.auto-toolchain.redhat.com/resources> VHCL-008 monitoring
+[2025-08-12T11:04:01.181849] U04MGT65NQJ: I see errors on both runners. analyzing
+[2025-08-12T11:10:03.021669] U0171SJF00H: <@U04QNH25QA1> also found this on the infra repo <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/pipelines/12520559>
+[2025-08-12T11:17:31.541329] U04MGT65NQJ: on one of the two instances, I was trying out something. this is probably the reason for the error that Roni saw on the infra repo. I will regenerate the instance so pipelines can continue. On the other instance there is an error which I can't find a reason for.
+[2025-08-12T12:41:15.855739] U0171SJF00H: :howdy: <@U04QNH25QA1> needs one more review here to resolve part of the issue he discussed in the Open Sync meeting just now
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/618>
+[2025-08-12T13:17:30.697599] U0171SJF00H: <@U04MGT65NQJ> Do you remember the IT ticket we had to increase our resource quotas on MP+ ?
+[2025-08-12T13:17:50.012369] U0171SJF00H: I just wanna take a peek at that to file one for Roni for TC
+[2025-08-12T14:14:06.983159] U0171SJF00H: one review/approval here from anyone willing :)
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/620>
+[2025-08-12T15:48:58.692569] U04QNH25QA1: <@U0171SJF00H> <@U04MGT65NQJ> I got the following error (<https://gitlab.cee.redhat.com/automotive/services/test-console/-/jobs/38614821>):
+```fatal: unable to access '<https://gitlab.cee.redhat.com/automotive/services/test-console.git/>': Error while processing content unencoding: invalid stored block lengths```
+[2025-08-14T12:28:59.570559] U04JRTQ4LHK: Just following up on our discussion in the auto-toolchain team meeting, did we now increase the size of the RHIVOS webserver ec2 instance?
+[2025-08-18T11:52:44.391369] U04QNH25QA1: Hi we get the following error when uploading to S3 bucket any idea?
+```Unable to locate credentials```
+[2025-08-18T12:02:38.208829] U020YLADEKA: Can we somehow add the script output link (stats )  to the ATC dashboard monitoring per service resource page <https://dashboard.auto-toolchain.redhat.com/resources|here>?
+[2025-08-18T12:04:53.477909] U020YLADEKA: Make sense <@U04JRTQ4LHK>, if it's too much work to add it there leave it
+[2025-08-18T18:54:37.959979] U020YLADEKA: Thank you <@U04MGT65NQJ> for pulling the data from current web server instances .
+
+About priority:
+My point before was to get the baseline monitoring on the current and past webserver availability and issues as one of our critical ATC services and part of Infrastructure availability improvements (AUTOBU-886).
+<@U04MGT65NQJ> can you add an Epic for monitoring the RHIVOS webserver service ? 
+We will also need to keep monitoring it after we switch to cloudfront and pulp (which will take a while especially with pulp VPN blockers for DS)
+
+This will help us with understanding how much we improved (hopefully) by moving to cloud front so we should definitely be investing in it .
+
+<@U04NN2GEXLZ> please correct me if I’m off about monitoring this service not on the top priority list.
+[2025-08-19T16:02:50.189599] U04NN2GEXLZ: For this initiative for sure; we need to figure out what to monitor and how to monitor it to get some baseline data.
+[2025-08-21T12:35:56.001549] U02F2L89YTS: <@U0171SJF00H> I think it's time to implement this. I was thinking on taking this tasks. I might refine the ticket to specify that it should be a job in the upstream pipeline, but I think this capture the task.
+Would you ming to review it and give me your blasing to work on that? hehe
+<https://issues.redhat.com/browse/VROOM-32269>
+[2025-08-26T09:16:53.599259] U0171SJF00H: :howdy: can i get some eyes on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/602>?
+I've left some more context in the MR description
+[2025-08-26T13:20:07.280419] U04NNGY4QQ2: I have a dumb question, can we create gitlab runners close to iad2 datacenter for downstream generate-compose job? Since the generated composes are stored there <https://download-01.beak-001.prod.iad2.dc.redhat.com/odcs/prod/odcs-4399323/> maybe having runners closer to this region shortens the compose download time.
+[2025-08-28T13:04:52.871119] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/632> One more review, the merge in !602 had some Terraform apply failures, these should fix that..
+[2025-08-28T20:06:13.550089] U02F2L89YTS: Please, have a look to this MR: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/633>
+That one is required for making this one work: <https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/424>
+[2025-09-01T06:40:31.838869] U04Q4USRZTM: Hi everyone,
+I was thinking to change Test Console OpenShift strategy configuration from Recreate to Rolling to avoid disruptions in user experience during deployment updates. wdyt? Is there any reason we are using Recreate or any concerns on using Rolling?
+[2025-09-01T07:23:37.632509] U0171SJF00H: No specific reason IIRC, though if you're planning on major updates and major incompatibilities between versions, I'd say keep recreate, but if it's a fairly "clean" update, then no obstacles to rolling
+[2025-09-01T12:39:37.297579] U0171SJF00H: The previous cloudfront apply failed again :sad_meow:
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/635>
+this one should hopefully fix that...
+[2025-09-01T14:30:38.607719] U0171SJF00H: I really hope this is the last one <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/637> my sanity is begging for it
+[2025-09-01T15:11:33.380549] U0171SJF00H: Spoiler alert: it wasn't ....
+[2025-09-01T15:11:37.928329] U0171SJF00H: ```│ Error: creating WAFv2 WebACL (rhivos-internal-vpc-only): WAFInvalidParameterException: Error reason: You have used none or multiple values for a field that requires exactly one value., field: RULE, parameter: Rule
+│ {
+│   RespMetadata: {
+│     StatusCode: 400,
+│     RequestID: "bb14f413-e774-4af9-8faa-d29fcc99d264"
+│   },
+│   Field: "RULE",
+│   Message_: "Error reason: You have used none or multiple values for a field that requires exactly one value., field: RULE, parameter: Rule",
+│   Parameter: "Rule",
+│   Reason: "You have used none or multiple values for a field that requires exactly one value."
+│ }
+│ 
+│   with module.rhivos_cloudfront.aws_wafv2_web_acl.rhivos_internal_vpc_only,
+│   on modules/rhivos-cloudfront/waf.tf line 25, in resource "aws_wafv2_web_acl" "rhivos_internal_vpc_only":
+│   25: resource "aws_wafv2_web_acl" "rhivos_internal_vpc_only" {
+│ 
+╵```
+
+[2025-09-01T15:12:16.374249] U0171SJF00H: I'll try to set this up manually instead of fidgeting with terraform, maybe that way I'll at least get something deployed and then re-applied retroactively to that config, so I don't need to bother anyone anymore (for a while)
+[2025-09-01T15:19:05.286519] U02F2L89YTS: I find that way always shorter and less troublesome (unless it's a straightforward change) for infra changes
+[2025-09-04T13:40:08.233799] U0171SJF00H: Can I get some eyes on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/616>? this one slipped through the cracks somehow
+[2025-09-05T11:16:22.050129] U04Q4USRZTM: Morning,
+I see this error building container in gitlab CI
+```curl: (28) Failed to connect to repository-basic.engineering.redhat.com port 443: Connection timed out
+error building image: error building stage: failed to execute command: waiting for process to exit: exit status 28```
+any insights?
+<https://gitlab.cee.redhat.com/automotive/services/test-console/-/jobs/40043527>
+[2025-09-05T11:24:46.537779] U02DXVBD5CP: seems that this `<https://repository-basic.engineering.redhat.com>` is not reacheable, maybe wait and try again
+[2025-09-05T11:34:09.610479] U04AXB4GK52: Seems internal Nexus is down right now - nothing shows up in outage-list about this so Im going to report to middleware
+[2025-09-05T11:45:39.107349] U04AXB4GK52: There is ongoing network maintenance in the IAD2 data center today that seems to be affecting RERC availability. According to outage list the scheduled maintenance window is over at 1400UTC and things should be okay then
+[2025-09-05T11:45:51.094439] U04AXB4GK52: cc: <@U04Q4USRZTM> <@U02DXVBD5CP>
+[2025-09-05T11:46:58.802939] U02DXVBD5CP: thanks <@U04AXB4GK52> :meow_thx:
+[2025-09-05T11:48:03.169679] U04AXB4GK52: Just FYSA there's also scheduled resilience testing for the same data center next week from 8 - 12 Sep. The notice says there shouldn't be any impact to users, but if things are acting funny we should keep it in mind and file a ticket for anything fatal
+[2025-09-08T08:42:33.817199] U02JHD5HMGC: Good morning, the ATC dashboard expired on Friday.  No issues on Firefox, but I'd like to fix the issue.
+I've looked at the dashboard code, the RH certs there expire in 2055.
+When I run locally, the webpage is not secured.
+the gitlab-ci.yml includes pipeline-as-code gitlab files, but I haven't found what I'm looking for.
+Anyone here any suggestions on how to update a cert for ATC dashboard?
+[2025-09-08T08:49:38.243669] U0171SJF00H: &gt; certs there expire in 2055
+Cool, so we're covered for the next 30 years :wink:  (jk, I know it's a typo)
+So, generally that process isn't difficult, but the first step is to re-submit a certificate request to IT. let me find the docs for that
+[2025-09-08T08:51:20.632589] U0171SJF00H: <https://spaces.redhat.com/spaces/Automotive/pages/339597128/Auto+Toolchain+SSL+Certificates#AutoToolchainSSLCertificates-dashboard.auto-toolchain.redhat.com|https://spaces.redhat.com/spaces/Automotive/pages/339597128/Auto+Toolchain+SSL+Certificates#AutoToolchainSSLCertificat[…]d.auto-toolchain.redhat.com>
+[2025-09-08T08:54:17.885119] U02JHD5HMGC: ```auto-toolchain-dashboard (update-cert) $ openssl x509 --enddate -noout -in certs/RH-IT-Root-CA.crt 
+notAfter=Jun 26 17:38:11 2055 GMT```
+
+[2025-09-08T08:57:53.255379] U02DXVBD5CP: wow 2055 for real
+[2025-09-08T08:58:13.111249] U02DXVBD5CP: :hehecat:
+[2025-09-08T09:03:10.862129] U0171SJF00H: Ah, but that's for the CA expiry date, not the .crt that we use to sign for SSL
+[2025-09-10T10:55:28.926479] U04QNH25QA1: Hi, any idea why this stopped working <https://gitlab.cee.redhat.com/automotive/services/test-console/-/jobs/40257504>
+```INFO[0154] Running: [/bin/sh -c curl -X GET <https://repository-basic.engineering.redhat.com/nexus/repository/dno-raw/droute-client/1.2.2/droute-linux-386>          -o "${DROUTE_PATH}" &amp;&amp;  chmod +x "${DROUTE_PATH}"] 
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (60) SSL certificate problem: unable to get local issuer certificate```
+[2025-09-10T12:31:35.466539] U04NNGY4QQ2: Hi <@U04AXB4GK52> any idea why the contcert-client is not installed in gator container-build? <https://gitlab.cee.redhat.com/automotive/fences/gating/gator/-/jobs/40261940>
+[2025-09-11T12:41:19.090549] U04AGQD0K8D: Hi All,
+Can I get some reviews on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/639>
+[2025-09-12T13:04:25.870199] U0171SJF00H: small review for anyone willing, <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/640> no rush on this, i'll probably only merge this on Monday
+[2025-09-12T13:56:19.364229] U04Q4USRZTM: Hi everyone,
+I see we have the following definition in Test Console preprod
+```annotations:
+    <http://deployment.kubernetes.io/revision|deployment.kubernetes.io/revision>: '64'
+    <http://turbo.ibm.com/override|turbo.ibm.com/override>: 'true'```
+and this error
+```Invalid value 'true' for annotation '<http://turbo.ibm.com/override|turbo.ibm.com/override>'. Valid values are: false, cpu, all```
+Which value is suggested here?
+[2025-09-14T19:37:24.996629] U020YLADEKA: Seems like this helped : 
+[2025-09-15T08:09:28.048819] U0171SJF00H: :howdy:  <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/640> If anyone could lend a review :)
+[2025-09-15T09:02:52.784259] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/642> - PEBKAC on my end, copy pasting policies and not noticing I didn't change some paths... :facepalm:
+[2025-09-16T06:27:21.636139] U04Q4USRZTM: HI everyone,
+I see CI jobs stuck
+<https://gitlab.cee.redhat.com/automotive/services/test-console/-/merge_requests/487>
+But I checked and there are available runners, any idea?
+[2025-09-16T11:23:23.157859] U0171SJF00H: <@U02JHD5HMGC> you're going to have to re-submit that CSR with a proper cname in the request, <@U04NNGY4QQ2> noticed you requested <http://atcdashboard-rhivos.int.paas.dev.redhat.com|atcdashboard-rhivos.int.paas.dev.redhat.com>
+[2025-09-16T11:23:56.756869] U0171SJF00H: this time around please note the private key you use to generate the csr, we'll need that when we add it to the deployment, also the cname should match the current dashboard url
+[2025-09-16T13:22:15.984819] U0171SJF00H: :howdy: can I get one more approval here? <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/645>
+[2025-09-16T14:13:09.963209] U0171SJF00H: and one more please: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/646>
+[2025-09-17T09:50:34.187149] U0171SJF00H: <@U04MGT65NQJ> Mind taking another glance at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/616> ? I think i addressed all of your comments
+[2025-09-17T09:58:43.724919] U04MGT65NQJ: Hi <!channel>,
+Attn: If you are accessing AWS from the command line manually or programmaticaly
+
+We have recently received a communication from IT that we should change the way we login to AWS from the command line. Using static personal users is no longer allowed starting November, and SSO should be used instead. I have created a <https://spaces.redhat.com/x/C4BTKQ|page> that explains how to migrate and I will also give a demonstration in the Toolchain Demo this afternoon.  Please take a few minutes to complete the migration for your personal user if you have one, because starting November, IT will automatically delete AWS users risking lockout. Also please alert me on the <https://issues.redhat.com/browse/VROOM-31311|Jira Epic> comments to any use cases you might have around using static AWS credentials so that I can address them in time.
+Thanks a lot
+[2025-09-17T12:09:30.008999] U04NNGY4QQ2: Hi <@U0171SJF00H> <@U04MGT65NQJ> autosd webserver seems down, I cannot reach <http://autosd.sig.centos.org/AutoSD-9/nightly/repos/AutoSD/compose/AutoSD>
+[2025-09-17T13:16:34.958949] U0171SJF00H: Quite an MR for reviews :please-cat:
+
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/644>
+[2025-09-19T08:57:23.434019] U04JRTQ4LHK: I guess I've discovered where that token was being used... It was still in place for the rhivos-webserver. I've knocked that offline and <@U02DXVBD5CP> said she'll fix it.
+[2025-09-19T09:00:10.671219] U04Q4USRZTM: It was announced somewhere the introduction of SonarQube?
+I see my CI failing now and I don't expected to spend time fixing those stuff today!
+[2025-09-22T13:05:43.873359] U0171SJF00H: :howdy: Can I get some eyes on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/644> ?
+
+Eitan kindly added a commit where he addressed his own comment (thank you!) so I think we're ready to deploy this. still some more work to do, but getting close
+[2025-09-22T14:18:44.699159] U0171SJF00H: One more :meow_pwettyplease:
+[2025-09-23T10:59:30.399679] U0171SJF00H: May I get some eyes on <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/652>? the apply for !644 failed, unfortunately with terraform some fields aren't validated prior to hitting the API, so, sometimes we're left with this ugly "validated" but not "correct" terraform config...
+[2025-09-23T14:05:20.295729] U0171SJF00H: <@U02DXVBD5CP> I see you're having some unrelated pipeline failures in: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/653>
+[2025-09-23T14:06:02.107479] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/649/diffs> Should fix the one of the changes in the plan
+[2025-09-23T14:06:48.934179] U0171SJF00H: as for the bucket failure, I'll address that now
+[2025-09-25T08:30:39.372929] U02DXVBD5CP: one more review here pls <https://gitlab.cee.redhat.com/automotive/services/supply-chain-webserver/-/merge_requests/51>
+[2025-09-29T06:44:51.545259] U04QNH25QA1: Hi Good morning, I can't login to RHIVOS server, not sure if it's a known issue or my local issue:
+[2025-09-29T08:41:00.361959] U04JRTQ4LHK: <@U0171SJF00H> Do you want to double check <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/657> before I just hit merge?
+[2025-10-01T12:31:03.273839] U02F2L89YTS: <@U02DXVBD5CP> I see you already added the `/mnt/buckets/in-vehicle-os` to the webserver, but I don't see it working. Was that change deployed?
+<https://gitlab.cee.redhat.com/automotive/services/supply-chain-webserver/-/commit/7f307213e08f818ddef7fda6df2d74163b52928a>
+[2025-10-01T12:31:38.043239] U02DXVBD5CP: i haven't pulled that into ec2 and rebuild the container yet
+[2025-10-01T12:31:48.103779] U02F2L89YTS: Ah, ok
+[2025-10-01T12:32:03.713609] U02DXVBD5CP: sorry been busy with Errata stuff
+[2025-10-01T12:32:19.794159] U02F2L89YTS: no worries, just worndering. Do you have a ticket for that chnage?
+[2025-10-01T12:32:33.403799] U02DXVBD5CP: nope, I don't have
+[2025-10-01T12:33:10.980699] U02F2L89YTS: Ok, I'll create one under this epic and we add your change and the deployment. Sounds good?
+<https://issues.redhat.com/browse/VROOM-33349>
+[2025-10-01T12:36:04.781299] U02F2L89YTS: BTW, now that we're cleaning/renaming things, maybe we should rename the `supply-chain-webserver` repo to `rhivos-webserver`, which is how we normally refers to and that is more clear.
+WDYT?
+[2025-10-01T12:38:44.816869] U02DXVBD5CP: it's fine by me

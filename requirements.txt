@@ -16,8 +16,14 @@ urllib3==2.4.0
 # Async HTTP client for Slack API
 httpx>=0.28.1
 
+# Gemini AI integration
+google-generativeai
+
 # Type hints and validation
 typing_extensions==4.14.0
+
+# Schedule management
+croniter==2.0.1
 
 # Performance monitoring (optional)
 # rich==14.1.0  # For better console output

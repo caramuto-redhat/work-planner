@@ -1,0 +1,48 @@
+# Slack Data Collection Schedule Configuration
+# This file defines when and how often to collect Slack data
+
+# Global settings
+global:
+  timezone: "UTC"
+  retention_days: 30  # How long to keep old dumps
+  max_age_hours: 24   # Maximum age before forcing fresh dump
+
+# Slack data collection schedule
+slack:
+  enabled: true
+  schedule: "0 6 * * *"  # Daily at 6 AM UTC
+  teams:
+    - name: "toolchain"
+      channels: "all"  # Dump all channels for this team
+      max_age_hours: 24
+    - name: "foa"
+      channels: "all"
+      max_age_hours: 24
+    - name: "assessment"
+      channels: "all"
+      max_age_hours: 24
+    - name: "boa"
+      channels: "all"
+      max_age_hours: 24
+  # Individual channels can also be specified
+  individual_channels:
+    - channel_id: "C04JDFLHJN6"
+      max_age_hours: 12  # More frequent for important channels
+    - channel_id: "C05BYR06B0V"
+      max_age_hours: 12
+
+# Data retention and cleanup
+cleanup:
+  enabled: true
+  schedule: "0 2 * * 0"  # Weekly on Sunday at 2 AM UTC
+  retention_days: 30
+  keep_latest: 10  # Always keep the 10 most recent dumps
+  compress_old: true  # Compress dumps older than 7 days
+
+# Notification settings
+notifications:
+  enabled: true
+  slack_channel: "C096PGA5885"  # Logs channel
+  on_success: true
+  on_failure: true
+  on_warning: true

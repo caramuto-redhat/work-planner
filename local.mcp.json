@@ -7,7 +7,7 @@
       ],
       "cwd": "/Users/pacaramu/Documents/Git/work-planner",
       "env": {
-        "ENV_FILE": "/Users/pcaramu/.rh-work-planner.env"
+        "ENV_FILE": "/Users/pacaramu/.rh-work-planner.env"
       },
       "description": "Local Work Planner MCP server with Slack integration"
     }

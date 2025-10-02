@@ -44,16 +44,11 @@ try:
     from connectors.slack.client import SlackClient
     from connectors.slack.config import SlackConfig
     from connectors.slack.tools import (
-        dump_slack_channel_tool,
-        dump_team_slack_data_tool,
-        list_team_slack_channels_tool,
-        read_slack_channel_tool,
-        read_team_slack_data_tool,
-        list_slack_dumps_tool,
-        get_slack_dump_summary_tool,
-        force_fresh_slack_dump_tool,
-        search_slack_mentions_tool,
-        search_team_slack_mentions_tool
+        dump_slack_data_tool,
+        read_slack_data_tool,
+        search_slack_data_tool,
+        list_slack_channels_tool,
+        list_slack_dumps_tool
     )
     
     # Create Slack client and config
@@ -61,20 +56,67 @@ try:
     slack_client = SlackClient(slack_config)
     
     # Register Slack tools
-    mcp.tool()(dump_slack_channel_tool(slack_client, slack_config))
-    mcp.tool()(dump_team_slack_data_tool(slack_client, slack_config))
-    mcp.tool()(list_team_slack_channels_tool(slack_client, slack_config))
-    mcp.tool()(read_slack_channel_tool(slack_client, slack_config))
-    mcp.tool()(read_team_slack_data_tool(slack_client, slack_config))
+    mcp.tool()(dump_slack_data_tool(slack_client, slack_config))
+    mcp.tool()(read_slack_data_tool(slack_client, slack_config))
+    mcp.tool()(search_slack_data_tool(slack_client, slack_config))
+    mcp.tool()(list_slack_channels_tool(slack_client, slack_config))
     mcp.tool()(list_slack_dumps_tool(slack_client, slack_config))
-    mcp.tool()(get_slack_dump_summary_tool(slack_client, slack_config))
-    mcp.tool()(force_fresh_slack_dump_tool(slack_client, slack_config))
-    mcp.tool()(search_slack_mentions_tool(slack_client, slack_config))
-    mcp.tool()(search_team_slack_mentions_tool(slack_client, slack_config))
     
-    print("✅ Registered Slack connector with 10 tools")
+    print("✅ Registered Slack connector with 5 unified tools")
 except Exception as e:
     print(f"❌ Failed to register Slack connector: {e}")
+
+# Initialize Gemini connector
+try:
+    from connectors.gemini.tools import (
+        analyze_slack_data_tool,
+        analyze_jira_data_tool,
+        generate_email_summary_tool,
+        custom_ai_analysis_tool
+    )
+    
+    # Create Gemini client and config
+    from connectors.gemini.client import GeminiClient
+    from connectors.gemini.config import GeminiConfig
+    
+    gemini_config = GeminiConfig()
+    gemini_client = GeminiClient(gemini_config.get_config())
+    
+    # Register Gemini tools
+    mcp.tool()(analyze_slack_data_tool(gemini_client, gemini_config.get_config()))
+    mcp.tool()(analyze_jira_data_tool(gemini_client, gemini_config.get_config()))
+    mcp.tool()(generate_email_summary_tool(gemini_client, gemini_config.get_config()))
+    mcp.tool()(custom_ai_analysis_tool(gemini_client, gemini_config.get_config()))
+    
+    print("✅ Registered Gemini connector with 4 tools")
+except Exception as e:
+    print(f"❌ Failed to register Gemini connector: {e}")
+
+# Initialize Schedule connector
+try:
+    from connectors.schedule.tools import (
+        get_schedule_status_tool,
+        run_scheduled_collection_tool,
+        update_schedule_config_tool,
+        add_team_to_schedule_tool,
+        remove_team_from_schedule_tool
+    )
+    
+    # Create Schedule client and config
+    from connectors.schedule.config import ScheduleConfig
+    
+    schedule_config = ScheduleConfig()
+    
+    # Register Schedule tools
+    mcp.tool()(get_schedule_status_tool(None, schedule_config))
+    mcp.tool()(run_scheduled_collection_tool(None, schedule_config))
+    mcp.tool()(update_schedule_config_tool(None, schedule_config))
+    mcp.tool()(add_team_to_schedule_tool(None, schedule_config))
+    mcp.tool()(remove_team_from_schedule_tool(None, schedule_config))
+    
+    print("✅ Registered Schedule connector with 5 tools")
+except Exception as e:
+    print(f"❌ Failed to register Schedule connector: {e}")
 
 # Built-in tool listing
 @mcp.tool()
@@ -85,13 +127,14 @@ def list_available_tools() -> str:
         "tools": [
             "search_issues", "get_team_issues", "get_project_info", 
             "get_user_info", "list_teams", "list_organizations",
-            "dump_slack_channel", "dump_team_slack_data", "list_team_slack_channels",
-            "read_slack_channel", "read_team_slack_data", "list_slack_dumps",
-            "get_slack_dump_summary", "force_fresh_slack_dump",
-            "search_slack_mentions", "search_team_slack_mentions",
+            "dump_slack_data", "read_slack_data", "search_slack_data",
+            "list_slack_channels", "list_slack_dumps",
+            "analyze_slack_data", "analyze_jira_data", "generate_email_summary",
+            "custom_ai_analysis", "get_schedule_status", "run_scheduled_collection",
+            "update_schedule_config", "add_team_to_schedule", "remove_team_from_schedule",
             "list_available_tools"
         ],
-        "total_tools": 17
+        "total_tools": 21
     })
 
 if __name__ == "__main__":

@@ -100,16 +100,27 @@ def check_and_dump_if_needed(client, config, channel_id: str, max_age_hours: int
                 f.write(f"# Generated: {datetime.now().isoformat()}\n")
                 f.write(f"# Total Messages: {len(messages)}\n\n")
                 
+                # Get user display names mapping
+                user_mappings = config.get('user_display_names', {})
+                
                 for message in messages:
                     timestamp = datetime.fromtimestamp(float(message['ts']))
-                    user = message.get('user', 'Unknown')
+                    user_id = message.get('user', 'Unknown')
                     text = message.get('text', '')
+                    
+                    # Replace user ID with display name if available
+                    user = user_mappings.get(user_id, user_id)
                     
                     # Enhanced parsing: clean up Slack formatting
                     parsed_text = text
                     # Remove Slack user mentions and replace with readable format
                     import re
-                    parsed_text = re.sub(r'<@([A-Z0-9]+)>', r'@\1', parsed_text)
+                    # Replace user mentions in message content with display names
+                    def replace_user_mention(match):
+                        mentioned_user_id = match.group(1)
+                        display_name = user_mappings.get(mentioned_user_id, mentioned_user_id)
+                        return f"@{display_name}"
+                    parsed_text = re.sub(r'<@([A-Z0-9]+)>', replace_user_mention, parsed_text)
                     # Remove Slack channel links and replace with readable format
                     parsed_text = re.sub(r'<#([A-Z0-9]+)\|([^>]+)>', r'#\2', parsed_text)
                     # Remove general links but keep the URL
@@ -374,12 +385,16 @@ def force_fresh_slack_dump_tool(client, config):
             if not team_channels:
                 return create_error_response(f"No Slack channels found for team '{team}'")
             
+            # Import the dump_slack_channel_tool to ensure proper user mapping
+            from .slack_dumper import dump_slack_channel_tool
+            dump_tool = dump_slack_channel_tool(client, config)
+            
             results = []
             errors = []
             
             for channel_id in team_channels:
-                # Force dump by setting max_age_hours to 0
-                result = check_and_dump_if_needed(client, config, channel_id, max_age_hours=0)
+                # Use the dump_slack_channel_tool directly to ensure user mapping is applied
+                result = dump_tool(channel_id)
                 result_data = json.loads(result)
                 if "error" not in result_data:
                     results.append(result_data)
