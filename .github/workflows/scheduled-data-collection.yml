@@ -43,18 +43,18 @@ jobs:
         slack_client = SlackClient(slack_config)
         dump_tool = dump_slack_data_tool(slack_client, slack_config)
         
-        # Get all configured channels
-        channels = slack_config.get_channels()
-        print(f'Found {len(channels)} channels to process')
+        # Get all configured channels from slack_channels section
+        slack_channels = slack_config.get('slack_channels', {})
+        print(f'Found {len(slack_channels)} channels to process')
         
         # Dump data for all channels
-        for channel in channels:
+        for channel_id, team_name in slack_channels.items():
             try:
-                print(f'Dumping data for channel: {channel[\"name\"]} ({channel[\"id\"]})')
-                result = dump_tool(channel['id'])
-                print(f'✅ Success: {channel[\"name\"]}')
+                print(f'Dumping data for channel: {channel_id} (team: {team_name})')
+                result = dump_tool(channel_id)
+                print(f'✅ Success: {channel_id} -> {team_name}')
             except Exception as e:
-                print(f'❌ Error processing {channel[\"name\"]}: {e}')
+                print(f'❌ Error processing {channel_id}: {e}')
                 # Continue with other channels instead of failing completely
                 continue
         
