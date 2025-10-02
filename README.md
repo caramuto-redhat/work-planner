@@ -248,9 +248,6 @@ podman run -i --rm --env-file ~/.rh-work-planner.env localhost/work-planner:late
 
 # GitHub Container Registry:
 podman run -i --rm --env-file ~/.rh-work-planner.env ghcr.io/caramuto-redhat/work-planner:latest
-
-# Quay.io:
-podman run -i --rm --env-file ~/.rh-work-planner.env quay.io/rhn-support-pacaramu/work-planner:latest
 ```
 
 ## 🎯 MCP Tools Usage
@@ -475,16 +472,9 @@ make setup          # Setup environment file
 make help           # Show available commands
 ```
 
-### Deploy to Quay.io
+### Deploy to GitHub Container Registry
 
-```bash
-# Set your Quay.io credentials
-export QUAY_USERNAME=your-quay-username
-export QUAY_TOKEN=your-quay-token
-
-# Deploy to Quay.io
-./deploy-quay.sh
-```
+The container is automatically built and pushed to GitHub Container Registry (GHCR) on every push to main branch. No additional deployment steps needed.
 
 ## 📋 Environment Variables
 

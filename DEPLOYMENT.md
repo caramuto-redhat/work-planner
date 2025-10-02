@@ -30,8 +30,8 @@ After adding all secrets, you should see them listed in the "Repository secrets"
 The repository includes a GitHub Actions workflow that automatically:
 - Tests the application with GitHub secrets
 - Builds the container
-- Pushes to both GitHub Container Registry and Quay.io
-- Deploys to your preferred platform
+- Pushes to GitHub Container Registry (GHCR)
+- Provides ready-to-use container images
 
 ### Manual Container Build
 
@@ -53,20 +53,16 @@ docker run -i --rm \
   work-planner:latest
 ```
 
-### Deploy to Quay.io
+### Deploy to GitHub Container Registry
+
+The container is automatically built and pushed to GitHub Container Registry (GHCR) on every push to main branch. You can pull and use the image directly:
 
 ```bash
-# Set your Quay.io credentials
-export QUAY_USERNAME=your-quay-username
-export QUAY_TOKEN=your-quay-token
+# Pull the latest image
+podman pull ghcr.io/caramuto-redhat/work-planner:latest
 
-# Deploy using the provided script
-./deploy-quay.sh
-
-# Or manually:
-podman build -t quay.io/rhn-support-pacaramu/work-planner:latest .
-echo "$QUAY_TOKEN" | podman login quay.io -u "$QUAY_USERNAME" --password-stdin
-podman push quay.io/rhn-support-pacaramu/work-planner:latest
+# Run the container
+podman run -i --rm --env-file ~/.rh-work-planner.env ghcr.io/caramuto-redhat/work-planner:latest
 ```
 
 ## 🔧 Local Development
