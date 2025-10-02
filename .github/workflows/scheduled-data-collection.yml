@@ -5,15 +5,6 @@ on:
     # Run every day at 6 AM UTC
     - cron: '0 6 * * *'
   workflow_dispatch:  # Allow manual triggering
-    inputs:
-      team:
-        description: 'Team to collect Slack data for (leave empty for all teams)'
-        required: false
-        default: ''
-
-env:
-  GHCR_REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   collect-slack-data:
@@ -35,72 +26,39 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Load Slack schedule configuration
-      id: schedule
-      run: |
-        python -c "
-        import yaml
-        with open('config/schedule.yaml', 'r') as f:
-            config = yaml.safe_load(f)
-        
-        # Check if Slack collection is enabled
-        slack_enabled = config.get('slack', {}).get('enabled', False)
-        print(f'slack_enabled={slack_enabled}')
-        
-        # Get teams to process
-        slack_teams = config.get('slack', {}).get('teams', [])
-        teams = [team['name'] for team in slack_teams]
-        print(f'teams={teams}')
-        " >> $GITHUB_OUTPUT
-    
-    - name: Collect Slack Data
-      if: steps.schedule.outputs.slack_enabled == 'True'
+    - name: Collect Slack Data for All Channels
       env:
-        JIRA_URL: ${{ secrets.JIRA_URL }}
-        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
         SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
         SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
         LOGS_CHANNEL_ID: ${{ secrets.LOGS_CHANNEL_ID }}
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
         python -c "
         import os
-        import sys
-        import yaml
         from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool
         from connectors.slack.client import SlackClient
         from connectors.slack.config import SlackConfig
         
-        # Load configurations
+        # Load Slack configuration
         slack_config = SlackConfig.load('config/slack.yaml')
         slack_client = SlackClient(slack_config)
         dump_tool = dump_slack_data_tool(slack_client, slack_config)
         
-        # Load schedule config
-        with open('config/schedule.yaml', 'r') as f:
-            schedule_config = yaml.safe_load(f)
+        # Get all configured channels
+        channels = slack_config.get_channels()
+        print(f'Found {len(channels)} channels to process')
         
-        # Get teams to process
-        target_team = os.getenv('INPUT_TEAM', '')
-        if target_team:
-            teams_to_process = [target_team]
-        else:
-            slack_teams = schedule_config.get('slack', {}).get('teams', [])
-            teams_to_process = [team['name'] for team in slack_teams]
-        
-        print(f'Processing Slack data for teams: {teams_to_process}')
-        
-        # Process each team
-        for team in teams_to_process:
+        # Dump data for all channels
+        for channel in channels:
             try:
-                print(f'Dumping Slack data for team: {team}')
-                result = dump_tool(team)
-                print(f'Success: {team} - {result[:200]}...')
+                print(f'Dumping data for channel: {channel[\"name\"]} ({channel[\"id\"]})')
+                result = dump_tool(channel['id'])
+                print(f'✅ Success: {channel[\"name\"]}')
             except Exception as e:
-                print(f'Error processing team {team}: {e}')
-                sys.exit(1)
+                print(f'❌ Error processing {channel[\"name\"]}: {e}')
+                # Continue with other channels instead of failing completely
+                continue
         
-        print('Slack data collection completed successfully')
+        print('🎉 Slack data collection completed')
         "
     
     - name: Upload Slack Data Artifacts
@@ -111,8 +69,8 @@ jobs:
         path: connectors/slack/slack_dump/
         retention-days: 30
     
-    - name: Send Success Notification
-      if: success()
+    - name: Send Notification to Slack
+      if: always()
       env:
         SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
         LOGS_CHANNEL_ID: ${{ secrets.LOGS_CHANNEL_ID }}
@@ -121,50 +79,16 @@ jobs:
         import os
         import requests
         
-        # Send success notification to Slack
         slack_token = os.getenv('SLACK_XOXC_TOKEN')
         channel_id = os.getenv('LOGS_CHANNEL_ID')
         
         if slack_token and channel_id:
-            message = f'✅ Daily Slack data collection completed successfully\\nRun: {os.getenv(\"GITHUB_RUN_NUMBER\")}\\nCommit: {os.getenv(\"GITHUB_SHA\")[:8]}'
+            status = '✅ Success' if os.getenv('JOB_STATUS') == 'success' else '❌ Failed'
+            message = f'{status} Daily Slack data collection\\nRun: {os.getenv(\"GITHUB_RUN_NUMBER\")}\\nCommit: {os.getenv(\"GITHUB_SHA\")[:8]}'
             
-            response = requests.post('https://slack.com/api/chat.postMessage', {
+            requests.post('https://slack.com/api/chat.postMessage', {
                 'token': slack_token,
                 'channel': channel_id,
                 'text': message
             })
-            
-            if response.json().get('ok'):
-                print('Success notification sent to Slack')
-            else:
-                print(f'Failed to send notification: {response.json()}')
-        "
-    
-    - name: Send Failure Notification
-      if: failure()
-      env:
-        SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
-        LOGS_CHANNEL_ID: ${{ secrets.LOGS_CHANNEL_ID }}
-      run: |
-        python -c "
-        import os
-        import requests
-        
-        # Send failure notification to Slack
-        slack_token = os.getenv('SLACK_XOXC_TOKEN')
-        channel_id = os.getenv('LOGS_CHANNEL_ID')
-        
-        if slack_token and channel_id:
-            message = f'❌ Daily Slack data collection failed\\nRun: {os.getenv(\"GITHUB_RUN_NUMBER\")}\\nCommit: {os.getenv(\"GITHUB_SHA\")[:8]}\\nCheck logs for details'
-            
-            response = requests.post('https://slack.com/api/chat.postMessage', {
-                'token': slack_token,
-                'channel': channel_id,
-                'text': message
-            })
-            
-            if response.json().get('ok'):
-                print('Failure notification sent to Slack')
-            else:
-                print(f'Failed to send notification: {response.json()}')
         "
