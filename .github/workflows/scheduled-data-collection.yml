@@ -117,6 +117,8 @@ jobs:
         
         # Create zip file with all slack dumps
         zip_filename = f'slack-dumps-{datetime.now().strftime(\"%Y%m%d-%H%M%S\")}.zip'
+        print(f'🔐 Creating zip file: {zip_filename}')
+        file_count = 0
         with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for root, dirs, files in os.walk('connectors/slack/slack_dump/'):
                 # Skip attachment directories if not including attachments
@@ -124,10 +126,15 @@ jobs:
                     print(f'Skipping attachment directory: {root}')
                     continue
                 
+                print(f'📁 Processing directory: {root}')
                 for file in files:
                     file_path = os.path.join(root, file)
                     arcname = os.path.relpath(file_path, 'connectors/slack/slack_dump/')
                     zipf.write(file_path, arcname)
+                    file_count += 1
+                    print(f'📄 Adding file: {arcname}')
+        
+        print(f'📦 Zip file created with {file_count} files')
         
         # Create email
         msg = MIMEMultipart()
