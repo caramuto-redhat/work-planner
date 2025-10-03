@@ -27,4 +27,4 @@ ENV LOGS_CHANNEL_ID=$LOGS_CHANNEL_ID
 ENV GEMINI_API_KEY=$GEMINI_API_KEY
 
 # Entrypoint
-CMD ["python", "server.py"] 
+CMD ["python", "server.py"] # Trigger container rebuild Fri Oct  3 16:27:59 -03 2025
