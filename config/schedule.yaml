@@ -11,6 +11,7 @@ global:
 slack:
   enabled: true
   schedule: "0 6 * * *"  # Daily at 6 AM UTC
+  include_attachments: false  # Set to true to include file attachments
   teams:
     - name: "toolchain"
       channels: "all"  # Dump all channels for this team

@@ -206,7 +206,7 @@ def list_slack_dumps_tool(client, config):
 
 # Helper functions for the unified tools
 
-def _dump_single_channel(client, config, channel_id: str, latest_date: str = None) -> str:
+def _dump_single_channel(client, config, channel_id: str, latest_date: str = None, include_attachments: bool = False) -> str:
     """Dump a single Slack channel"""
     try:
         validated_channel_id = validate_channel_id(channel_id)
@@ -234,6 +234,13 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
         dump_dir = config.get("data_collection", {}).get("dump_directory", "slack_dumps")
         os.makedirs(dump_dir, exist_ok=True)
         
+        # Create attachments directory if including attachments
+        attachments_dir = None
+        if include_attachments:
+            attachments_dir = config.get("data_collection", {}).get("attachments_directory", "slack_attachments")
+            attachment_channel_dir = os.path.join(attachments_dir, validated_channel_id)
+            os.makedirs(attachment_channel_dir, exist_ok=True)
+        
         # Create filename
         filename = f"{validated_channel_id}_slack_dump.txt"
         filepath = os.path.join(dump_dir, filename)
@@ -247,12 +254,47 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
                 f.write(f"# Messages up to: {latest_date}\n")
             f.write(f"# Total Messages: {len(messages)}\n\n")
             
+            attachment_count = 0
             for message in messages:
                 timestamp = datetime.fromtimestamp(float(message['ts']))
                 user = message.get('user', 'Unknown')
                 text = message.get('text', '')
                 
                 f.write(f"[{timestamp.isoformat()}] {user}: {text}\n")
+                
+                # Handle attachments if enabled
+                if include_attachments and ('files' in message or 'blocks' in message):
+                    attachments = client.get_message_attachments(message)
+                    for attachment in attachments:
+                        download_url = attachment.get('url_private_download') or attachment.get('url_private')
+                        if download_url:
+                            try:
+                                # Download attachment
+                                attachment_result = [None]
+                                def run_async():
+                                    try:
+                                        attachment_result[0] = asyncio.run(client.download_attachment(download_url, attachment['name']))
+                                    except Exception as e:
+                                        attachment_result[0] = (None, None)
+                                
+                                thread = threading.Thread(target=run_async)
+                                thread.start()
+                                thread.join()
+                                
+                                attachment_filename, attachment_content = attachment_result[0] or (None, None)
+                                
+                                if attachment_filename and attachment_content:
+                                    # Save attachment
+                                    attachment_path = os.path.join(attachment_channel_dir, attachment_filename)
+                                    with open(attachment_path, 'wb') as af:
+                                        af.write(attachment_content)
+                                    
+                                    f.write(f"    [ATTACHMENT: {attachment_filename} ({attachment.get('size', 0)} bytes)]\n")
+                                    attachment_count += 1
+                                else:
+                                    f.write(f"    [ATTACHMENT: {attachment['name']} (download failed)]\n")
+                            except Exception as e:
+                                f.write(f"    [ATTACHMENT: {attachment['name']} (error: {str(e)})]\n")
         
         # Also create parsed version
         parsed_dir = config.get("data_collection", {}).get("parsed_directory", "slack_dumps_parsed")
@@ -335,7 +377,7 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
                 
                 f.write(f"\n")
         
-        return create_success_response({
+        result_data = {
             "target": validated_channel_id,
             "target_type": "channel",
             "messages_count": len(messages),
@@ -345,7 +387,14 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
             "parsed_filename": parsed_filename,
             "channel_name": channel_name,
             "latest_date": latest_date
-        })
+        }
+        
+        if include_attachments:
+            result_data["attachments_count"] = attachment_count
+            result_data["attachments_dir"] = attachment_channel_dir
+            result_data["include_attachments"] = True
+        
+        return create_success_response(result_data)
         
     except ValueError as e:
         return create_error_response(str(e))

@@ -4,7 +4,9 @@ Slack client wrapper
 
 import os
 import httpx
-from typing import List, Dict, Any
+import json
+from typing import List, Dict, Any, Optional
+from urllib.parse import urlparse
 
 
 class SlackClient:
@@ -63,6 +65,74 @@ class SlackClient:
                     
             except Exception as e:
                 raise RuntimeError(f"Failed to fetch Slack channel history: {str(e)}")
+    
+    async def download_attachment(self, url: str, filename: str = None) -> Optional[str]:
+        """Download an attachment file from Slack"""
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.xoxc_token}",
+            }
+            cookies = {"d": self.xoxd_token}
+            
+            async with httpx.AsyncClient() as client:
+                response = await client.get(url, headers=headers, cookies=cookies, timeout=30.0)
+                response.raise_for_status()
+                
+                # Determine filename from URL if not provided
+                if not filename:
+                    parsed_url = urlparse(url)
+                    filename = parsed_url.path.split('/')[-1]
+                    if not filename:
+                        filename = "attachment"
+                
+                return filename, response.content
+                
+        except Exception as e:
+            print(f"Warning: Failed to download attachment {url}: {str(e)}")
+            return None, None
+    
+    def get_message_attachments(self, message: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Extract attachment information from a message"""
+        attachments = []
+        
+        # Check for files attachment
+        if 'files' in message:
+            for file_info in message.get('files', []):
+                attachment_info = {
+                    'id': file_info.get('id'),
+                    'name': file_info.get('name', 'unnamed'),
+                    'title': file_info.get('title', ''),
+                    'mimetype': file_info.get('mimetype', ''),
+                    'filetype': file_info.get('filetype', ''),
+                    'url_private': file_info.get('url_private'),
+                    'url_private_download': file_info.get('url_private_download'),
+                    'size': file_info.get('size', 0),
+                    'thumb_360': file_info.get('thumb_360'),
+                    'preview': file_info.get('preview', ''),
+                }
+                attachments.append(attachment_info)
+        
+        # Check for blocks attachments (for uploaded files)
+        if 'blocks' in message:
+            for block in message.get('blocks', []):
+                if block.get('type') == 'file':
+                    element = block.get('elements', [{}])[0]
+                    file_info = element.get('external_id', {})
+                    if file_info:
+                        attachment_info = {
+                            'id': file_info.get('id'),
+                            'name': file_info.get('name', 'unnamed'),
+                            'title': file_info.get('title', ''),
+                            'mimetype': file_info.get('mimetype', ''),
+                            'filetype': file_info.get('filetype', ''),
+                            'url_private': '',
+                            'url_private_download': '',
+                            'size': file_info.get('size', 0),
+                            'preview': file_info.get('preview', ''),
+                        }
+                        attachments.append(attachment_info)
+        
+        return attachments
     
     def search_slack_mentions(self, slack_data: str, search_term: str) -> List[str]:
         """Search for specific mentions or names in Slack data"""

@@ -110,7 +110,8 @@ try:
         run_scheduled_collection_tool,
         update_schedule_config_tool,
         add_team_to_schedule_tool,
-        remove_team_from_schedule_tool
+        remove_team_from_schedule_tool,
+        toggle_slack_attachments_tool
     )
     
     # Create Schedule client and config
@@ -124,8 +125,9 @@ try:
     mcp.tool()(update_schedule_config_tool(None, schedule_config))
     mcp.tool()(add_team_to_schedule_tool(None, schedule_config))
     mcp.tool()(remove_team_from_schedule_tool(None, schedule_config))
+    mcp.tool()(toggle_slack_attachments_tool(None, schedule_config))
     
-    print("✅ Registered Schedule connector with 5 tools")
+    print("✅ Registered Schedule connector with 6 tools")
 except Exception as e:
     print(f"❌ Failed to register Schedule connector: {e}")
 

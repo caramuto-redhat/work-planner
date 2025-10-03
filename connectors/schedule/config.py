@@ -42,7 +42,8 @@ class ScheduleConfig:
             'slack': {
                 'enabled': True,
                 'schedule': '0 6 * * *',
-                'teams': []
+                'teams': [],
+                'include_attachments': False
             },
             'jira': {
                 'enabled': True,
@@ -120,6 +121,10 @@ class ScheduleConfig:
         """Check if notifications are enabled for a specific type"""
         notifications = self.get_notification_config()
         return notifications.get('enabled', False) and notifications.get(notification_type, False)
+    
+    def get_include_attachments(self) -> bool:
+        """Get whether to include attachments in Slack dumps"""
+        return self.config.get('slack', {}).get('include_attachments', False)
     
     def get_cleanup_config(self) -> Dict[str, Any]:
         """Get cleanup configuration"""

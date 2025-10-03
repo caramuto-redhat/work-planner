@@ -77,6 +77,7 @@ jobs:
         from email import encoders
         from datetime import datetime
         import zipfile
+        import yaml
         
         # Email configuration
         email_username = os.getenv('EMAIL_USERNAME')
@@ -87,10 +88,25 @@ jobs:
             print('❌ Email credentials not configured')
             exit(1)
         
+        # Read schedule configuration to check attachment setting
+        try:
+            with open('config/schedule.yaml', 'r') as f:
+                schedule_config = yaml.safe_load(f)
+            include_attachments = schedule_config.get('slack', {}).get('include_attachments', False)
+            print(f'📎 Attachment inclusion setting: {include_attachments}')
+        except Exception as e:
+            print(f'⚠️  Could not read schedule config: {e}')
+            include_attachments = False
+        
         # Create zip file with all slack dumps
         zip_filename = f'slack-dumps-{datetime.now().strftime(\"%Y%m%d-%H%M%S\")}.zip'
         with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for root, dirs, files in os.walk('connectors/slack/slack_dump/'):
+                # Skip attachment directories if not including attachments
+                if not include_attachments and 'slack_attachments' in root:
+                    print(f'Skipping attachment directory: {root}')
+                    continue
+                
                 for file in files:
                     file_path = os.path.join(root, file)
                     arcname = os.path.relpath(file_path, 'connectors/slack/slack_dump/')
@@ -109,6 +125,7 @@ jobs:
         Date: {datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")}
         Run: {os.getenv(\"GITHUB_RUN_NUMBER\")}
         Commit: {os.getenv(\"GITHUB_SHA\")[:8]}
+        Include Attachments: {include_attachments}
         
         This email contains the latest Slack data dumps from all configured channels.
         The attached zip file includes both raw and parsed data.
@@ -124,11 +141,20 @@ jobs:
         for channel_id, team_name in slack_channels.items():
             body += f'  - {channel_id} ({team_name})\\n'
         
-        body += '''
+        body += f'''
         
         The zip file contains:
-        - Raw Slack dumps (JSON format)
-        - Parsed Slack dumps (text format)
+        - Raw Slack dumps (text format)
+        - Parsed Slack dumps (text format)'''
+        
+        if include_attachments:
+            body += '''
+        - Slack file attachments (images, documents, etc.)'''
+        else:
+            body += '''
+        - Attachment files excluded (configured in schedule.yaml)'''
+        
+        body += '''
         
         Best regards,
         Work Planner MCP Server

@@ -115,6 +115,11 @@ def update_schedule_config_tool(client, config):
             service: Service name (slack, jira, ai_analysis, email_summary, global)
             setting: Setting name to update
             value: New value for the setting
+            
+        Examples:
+            - update_schedule_config('slack', 'include_attachments', 'true')
+            - update_schedule_config('slack', 'enabled', 'false')
+            - update_schedule_config('global', 'timezone', 'EST')
         """
         try:
             schedule_config = ScheduleConfig()
@@ -290,6 +295,59 @@ def remove_team_from_schedule_tool(client, config):
     return remove_team_from_schedule
 
 
+def toggle_slack_attachments_tool(client, config):
+    """Create toggle_slack_attachments tool function"""
+    
+    def toggle_slack_attachments(enable: bool = None) -> str:
+        """
+        Toggle whether to include Slack file attachments in scheduled dumps.
+        
+        Args:
+            enable: True to enable attachments, False to disable, None to toggle current setting
+        """
+        try:
+            schedule_config = ScheduleConfig()
+            
+            # Get current setting
+            current_setting = schedule_config.get_include_attachments()
+            
+            if enable is None:
+                # Toggle current setting
+                new_setting = not current_setting
+            else:
+                new_setting = enable
+            
+            # Update the configuration
+            if 'slack' not in schedule_config.config:
+                schedule_config.config['slack'] = {}
+            
+            schedule_config.config['slack']['include_attachments'] = new_setting
+            
+            # Save the updated configuration
+            import yaml
+            with open(schedule_config.config_path, 'w', encoding='utf-8') as f:
+                yaml.dump(schedule_config.config, f, default_flow_style=False, indent=2)
+            
+            action = "toggled" if enable is None else "set"
+            status = "enabled" if new_setting else "disabled"
+            
+            return create_success_response({
+                "action": action,
+                "previous_setting": current_setting,
+                "new_setting": new_setting,
+                "status": status,
+                "slack_attachments": new_setting,
+                "config_updated": True,
+                "next_scheduled_run": schedule_config.get_next_run_times().get('slack', 'unknown'),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+        except Exception as e:
+            return create_error_response("Failed to toggle Slack attachments setting", str(e))
+    
+    return toggle_slack_attachments
+
+
 # Helper function for running service collection
 def _run_service_collection(service: str, team: str, schedule_config: ScheduleConfig) -> dict:
     """Run data collection for a specific service"""
@@ -302,6 +360,14 @@ def _run_service_collection(service: str, team: str, schedule_config: ScheduleCo
         
         slack_config = SlackConfig.load('config/slack.yaml')
         slack_client = SlackClient(slack_config)
+        
+        # Check if attachments should be included
+        include_attachments = schedule_config.get_include_attachments()
+        if include_attachments:
+            # Add attachment configuration to slack config for the session
+            slack_config.config['data_collection'] = slack_config.config.get('data_collection', {})
+            slack_config.config['data_collection']['attachments_directory'] = 'connectors/slack/slack_dump/slack_attachments'
+        
         dump_tool = dump_slack_data_tool(slack_client, slack_config)
         
         teams_to_process = [team] if team else [t['name'] for t in schedule_config.get_teams('slack')]
@@ -311,7 +377,12 @@ def _run_service_collection(service: str, team: str, schedule_config: ScheduleCo
             result = dump_tool(team_name)
             results[team_name] = json.loads(result)
         
-        return {"service": "slack", "teams_processed": teams_to_process, "results": results}
+        return {
+            "service": "slack", 
+            "teams_processed": teams_to_process, 
+            "results": results,
+            "include_attachments": include_attachments
+        }
     
     elif service == "jira":
         # Import and run Jira collection
