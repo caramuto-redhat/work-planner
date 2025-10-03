@@ -186,16 +186,21 @@ jobs:
         
         msg.attach(MIMEText(body, 'plain'))
         
-        # Attach zip file
-        with open(zip_filename, 'rb') as attachment:
-            part = MIMEBase('application', 'octet-stream')
-            part.set_payload(attachment.read())
-            encoders.encode_base64(part)
-            part.add_header(
-                'Content-Disposition',
-                f'attachment; filename= {zip_filename}',
-            )
-            msg.attach(part)
+        # Only attach zip file if attachments are enabled (both Slack attachment download AND email attachment)
+        if include_attachments:
+            print(f'📎 Attaching zip file to email: {zip_filename}')
+            # Attach zip file
+            with open(zip_filename, 'rb') as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header(
+                    'Content-Disposition',
+                    f'attachment; filename= {zip_filename}',
+                )
+                msg.attach(part)
+        else:
+            print(f'📎 No zip file attachment - attachments disabled')
         
         # Send email
         try:
