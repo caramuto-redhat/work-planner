@@ -206,10 +206,20 @@ def list_slack_dumps_tool(client, config):
 
 # Helper functions for the unified tools
 
-def _dump_single_channel(client, config, channel_id: str, latest_date: str = None, include_attachments: bool = False) -> str:
+def _dump_single_channel(client, config, channel_id: str, latest_date: str = None, include_attachments: bool = None) -> str:
     """Dump a single Slack channel"""
     try:
         validated_channel_id = validate_channel_id(channel_id)
+        
+        # If include_attachments is not specified, check the schedule config
+        if include_attachments is None:
+            try:
+                from connectors.schedule.config import ScheduleConfig
+                schedule_config = ScheduleConfig()
+                include_attachments = schedule_config.get_include_attachments()
+            except Exception as e:
+                print(f"⚠️ Could not read schedule config for attachments: {e}")
+                include_attachments = False
         
         # Get channel history using async function
         def run_async():
@@ -240,6 +250,9 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
             attachments_dir = config.get("data_collection", {}).get("attachments_directory", "slack_attachments")
             attachment_channel_dir = os.path.join(attachments_dir, validated_channel_id)
             os.makedirs(attachment_channel_dir, exist_ok=True)
+            print(f"📎 Attachment download enabled for channel {validated_channel_id}")
+        else:
+            print(f"📎 Attachment download disabled for channel {validated_channel_id}")
         
         # Create filename
         filename = f"{validated_channel_id}_slack_dump.txt"

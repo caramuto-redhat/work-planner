@@ -34,13 +34,30 @@ jobs:
       run: |
         python -c "
         import os
+        import yaml
+        from connectors.schedule.config import ScheduleConfig
         from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool
         from connectors.slack.client import SlackClient
         from connectors.slack.config import SlackConfig
         
+        # Read attachment setting from schedule config
+        try:
+            schedule_config = ScheduleConfig()
+            include_attachments = schedule_config.get_include_attachments()
+            print(f'📎 Attachment inclusion setting: {include_attachments}')
+        except Exception as e:
+            print(f'⚠️  Could not read schedule config: {e}')
+            include_attachments = False
+        
         # Load Slack configuration
         slack_config = SlackConfig.load('config/slack.yaml')
         slack_client = SlackClient(slack_config)
+        
+        # Configure attachment directory if needed
+        if include_attachments:
+            slack_config.config['data_collection'] = slack_config.config.get('data_collection', {})
+            slack_config.config['data_collection']['attachments_directory'] = 'connectors/slack/slack_dump/slack_attachments'
+        
         dump_tool = dump_slack_data_tool(slack_client, slack_config)
         
         # Get all configured channels from slack_channels section
@@ -50,7 +67,7 @@ jobs:
         # Dump data for all channels
         for channel_id, team_name in slack_channels.items():
             try:
-                print(f'Dumping data for channel: {channel_id} (team: {team_name})')
+                print(f'Dumping data for channel: {channel_id} (team: {team_name}) - Attachments: {include_attachments}')
                 result = dump_tool(channel_id)
                 print(f'✅ Success: {channel_id} -> {team_name}')
             except Exception as e:
@@ -58,7 +75,7 @@ jobs:
                 # Continue with other channels instead of failing completely
                 continue
         
-        print('🎉 Slack data collection completed')
+        print(f'🎉 Slack data collection completed - Attachments: {include_attachments}')
         "
     
     - name: Send Slack Data via Email
