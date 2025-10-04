@@ -85,6 +85,12 @@ jobs:
       run: |
         python -c "
         import os
+        
+        # Debug: Print environment variables for Jira collection
+        print('🔍 Jira Environment variables check:')
+        print(f'JIRA_URL: {\"✅ SET\" if os.getenv(\"JIRA_URL\") else \"❌ MISSING\"} ({os.getenv(\"JIRA_URL\", \"\")[:50]}...)')
+        print(f'JIRA_API_TOKEN: {\"✅ SET\" if os.getenv(\"JIRA_API_TOKEN\") else \"❌ MISSING\"} ({os.getenv(\"JIRA_API_TOKEN\", \"\")[:10]}...)')
+        
         from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
         from connectors.jira.client import JiraClient
         from connectors.jira.config import JiraConfig
