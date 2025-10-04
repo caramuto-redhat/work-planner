@@ -181,7 +181,7 @@ jobs:
         "
     
     - name: Send Slack Data via Email
-      if: always()
+      if: false  # DISABLED - Use daily-summary.yml workflow for Daily Summary emails instead
       env:
         EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
         EMAIL_PASSWORD: ${{ secrets.EMAIL_TOKEN }}

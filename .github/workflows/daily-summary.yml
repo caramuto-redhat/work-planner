@@ -1,0 +1,153 @@
+name: Daily AI Summary & Email Report
+
+on:
+  schedule:
+    # Run every day at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  ai-summary-and-email:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Collect Slack Data for Analysis
+      env:
+        SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
+        SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
+      run: |
+        python -c "
+        import os
+        from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool
+        from connectors.slack.client import SlackClient
+        from connectors.slack.config import SlackConfig
+        
+        print('📱 Collecting Slack data for AI analysis...')
+        
+        # Load Slack configuration
+        slack_config = SlackConfig.load('config/slack.yaml')
+        slack_client = SlackClient(slack_config)
+        dump_tool = dump_slack_data_tool(slack_client, slack_config)
+        
+        # Get all configured channels from slack_channels section
+        slack_channels = slack_config.get('slack_channels', {})
+        print(f'Found {len(slack_channels)} channels to process')
+        
+        # Dump data for all channels
+        for channel_id, team_name in slack_channels.items():
+            try:
+                print(f'📱 Collecting Slack data for channel: {channel_id} (team: {team_name})')
+                result = dump_tool(channel_id)
+                print(f'✅ Slack data collected for channel: {channel_id}')
+            except Exception as e:
+                print(f'❌ Error collecting Slack data for {channel_id}: {e}')
+                continue
+        
+        print('🎉 Slack data collection completed for AI analysis')
+        "
+    
+    - name: Collect Jira Data for Analysis
+      env:
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      run: |
+        python -c "
+        import os
+        from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
+        from connectors.jira.client import JiraClient
+        from connectors.jira.config import JiraConfig
+        
+        print('🎫 Collecting Jira data for AI analysis...')
+        
+        # Initialize Jira client and config
+        jira_config = JiraConfig.load('config/jira.yaml')
+        jira_client = JiraClient(jira_config)
+        dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
+        
+        # Collect data for all configured teams
+        teams = ['toolchain', 'foa', 'assessment', 'boa']
+        tickets_filter = 'All In Progress'
+        
+        for team in teams:
+            try:
+                print(f'🎫 Collecting Jira data for team: {team} (filter: {tickets_filter})')
+                result = dump_tool(team, tickets_filter)
+                print(f'✅ Jira data collected for team: {team}')
+            except Exception as e:
+                print(f'❌ Error collecting Jira data for team {team}: {e}')
+                continue
+        
+        print('🎉 Jira data collection completed for AI analysis')
+        "
+    
+    - name: Generate AI Analysis & Send Daily Summary Emails
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
+        SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
+        EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_TOKEN }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      run: |
+        python -c "
+        import os
+        
+        # Debug: Print environment variables
+        print('🔍 Environment variables check:')
+        print(f'JIRA_URL: {\"✅ SET\" if os.getenv(\"JIRA_URL\") else \"❌ MISSING\"}')
+        print(f'JIRA_API_TOKEN: {\"✅ SET\" if os.getenv(\"JIRA_API_TOKEN\") else \"❌ MISSING\"}')
+        print(f'GEMINI_API_KEY: {\"✅ SET\" if os.getenv(\"GEMINI_API_KEY\") else \"❌ MISSING\"}')
+        print(f'EMAIL_USERNAME: {\"✅ SET\" if os.getenv(\"EMAIL_USERNAME\") else \"❌ MISSING\"}')
+        print(f'EMAIL_PASSWORD: {\"✅ SET\" if os.getenv(\"EMAIL_PASSWORD\") else \"❌ MISSING\"}')
+        print(f'EMAIL_FROM: {\"✅ SET\" if os.getenv(\"EMAIL_FROM\") else \"❌ MISSING\"}')
+        print(f'SLACK_XOXC_TOKEN: {\"✅ SET\" if os.getenv(\"SLACK_XOXC_TOKEN\") else \"❌ MISSING\"}')
+        
+        from connectors.gemini.tools.ai_summary_tool import ai_summary_tool
+        from connectors.gemini.client import GeminiClient
+        from connectors.gemini.config import GeminiConfig
+        
+        print('🤖 Starting AI Summary Analysis and Daily Email Generation...')
+        
+        # Initialize Gemini client
+        gemini_config = GeminiConfig()
+        gemini_client = GeminiClient(gemini_config.get_config())
+        
+        # Create AI summary tool
+        ai_tool_func = ai_summary_tool(gemini_client, gemini_config.get_config())
+        
+        # Run analysis for each team with email sending enabled
+        teams = ['toolchain', 'foa', 'assessment', 'boa']
+        
+        for team in teams:
+            try:
+                print(f'🔍 Analyzing data and generating daily summary for team: {team}')
+                result = ai_tool_func(team=team, send_email=True)
+                print(f'✅ Daily summary email sent for team: {team}')
+                print('📧 Using Daily Summary template from config/email.yaml')
+                print('   - Includes {slack_analysis} content')
+                print('   - Includes {jira_analysis} content') 
+                print('   - Uses {email_summary} template')
+            except Exception as e:
+                print(f'❌ Error generating daily summary for team {team}: {e}')
+                continue
+        
+        print('🎉 Daily Summary Analysis completed for all teams')
+        print('📧 Check that ALL teams received their Daily Summary emails!')
+        "
