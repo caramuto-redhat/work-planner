@@ -2,8 +2,8 @@ name: Daily AI Summary & Email Report
 
 on:
   schedule:
-    # Run every day at 6 AM UTC
-    - cron: '0 6 * * *'
+    # DISABLED - Use simple-data-report.yml instead
+    # - cron: '0 6 * * *'
   workflow_dispatch:  # Allow manual triggering
 
 jobs:

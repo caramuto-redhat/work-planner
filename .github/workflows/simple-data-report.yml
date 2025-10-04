@@ -1,0 +1,222 @@
+name: Simple Data Report - Raw Data Only
+
+on:
+  schedule:
+    # Run every day at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  simple-data-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Collect Raw Data and Send Simple Report
+      env:
+        SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
+        SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_TOKEN }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      run: |
+        python -c "
+        import os
+        import json
+        import smtplib
+        from email.mime.text import MIMEText
+        from datetime import datetime
+        
+        # Collect Slack data
+        print('📱 Collecting Slack data...')
+        try:
+            from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool
+            from connectors.slack.client import SlackClient
+            from connectors.slack.config import SlackConfig
+            
+            slack_config = SlackConfig.load('config/slack.yaml')
+            slack_client = SlackClient(slack_config)
+            dump_tool = dump_slack_data_tool(slack_client, slack_config)
+            
+            slack_channels = slack_config.get('slack_channels', {})
+            slack_data = []
+            
+            for channel_id, team_name in slack_channels.items():
+                try:
+                    print(f'📱 Processing channel: {channel_id} (team: {team_name})')
+                    result = dump_tool(channel_id)
+                    
+                    # Read the parsed dump to get last message
+                    parsed_dir = 'connectors/slack/slack_dump/slack_dumps_parsed'
+                    parsed_file = f'{channel_id}_slack_dump_parsed.txt'
+                    parsed_path = f'{parsed_dir}/{parsed_file}'
+                    
+                    if os.path.exists(parsed_path):
+                        with open(parsed_path, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        
+                        # Extract last message
+                        lines = content.split('\\n')
+                        last_message = 'No messages found'
+                        for i in range(len(lines) - 1, -1, -1):
+                            if lines[i].strip() and not lines[i].startswith('#') and not lines[i].startswith('Message') and not lines[i].startswith('From:') and not lines[i].startswith('-') and not lines[i].startswith('='):
+                                last_message = lines[i].strip()[:200]  # Limit to 200 chars
+                                break
+                        
+                        slack_data.append({
+                            'channel_id': channel_id,
+                            'team': team_name,
+                            'last_message': last_message
+                        })
+                        print(f'✅ Channel {channel_id}: {last_message[:50]}...')
+                    
+                except Exception as e:
+                    print(f'❌ Error processing {channel_id}: {e}')
+                    continue
+            
+            slack_collected = len(slack_data)
+        except Exception as e:
+            print(f'❌ Slack collection failed: {e}')
+            slack_data = []
+            slack_collected = 0
+        
+        # Collect Jira data
+        print('🎫 Collecting Jira data...')
+        try:
+            from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
+            from connectors.jira.client import JiraClient
+            from connectors.jira.config import JiraConfig
+            
+            jira_config = JiraConfig.load('config/jira.yaml')
+            jira_client = JiraClient(jira_config)
+            dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
+            
+            jira_data = []
+            teams = ['toolchain', 'foa', 'assessment', 'boa']
+            
+            for team in teams:
+                try:
+                    print(f'🎫 Processing team: {team}')
+                    result = dump_tool(team, 'All In Progress')
+                    
+                    # Read the JSON dump
+                    dump_dir = 'jira_dumps'
+                    json_file = f'{team}_all_in_progress_jira_dump.json'
+                    json_path = f'{dump_dir}/{json_file}'
+                    
+                    if os.path.exists(json_path):
+                        with open(json_path, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                        
+                        jira_data.append({
+                            'team': team,
+                            'total_issues': data.get('total_issues', 0),
+                            'issues': data.get('issues', [])
+                        })
+                        print(f'✅ Team {team}: {data.get(\"total_issues\", 0)} issues')
+                    
+                except Exception as e:
+                    print(f'❌ Error processing team {team}: {e}')
+                    continue
+            
+            jira_collected = len(jira_data)
+        except Exception as e:
+            print(f'❌ Jira collection failed: {e}')
+            jira_data = []
+            jira_collected = 0
+        
+        # Prepare email content
+        print('📧 Preparing simple report email...')
+        
+        email_body = f'''Simple Data Report
+Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+SLACK CHANNELS - Last Messages:
+'''
+        
+        # Add Slack data
+        if slack_data:
+            for item in slack_data:
+                email_body += f'''
+Channel: {item['channel_id']} (Team: {item['team']})
+Last Message: {item['last_message']}
+---
+'''
+        else:
+            email_body += '''
+No Slack messages collected.
+---
+'''
+        
+        email_body += f'''
+
+JIRA TICKETS - In Progress:
+'''
+        
+        # Add Jira data
+        if jira_data:
+            for team_data in jira_data:
+                email_body += f'''
+TEAM: {team_data['team'].upper()}
+Total Issues: {team_data['total_issues']}
+'''
+                for issue in team_data['issues'][:10]:  # Limit to first 10 issues per team
+                    email_body += f'  - {issue.get(\"key\", \"N/A\")}: {issue.get(\"summary\", \"No summary\")} (Status: {issue.get(\"status\", \"Unknown\")})\\n'
+                email_body += '''
+'''
+        else:
+            email_body += '''
+No Jira tickets collected.
+'''
+        
+        email_body += f'''
+
+Summary:
+- Slack channels processed: {slack_collected}
+- Jira teams processed: {jira_collected}
+
+Generated by Work Planner Simple Data Reporter
+'''
+        
+        # Send email
+        print('📧 Sending email...')
+        try:
+            email_username = os.getenv('EMAIL_USERNAME')
+            email_password = os.getenv('EMAIL_PASSWORD') 
+            email_from = os.getenv('EMAIL_FROM')
+            
+            msg = MIMEText(email_body, 'plain')
+            msg['Subject'] = f'Simple Data Report - {datetime.now().strftime(\"%Y-%m-%d\")}'
+            msg['From'] = email_from
+            msg['To'] = email_from
+            
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(email_username, email_password)
+            server.send_message(msg)
+            server.quit()
+            
+            print('✅ Simple data report email sent successfully!')
+            
+        except Exception as e:
+            print(f'❌ Failed to send email: {e}')
+            exit(1)
+        
+        print('🎉 Simple data collection and reporting completed!')
+        "
