@@ -200,7 +200,7 @@ jobs:
         
         # Email configuration
         email_username = os.getenv('EMAIL_USERNAME')
-        email_token = os.getenv('EMAIL_TOKEN')
+        email_token = os.getenv('EMAIL_PASSWORD')
         email_from = os.getenv('EMAIL_FROM')
         
         if not all([email_username, email_token, email_from]):
