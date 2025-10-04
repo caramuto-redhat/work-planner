@@ -78,6 +78,54 @@ jobs:
         print(f'🎉 Slack data collection completed - Attachments: {include_attachments}')
         "
     
+    - name: Run AI Summary Analysis
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        JIRA_SERVER_URL: ${{ secrets.JIRA_SERVER_URL }}
+        JIRA_USERNAME: ${{ secrets.JIRA_USERNAME }}
+        JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+        EMAIL_TOKEN: ${{ secrets.EMAIL_TOKEN }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      run: |
+        python -c "
+        import os
+        from connectors.gemini.tools.ai_summary_tool import ai_summary_tool
+        from connectors.gemini.client import GeminiClient
+        from connectors.gemini.config import GeminiConfig
+        from connectors.jira.client import JiraClient
+        from connectors.jira.config import JiraConfig
+        
+        print('🤖 Starting AI Summary Analysis...')
+        
+        # Initialize Gemini client
+        gemini_config = GeminiConfig()
+        gemini_client = GeminiClient(gemini_config.get_config())
+        
+        # Initialize Jira client 
+        jira_config = JiraConfig.load('config/jira.yaml')
+        jira_client = JiraClient(jira_config)
+        
+        # Create AI summary tool
+        ai_tool_func = ai_summary_tool(gemini_client, gemini_config.get_config())
+        
+        # Run analysis for each team with email sending enabled
+        teams = ['toolchain', 'foa', 'assessment', 'boa']
+        
+        for team in teams:
+            try:
+                print(f'🔍 Analyzing data for team: {team}')
+                result = ai_tool_func(team=team, send_email=True)
+                print(f'✅ AI analysis completed for team: {team}')
+                print(f'📧 Email sent successfully')
+            except Exception as e:
+                print(f'❌ Error analyzing team {team}: {e}')
+                # Continue with other teams
+                continue
+        
+        print('🎉 AI Summary Analysis completed for all teams')
+        "
+    
     - name: Send Slack Data via Email
       if: always()
       env:
