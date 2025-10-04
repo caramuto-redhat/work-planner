@@ -80,8 +80,8 @@ jobs:
     
     - name: Collect Jira Data for All Teams
       env:
-        JIRA_URL: ${{ secrets.JIRA_SERVER_URL }}
-        JIRA_API_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       run: |
         python -c "
         import os
@@ -123,8 +123,8 @@ jobs:
     - name: Run AI Summary Analysis
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        JIRA_URL: ${{ secrets.JIRA_SERVER_URL }}
-        JIRA_API_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
         SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
         SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
         EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
