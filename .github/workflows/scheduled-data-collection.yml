@@ -128,7 +128,7 @@ jobs:
         SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
         SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
         EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
-        EMAIL_TOKEN: ${{ secrets.EMAIL_TOKEN }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_TOKEN }}
         EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       run: |
         python -c "
@@ -139,6 +139,9 @@ jobs:
         print(f'JIRA_URL: {\"✅ SET\" if os.getenv(\"JIRA_URL\") else \"❌ MISSING\"}')
         print(f'JIRA_API_TOKEN: {\"✅ SET\" if os.getenv(\"JIRA_API_TOKEN\") else \"❌ MISSING\"}')
         print(f'GEMINI_API_KEY: {\"✅ SET\" if os.getenv(\"GEMINI_API_KEY\") else \"❌ MISSING\"}')
+        print(f'EMAIL_USERNAME: {\"✅ SET\" if os.getenv(\"EMAIL_USERNAME\") else \"❌ MISSING\"}')
+        print(f'EMAIL_PASSWORD: {\"✅ SET\" if os.getenv(\"EMAIL_PASSWORD\") else \"❌ MISSING\"}')
+        print(f'EMAIL_FROM: {\"✅ SET\" if os.getenv(\"EMAIL_FROM\") else \"❌ MISSING\"}')
         print(f'SLACK_XOXC_TOKEN: {\"✅ SET\" if os.getenv(\"SLACK_XOXC_TOKEN\") else \"❌ MISSING\"}')
         
         from connectors.gemini.tools.ai_summary_tool import ai_summary_tool
@@ -181,7 +184,7 @@ jobs:
       if: always()
       env:
         EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
-        EMAIL_TOKEN: ${{ secrets.EMAIL_TOKEN }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_TOKEN }}
         EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       run: |
         python -c "
