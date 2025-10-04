@@ -2,8 +2,8 @@ name: Daily AI Summary & Email Report
 
 on:
   schedule:
-    # DISABLED - Use simple-data-report.yml instead
-    # - cron: '0 6 * * *'
+    # DISABLED - Use simple-data-report.yml instead  
+    - cron: '0 0 1 1 0'  # Never runs - Jan 1st Sunday only (effectively disabled)
   workflow_dispatch:  # Allow manual triggering
 
 jobs:
