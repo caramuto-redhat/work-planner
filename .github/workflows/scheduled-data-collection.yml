@@ -78,6 +78,42 @@ jobs:
         print(f'🎉 Slack data collection completed - Attachments: {include_attachments}')
         "
     
+    - name: Collect Jira Data for All Teams
+      env:
+        JIRA_URL: ${{ secrets.JIRA_SERVER_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_TOKEN }}
+      run: |
+        python -c "
+        import os
+        from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
+        from connectors.jira.client import JiraClient
+        from connectors.jira.config import JiraConfig
+        
+        print('🎫 Starting Jira data collection...')
+        
+        # Initialize Jira client and config
+        jira_config = JiraConfig.load('config/jira.yaml')
+        jira_client = JiraClient(jira_config)
+        
+        # Create dump tool
+        dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
+        
+        # Collect data for all configured teams
+        teams = ['toolchain', 'foa', 'assessment', 'boa']
+        tickets_filter = 'All In Progress'
+        
+        for team in teams:
+            try:
+                print(f'🎫 Collecting Jira data for team: {team} (filter: {tickets_filter})')
+                result = dump_tool(team, tickets_filter)
+                print(f'✅ Jira data collected for team: {team}')
+            except Exception as e:
+                print(f'❌ Error collecting Jira data for team {team}: {e}')
+                continue
+        
+        print('🎉 Jira data collection completed')
+        "
+    
     - name: Run AI Summary Analysis
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
