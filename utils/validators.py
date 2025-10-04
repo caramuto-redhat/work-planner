@@ -18,10 +18,39 @@ def validate_max_results(max_results: int) -> int:
 
 
 def validate_team_name(team: str) -> str:
-    """Validate team name input"""
+    """Validate and resolve team name input with fuzzy matching"""
     if not team or not team.strip():
         raise ValueError("Team name cannot be empty")
-    return team.strip()
+    
+    team = team.strip().lower()
+    
+    # Known valid team names
+    valid_teams = ["toolchain", "foa", "assessment", "boa", "sp-rhivos"]
+    
+    # Direct match
+    if team in valid_teams:
+        return team
+    
+    # Fuzzy matching for common variations
+    fuzzy_matches = {
+        "automotive": "toolchain",
+        "toolchain automotive": "toolchain", 
+        "toolchain-infra": "toolchain",
+        "toolchain team": "toolchain",
+        "follow-on-activities": "foa",
+        "follow on activities": "foa",
+        "boa team": "boa",
+        "assessment team": "assessment",
+        "sp rhivos": "sp-rhivos",
+        "software platform rhivos": "sp-rhivos"
+    }
+    
+    if team in fuzzy_matches:
+        return fuzzy_matches[team]
+    
+    # If no exact match, raise error with suggestions
+    suggestions = ", ".join(valid_teams)
+    raise ValueError(f"Team '{team}' not found. Valid teams: {suggestions}")
 
 
 def validate_channel_id(channel_id: str) -> str:

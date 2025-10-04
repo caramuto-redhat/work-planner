@@ -33,6 +33,17 @@ data_collection:
   # Parsed dump file location
   parsed_directory: "connectors/slack/slack_dump/slack_dumps_parsed"
 
+# Bot Display Names Mapping
+# Maps Slack bot IDs to display names for search functionality
+# This maps bot IDs to their application names for better readability
+bot_display_names:
+  "B05NMKVG": "Rhivos-webserver notifier"  # Real bot ID from RHIVOS alerts
+  "B06B9BCD456": "SP-RHIVOS notifier"  
+  "B1234567891": "Assessment bot"
+  # Example: If you see bot ID B02AX123456 in channel, map it like:
+  # "B02AX123456": "Auto-deployment-bot"
+  # Add more bot mappings as needed
+
 # User Display Names Mapping
 # Maps Slack user IDs to display names for search functionality
 # This is the single source of truth for all user mappings

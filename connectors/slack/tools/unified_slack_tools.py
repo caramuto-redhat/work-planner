@@ -269,11 +269,13 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
             
             attachment_count = 0
             for message in messages:
-                timestamp = datetime.fromtimestamp(float(message['ts']))
-                user = message.get('user', 'Unknown')
-                text = message.get('text', '')
+                # Extract full message content using enhanced extraction
+                extracted = _extract_full_message_content(message, config)
+                timestamp = datetime.fromtimestamp(float(extracted['timestamp']))
+                display_name = extracted['display_name']
+                full_content = extracted['full_content']
                 
-                f.write(f"[{timestamp.isoformat()}] {user}: {text}\n")
+                f.write(f"[{timestamp.isoformat()}] {display_name}: {full_content}\n")
                 
                 # Handle attachments if enabled
                 if include_attachments and ('files' in message or 'blocks' in message):
@@ -330,23 +332,25 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
             f.write(f"Total Messages: {len(messages)}\n")
             f.write(f"{'='*80}\n\n")
             
-            # Get user display names mapping
-            user_mappings = config.get('user_display_names', {})
-            
             for i, message in enumerate(messages):
-                timestamp = datetime.fromtimestamp(float(message['ts']))
-                user_id = message.get('user', 'Unknown')
-                text = message.get('text', '')
-                
-                # Replace user ID with display name if available
-                user = user_mappings.get(user_id, user_id)
+                # Extract full message content using enhanced extraction
+                extracted = _extract_full_message_content(message, config)
+                timestamp = datetime.fromtimestamp(float(extracted['timestamp']))
+                user = extracted['display_name']
+                full_content = extracted['full_content']
                 
                 # Enhanced parsing: clean up Slack formatting
-                parsed_text = text
+                parsed_text = full_content  # Use enhanced full content
+                
+                # Get mappings for user mentions
+                user_mappings = config.get('user_display_names', {})
+                bot_mappings = config.get('bot_display_names', {})
+                
                 # Replace user mentions in message content with display names
                 def replace_user_mention(match):
                     mentioned_user_id = match.group(1)
-                    display_name = user_mappings.get(mentioned_user_id, mentioned_user_id)
+                    # Check both user and bot mappings
+                    display_name = user_mappings.get(mentioned_user_id) or bot_mappings.get(mentioned_user_id, mentioned_user_id)
                     return f"@{display_name}"
                 parsed_text = re.sub(r'<@([A-Z0-9]+)>', replace_user_mention, parsed_text)
                 # Remove Slack channel links and replace with readable format
@@ -453,7 +457,7 @@ def _dump_team_channels(client, config, team: str, latest_date: str = None) -> s
         return create_error_response("Failed to dump team channels", str(e))
 
 
-def _read_single_channel(client, config, channel_id: str, max_age_hours: int = 24) -> str:
+def _read_single_channel(client, config, channel_id: str, max_age_hours: int = 24, use_parsed: bool = False) -> str:
     """Read a single Slack channel"""
     try:
         validated_channel_id = validate_channel_id(channel_id)
@@ -464,10 +468,14 @@ def _read_single_channel(client, config, channel_id: str, max_age_hours: int = 2
         if "error" in dump_data:
             return dump_result  # Return the original error response
         
-        dump_dir = config.get("data_collection", {}).get("dump_directory", "slack_dumps")
-        
-        # Find the dump file for this channel
-        filename = f"{validated_channel_id}_slack_dump.txt"
+        # Choose between raw dump (with user IDs) or parsed dump (with display names)
+        if use_parsed:
+            dump_dir = config.get("data_collection", {}).get("parsed_directory", "slack_dumps_parsed")
+            filename = f"{validated_channel_id}_slack_dump_parsed.txt"
+        else:
+            dump_dir = config.get("data_collection", {}).get("dump_directory", "slack_dumps")
+            filename = f"{validated_channel_id}_slack_dump.txt"
+            
         filepath = os.path.join(dump_dir, filename)
         
         if not os.path.exists(filepath):
@@ -480,9 +488,13 @@ def _read_single_channel(client, config, channel_id: str, max_age_hours: int = 2
         # Get file stats
         stat = os.stat(filepath)
         
+        # Get channel name from config comments for better context
+        channel_name = _get_channel_name_from_config(config, validated_channel_id)
+        
         return create_success_response({
             "target": validated_channel_id,
             "target_type": "channel",
+            "channel_name": channel_name,
             "data": content,
             "source_file": filename,
             "file_path": filepath,
@@ -490,7 +502,8 @@ def _read_single_channel(client, config, channel_id: str, max_age_hours: int = 2
             "created": datetime.fromtimestamp(stat.st_ctime).isoformat(),
             "modified": datetime.fromtimestamp(stat.st_mtime).isoformat(),
             "data_action": dump_data.get("action", "unknown"),
-            "note": "Raw Slack data for LLM analysis - automatically refreshed if needed"
+            "data_format": "parsed" if use_parsed else "raw",
+            "note": "Parsed Slack data with display names" if use_parsed else "Raw Slack data with user IDs"
         })
         
     except ValueError as e:
@@ -547,12 +560,12 @@ def _read_team_channels(client, config, team: str, max_age_hours: int = 24) -> s
 
 
 def _search_single_channel(client, config, channel_id: str, search_term: str, max_age_hours: int = 24) -> str:
-    """Search a single Slack channel"""
+    """Search a single Slack channel using parsed data with display names"""
     try:
         validated_channel_id = validate_channel_id(channel_id)
         
-        # First, get the channel data
-        channel_result = _read_single_channel(client, config, validated_channel_id, max_age_hours)
+        # Read parsed data (with display names) instead of raw data (with user IDs)
+        channel_result = _read_single_channel(client, config, validated_channel_id, max_age_hours, use_parsed=True)
         channel_data = json.loads(channel_result)
         if "error" in channel_data:
             return channel_result  # Return the original error response
@@ -562,19 +575,65 @@ def _search_single_channel(client, config, channel_id: str, search_term: str, ma
         if not slack_data:
             return create_error_response("No Slack data available for search")
         
-        # Search for mentions
-        matches = client.search_slack_mentions(slack_data, search_term)
+        # Search for mentions in parsed text (case-insensitive)
+        search_patterns = _get_search_patterns(client, config, search_term)
+        matches = []
+        
+        # Simple text search in parsed content
+        lines = slack_data.split('\n')
+        current_message = None
+        message_context = []
+        
+        for line in lines:
+            if line.startswith('Message '):
+                # Save previous message if it matched
+                if current_message and any(pattern.lower() in current_message['text'].lower() for pattern in search_patterns):
+                    matches.append({
+                        'timestamp': current_message.get('timestamp', ''),
+                        'user': current_message.get('user', ''),
+                        'text': current_message.get('text', ''),
+                        'context': '\n'.join(current_message.get('context', [])[:2])  # Include 2 lines of context
+                    })
+                
+                # Start new message
+                current_message = {'timestamp': '', 'user': '', 'text': '', 'context': []}
+                message_context = []
+            
+            elif line.startswith('From: '):
+                if current_message:
+                    current_message['user'] = line.replace('From: ', '')
+            
+            elif line.startswith('From: '):
+                if current_message:
+                    current_message['user'] = line.replace('From: ', '')
+                    
+            else:
+                if current_message and line.strip():
+                    current_message['context'].append(line)
+                    if not line.startswith('=') and not line.startswith('-'):
+                        current_message['text'] += line + ' '
+        
+        # Check last message
+        if current_message and any(pattern.lower() in current_message['text'].lower() for pattern in search_patterns):
+            matches.append({
+                'timestamp': current_message.get('timestamp', ''),
+                'user': current_message.get('user', ''),
+                'text': current_message.get('text', ''),
+                'context': '\n'.join(current_message.get('context', [])[:2])
+            })
         
         # Prepare response
         response_data = {
             "target": validated_channel_id,
             "target_type": "channel",
+            "channel_name": channel_data.get("channel_name", ""),
             "search_term": search_term,
             "matches_found": len(matches),
-            "matches": matches,
+            "matches": matches[:10],  # Limit to 10 matches for readability
             "source_file": channel_data.get("source_file", "unknown"),
             "data_action": channel_data.get("data_action", "unknown"),
-            "search_patterns_used": _get_search_patterns(client, config, search_term)
+            "data_format": channel_data.get("data_format", "parsed"),
+            "search_patterns_used": search_patterns
         }
         
         return create_success_response(response_data)
@@ -693,11 +752,13 @@ def _check_and_dump_if_needed(client, config, channel_id: str, max_age_hours: in
                 f.write(f"# Total Messages: {len(messages)}\n\n")
                 
                 for message in messages:
-                    timestamp = datetime.fromtimestamp(float(message['ts']))
-                    user = message.get('user', 'Unknown')
-                    text = message.get('text', '')
+                    # Extract full message content using enhanced extraction
+                    extracted = _extract_full_message_content(message, config)
+                    timestamp = datetime.fromtimestamp(float(extracted['timestamp']))
+                    display_name = extracted['display_name']
+                    full_content = extracted['full_content']
                     
-                    f.write(f"[{timestamp.isoformat()}] {user}: {text}\n")
+                    f.write(f"[{timestamp.isoformat()}] {display_name}: {full_content}\n")
             
             # Also create parsed version
             parsed_dir = config.get("data_collection", {}).get("parsed_directory", "slack_dumps_parsed")
@@ -718,23 +779,25 @@ def _check_and_dump_if_needed(client, config, channel_id: str, max_age_hours: in
                 f.write(f"Total Messages: {len(messages)}\n")
                 f.write(f"{'='*80}\n\n")
                 
-                # Get user display names mapping
-                user_mappings = config.get('user_display_names', {})
-                
                 for i, message in enumerate(messages):
-                    timestamp = datetime.fromtimestamp(float(message['ts']))
-                    user_id = message.get('user', 'Unknown')
-                    text = message.get('text', '')
-                    
-                    # Replace user ID with display name if available
-                    user = user_mappings.get(user_id, user_id)
+                    # Extract full message content using enhanced extraction
+                    extracted = _extract_full_message_content(message, config)
+                    timestamp = datetime.fromtimestamp(float(extracted['timestamp']))
+                    user = extracted['display_name']
+                    text = extracted['full_content']  # Use rich content if available
                     
                     # Enhanced parsing: clean up Slack formatting
                     parsed_text = text
+                    
+                    # Get mappings for user mentions
+                    user_mappings = config.get('user_display_names', {})
+                    bot_mappings = config.get('bot_display_names', {})
+                    
                     # Replace user mentions in message content with display names
                     def replace_user_mention(match):
                         mentioned_user_id = match.group(1)
-                        display_name = user_mappings.get(mentioned_user_id, mentioned_user_id)
+                        # Check both user and bot mappings
+                        display_name = user_mappings.get(mentioned_user_id) or bot_mappings.get(mentioned_user_id, mentioned_user_id)
                         return f"@{display_name}"
                     parsed_text = re.sub(r'<@([A-Z0-9]+)>', replace_user_mention, parsed_text)
                     # Remove Slack channel links and replace with readable format
@@ -832,16 +895,156 @@ def _get_channel_name_from_config(config, channel_id: str) -> str:
         return f"#{team_id}-channel"
 
 
+def _extract_full_message_content(message: dict, config: dict) -> dict:
+    """Extract full message content including rich app/bot messages"""
+    
+    # Base fields
+    timestamp = message.get('ts')
+    user_id = message.get('user', 'Unknown')
+    basic_text = message.get('text', '')
+    app_id = message.get('app_id')
+    bot_id = message.get('bot_id')
+    
+    # Initialize result
+    result = {
+        'timestamp': timestamp,
+        'user_id': user_id,
+        'app_id': app_id,
+        'bot_id': bot_id,
+        'display_name': 'Unknown',  # Will be set after extracting content
+        'basic_text': basic_text,
+        'rich_content': '',
+        'full_content': basic_text
+    }
+    
+    # Extract rich content from blocks
+    if 'blocks' in message:
+        block_texts = []
+        for block in message['blocks']:
+            if block.get('type') == 'section' and 'text' in block:
+                block_text = block['text'].get('text', '')
+                if block_text:
+                    block_texts.append(block_text)
+            elif block.get('type') == 'context' and 'elements' in block:
+                for element in block['elements']:
+                    if element.get('type') == 'text':
+                        block_text = element.get('text', '')
+                        if block_text:
+                            block_texts.append(block_text)
+        
+        if block_texts:
+            result['rich_content'] = '\n'.join(block_texts)
+    
+    # Extract content from attachments (common in app messages)
+    if 'attachments' in message:
+        attachment_texts = []
+        
+        for attachment in message['attachments']:
+            # Main attachment text
+            if 'text' in attachment:
+                attachment_texts.append(attachment['text'])
+            
+            # Author information
+            if 'author_name' in attachment:
+                attachment_texts.append(f"From: {attachment['author_name']}")
+            
+            # Footer (metadata)
+            if 'footer' in attachment:
+                attachment_texts.append(f"Sender: {attachment['footer']}")
+                
+            # Title if present
+            if 'title' in attachment:
+                attachment_texts.append(f"Title: {attachment['title']}")
+        
+        if attachment_texts:
+            if result['rich_content']:
+                result['rich_content'] += '\n\n' + '\n'.join(attachment_texts)
+            else:
+                result['rich_content'] = '\n'.join(attachment_texts)
+    
+    # Combine rich content with basic text
+    if result['rich_content']:
+        result['full_content'] = result['rich_content']
+        if basic_text and basic_text.strip() and basic_text.strip() != '*Alert*':
+            result['full_content'] += '\n' + basic_text
+    else:
+        result['full_content'] = basic_text
+    
+    # Set display name using pattern detection based on full content
+    result['display_name'] = _get_message_sender_name(user_id, bot_id, app_id, result['full_content'], config)
+    
+    return result
+
+
+def _get_message_sender_name(user_id: str, bot_id: str, app_id: str, message_content: str, config: dict) -> str:
+    """Get display name for message sender (user, bot, or app) with pattern detection"""
+    
+    # Priority: Bot ID mapping > User ID mapping > Pattern detection > Raw IDs
+    if bot_id:
+        bot_mappings = config.get('bot_display_names', {})
+        if bot_id in bot_mappings:
+            return bot_mappings[bot_id]
+        else:
+            return f"Bot-{bot_id[:8]}"  # Truncated bot ID
+    
+    # Check for app-based bot (fallback)
+    if app_id:
+        app_mappings = config.get('app_display_names', {})  # Future enhancement
+        if app_id in app_mappings:
+            return app_mappings[app_id]
+        else:
+            return f"App-{app_id[:8]}"  # Truncated app ID
+    
+    # User mapping
+    if user_id and user_id != 'Unknown':
+        user_mappings = config.get('user_display_names', {})
+        return user_mappings.get(user_id, user_id)
+    
+    # Pattern-based detection for known message types
+    if message_content:
+        message_lower = message_content.lower()
+        
+        # RHIVOS maintenance alerts
+        if ('rhivos' in message_lower or 'auto-toolchain.redhat.com' in message_lower or 
+            'rhivos-webserver' in message_lower or 'rhivos webserver' in message_lower):
+            return 'Rhivos-webserver notifier'
+            
+        # SP-RHIVOS alerts
+        if ('sp-rhivos' in message_lower or 'sp rhivos' in message_lower or
+            'software platform rhivos' in message_lower):
+            return 'SP-RHIVOS notifier'
+            
+        # Assessment bot patterns
+        if ('assessment' in message_lower and ('deployment' in message_lower or 'automated' in message_lower)):
+            return 'Assessment bot'
+    
+    # Channel-specific message detection
+    # Check if this is likely a RHIVOS maintenance alert based on pattern
+    if message_content == '*Alert*':
+        # These are likely RHIVOS maintenance alerts since they:
+        # 1. Consistently appear on specific days/times
+        # 2. Contain only '*Alert*' text
+        # 3. Come from unknown/system sources
+        return 'Rhivos-webserver notifier'
+    
+    return 'Unknown'
+
+
 def _get_search_patterns(client, config, search_term: str) -> list:
-    """Get the search patterns that will be used for the search term"""
+    # Add mapped variations
     try:
         user_mappings = config.get('user_display_names', {})
+        bot_mappings = config.get('bot_display_names', {})
         
         patterns = [search_term.lower()]
         
         # Add mapped variations
         if search_term.lower() in user_mappings:
             patterns.append(user_mappings[search_term.lower()].lower())
+        
+        # Add bot mapping variations
+        if search_term.lower() in bot_mappings.values():
+            patterns.append(search_term.lower())
         
         # Add reverse mappings
         for display_name, mention in user_mappings.items():
@@ -851,3 +1054,27 @@ def _get_search_patterns(client, config, search_term: str) -> list:
         return list(set(patterns))  # Remove duplicates
     except:
         return [search_term.lower()]
+
+
+def _get_channel_name_from_config(config, channel_id: str) -> str:
+    """Extract channel name from config comments"""
+    try:
+        config_file = config.get("config_file", "config/slack.yaml")
+        if os.path.exists(config_file):
+            with open(config_file, 'r') as f:
+                content = f.read()
+            
+            lines = content.split('\n')
+            for i, line in enumerate(lines):
+                if channel_id in line:
+                    # Look for comment with channel name
+                    if '#' in line:
+                        comment = line.split('#')[-1].strip()
+                        if comment:
+                            return comment
+                    # If no comment found, return generic name
+                    return f"Channel {channel_id}"
+    except:
+        pass
+    
+    return f"Channel {channel_id}"

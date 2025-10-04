@@ -31,7 +31,9 @@ try:
         get_project_info_tool,
         get_user_info_tool,
         list_teams_tool,
-        list_organizations_tool
+        list_organizations_tool,
+        dump_jira_team_data_tool,
+        read_jira_team_data_tool
     )
     
     # Create Jira client and config
@@ -45,8 +47,10 @@ try:
     mcp.tool()(get_user_info_tool(jira_client, jira_config))
     mcp.tool()(list_teams_tool(jira_client, jira_config))
     mcp.tool()(list_organizations_tool(jira_client, jira_config))
+    mcp.tool()(dump_jira_team_data_tool(jira_client, jira_config))
+    mcp.tool()(read_jira_team_data_tool(jira_client, jira_config))
     
-    print("✅ Registered Jira connector with 6 tools")
+    print("✅ Registered Jira connector with 8 tools")
 except Exception as e:
     print(f"❌ Failed to register Jira connector: {e}")
 
@@ -79,39 +83,34 @@ except Exception as e:
 
 # Initialize Gemini connector
 try:
-    from connectors.gemini.tools import (
-        analyze_slack_data_tool,
-        analyze_jira_data_tool,
-        generate_email_summary_tool,
-        custom_ai_analysis_tool
-    )
+        from connectors.gemini.tools import (
+            analyze_jira_data_tool,
+            generate_email_summary_tool,
+            custom_ai_analysis_tool,
+            ai_summary_tool
+        )
+        
+        # Create Gemini client and config
+        from connectors.gemini.client import GeminiClient
+        from connectors.gemini.config import GeminiConfig
+        
+        gemini_config = GeminiConfig()
+        gemini_client = GeminiClient(gemini_config.get_config())
     
-    # Create Gemini client and config
-    from connectors.gemini.client import GeminiClient
-    from connectors.gemini.config import GeminiConfig
-    
-    gemini_config = GeminiConfig()
-    gemini_client = GeminiClient(gemini_config.get_config())
-    
-    # Register Gemini tools
-    mcp.tool()(analyze_slack_data_tool(gemini_client, gemini_config.get_config()))
-    mcp.tool()(analyze_jira_data_tool(gemini_client, gemini_config.get_config()))
-    mcp.tool()(generate_email_summary_tool(gemini_client, gemini_config.get_config()))
-    mcp.tool()(custom_ai_analysis_tool(gemini_client, gemini_config.get_config()))
-    
-    print("✅ Registered Gemini connector with 4 tools")
+        # Register Gemini tools
+        mcp.tool()(analyze_jira_data_tool(gemini_client, gemini_config.get_config()))
+        mcp.tool()(generate_email_summary_tool(gemini_client, gemini_config.get_config()))
+        mcp.tool()(custom_ai_analysis_tool(gemini_client, gemini_config.get_config()))
+        mcp.tool()(ai_summary_tool(gemini_client, gemini_config.get_config()))
+        
+        print("✅ Registered Gemini connector with 4 tools")
 except Exception as e:
     print(f"❌ Failed to register Gemini connector: {e}")
 
 # Initialize Schedule connector
 try:
     from connectors.schedule.tools import (
-        get_schedule_status_tool,
-        run_scheduled_collection_tool,
-        update_schedule_config_tool,
-        add_team_to_schedule_tool,
-        remove_team_from_schedule_tool,
-        toggle_slack_attachments_tool
+        get_schedule_status_tool
     )
     
     # Create Schedule client and config
@@ -119,17 +118,41 @@ try:
     
     schedule_config = ScheduleConfig()
     
-    # Register Schedule tools
+    # Register Schedule tools (monitoring only)
     mcp.tool()(get_schedule_status_tool(None, schedule_config))
-    mcp.tool()(run_scheduled_collection_tool(None, schedule_config))
-    mcp.tool()(update_schedule_config_tool(None, schedule_config))
-    mcp.tool()(add_team_to_schedule_tool(None, schedule_config))
-    mcp.tool()(remove_team_from_schedule_tool(None, schedule_config))
-    mcp.tool()(toggle_slack_attachments_tool(None, schedule_config))
     
-    print("✅ Registered Schedule connector with 6 tools")
+    print("✅ Registered Schedule connector with 1 tool (monitoring only)")
 except Exception as e:
     print(f"❌ Failed to register Schedule connector: {e}")
+
+# Initialize Email connector
+try:
+    from connectors.email.client import EmailClient
+    from connectors.email.config import EmailConfig
+    from connectors.email.tools import (
+        send_email_tool,
+        send_daily_summary_tool,
+        send_alert_tool,
+        send_data_collection_report_tool,
+        test_email_connection_tool,
+        get_email_config_tool
+    )
+    
+    # Create Email client and config
+    email_config = EmailConfig()
+    email_client = EmailClient(email_config.get_config())
+    
+    # Register Email tools
+    mcp.tool()(send_email_tool(email_client, email_config.get_config()))
+    mcp.tool()(send_daily_summary_tool(email_client, email_config.get_config()))
+    mcp.tool()(send_alert_tool(email_client, email_config.get_config()))
+    mcp.tool()(send_data_collection_report_tool(email_client, email_config.get_config()))
+    mcp.tool()(test_email_connection_tool(email_client, email_config.get_config()))
+    mcp.tool()(get_email_config_tool(email_client, email_config.get_config()))
+    
+    print("✅ Registered Email connector with 6 tools")
+except Exception as e:
+    print(f"❌ Failed to register Email connector: {e}")
 
 # Built-in tool listing
 @mcp.tool()
@@ -140,14 +163,16 @@ def list_available_tools() -> str:
         "tools": [
             "search_issues", "get_team_issues", "get_project_info", 
             "get_user_info", "list_teams", "list_organizations",
+            "dump_jira_team_data", "read_jira_team_data",
             "dump_slack_data", "read_slack_data", "search_slack_data",
             "list_slack_channels", "list_slack_dumps",
-            "analyze_slack_data", "analyze_jira_data", "generate_email_summary",
-            "custom_ai_analysis", "get_schedule_status", "run_scheduled_collection",
-            "update_schedule_config", "add_team_to_schedule", "remove_team_from_schedule",
+            "analyze_jira_data", "generate_email_summary", "custom_ai_analysis", "ai_summary",
+            "get_schedule_status",
+            "send_email", "send_daily_summary", "send_alert",
+            "send_data_collection_report", "test_email_connection", "get_email_config",
             "list_available_tools"
         ],
-        "total_tools": 21
+        "total_tools": 24
     })
 
 if __name__ == "__main__":

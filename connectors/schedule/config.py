@@ -86,16 +86,85 @@ class ScheduleConfig:
     
     def get_schedule(self, service: str) -> str:
         """Get the cron schedule for a service"""
-        return self.config.get(service, {}).get('schedule', '0 0 * * *')
+        service_config = self.config.get(service, {})
+        
+        # Check if this service uses the global schedule
+        global_schedule_enabled = service_config.get('global_schedule', False)
+        
+        if global_schedule_enabled:
+            # Use the global schedule if it exists, otherwise fall back to individual schedule
+            global_schedule = self.config.get('schedule', service_config.get('schedule', '0 0 * * *'))
+            return global_schedule
+        else:
+            # Use individual schedule
+            return service_config.get('schedule', '0 0 * * *')
     
     def get_teams(self, service: str) -> List[Dict[str, Any]]:
         """Get teams configuration for a service"""
         return self.config.get(service, {}).get('teams', [])
     
+    def get_global_schedule(self) -> str:
+        """Get the global schedule"""
+        return self.config.get('schedule', '0 6 * * *')
+    
+    def services_using_global_schedule(self) -> List[str]:
+        """Get list of services that use the global schedule"""
+        services = []
+        global_enabled_services = ['slack', 'jira', 'ai_summary', 'cleanup']
+        
+        for service in global_enabled_services:
+            service_config = self.config.get(service, {})
+            if service_config.get('global_schedule', False):
+                services.append(service)
+        
+        return services
+    
+    def services_using_individual_schedule(self) -> List[str]:
+        """Get list of services that use individual schedules"""
+        services = []
+        all_services = ['slack', 'jira', 'ai_summary', 'cleanup']
+        
+        for service in all_services:
+            service_config = self.config.get(service, {})
+            if not service_config.get('global_schedule', False):
+                services.append(service)
+        
+        return services
+    
     def get_team_config(self, service: str, team_name: str) -> Optional[Dict[str, Any]]:
         """Get configuration for a specific team and service"""
         teams = self.get_teams(service)
         return next((team for team in teams if team.get('name') == team_name), None)
+    
+    def get_ai_summary_config(self) -> Dict[str, Any]:
+        """Get AI summary configuration"""
+        return self.config.get('ai_summary', {})
+    
+    def get_ai_summary_email_config(self) -> Dict[str, Any]:
+        """Get AI summary email configuration"""
+        ai_summary_config = self.get_ai_summary_config()
+        return ai_summary_config.get('email', {})
+    
+    def is_ai_summary_email_enabled(self) -> bool:
+        """Check if AI summary email sending is enabled"""
+        email_config = self.get_ai_summary_email_config()
+        return email_config.get('enabled', False)
+    
+    def get_ai_summary_teams(self) -> List[Dict[str, Any]]:
+        """Get teams configuration for AI summary"""
+        ai_summary_config = self.get_ai_summary_config()
+        return ai_summary_config.get('teams', [])
+    
+    def get_jira_tickets_filter(self, team_name: str) -> str:
+        """Get the Jira tickets filter for a specific team"""
+        team_config = self.get_team_config('jira', team_name)
+        if team_config and 'tickets' in team_config:
+            return team_config['tickets']
+        return "All In Progress"  # Default filter
+    
+    def has_service_config(self, service: str) -> bool:
+        """Check if a service has configuration defined"""
+        return service in self.config
     
     def get_global_config(self) -> Dict[str, Any]:
         """Get global configuration settings"""
@@ -134,7 +203,7 @@ class ScheduleConfig:
         """Validate the current configuration"""
         try:
             # Check required sections
-            required_sections = ['global', 'slack', 'jira', 'ai_analysis', 'email_summary']
+            required_sections = ['global', 'slack', 'jira', 'ai_summary', 'cleanup']
             for section in required_sections:
                 if section not in self.config:
                     print(f"Warning: Missing required section '{section}' in schedule config")
@@ -142,16 +211,17 @@ class ScheduleConfig:
             
             # Validate cron schedules
             import re
-            cron_pattern = r'^(\*|([0-5]?\d)) (\*|([01]?\d|2[0-3])) (\*|([012]?\d|3[01])) (\*|([0-6]))$'
+            # Standard cron format: minute hour day month dayofweek
+            cron_pattern = r'^(\*|[0-5]?\d) (\*|[01]?\d|2[0-3]) (\*|3[01]|[12]?\d|[1-9]) (\*|1[0-2]|[1-9]) (\*|[0-6])$'
             
-            for service in ['slack', 'jira', 'ai_analysis', 'email_summary', 'cleanup']:
+            for service in ['slack', 'jira', 'ai_summary', 'cleanup']:
                 schedule = self.get_schedule(service)
                 if not re.match(cron_pattern, schedule):
                     print(f"Warning: Invalid cron schedule '{schedule}' for service '{service}'")
                     return False
             
             # Validate team configurations
-            for service in ['slack', 'jira', 'ai_analysis', 'email_summary']:
+            for service in ['slack', 'jira']:
                 teams = self.get_teams(service)
                 for team in teams:
                     if 'name' not in team:
@@ -167,7 +237,7 @@ class ScheduleConfig:
     def get_enabled_services(self) -> List[str]:
         """Get list of enabled services"""
         enabled = []
-        services = ['slack', 'jira', 'ai_analysis', 'email_summary', 'cleanup']
+        services = ['slack', 'jira', 'ai_summary', 'cleanup']
         
         for service in services:
             if self.is_enabled(service):

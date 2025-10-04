@@ -1,21 +1,8 @@
 # Slack Channel Dump
 # Channel ID: C05BYR06B0V
-# Generated: 2025-10-01T23:12:05.145353
+# Generated: 2025-10-03T19:32:11.458341
 # Total Messages: 1000
 
-[2024-10-24T14:59:39.797789] U0171SJF00H: <@U02F2L89YTS> <@U04NNGY4QQ2> I want to double-verify <https://eu-west-1.console.aws.amazon.com/s3/buckets/auto-product-build-downstream-staging?region=eu-west-1&amp;bucketType=general&amp;prefix=RHIVOS-1/&amp;showversions=false|https://eu-west-1.console.aws.amazon.com/s3/buckets/auto-product-build-downstream-staging?reg[…]cketType=general&amp;prefix=RHIVOS-1/&amp;showversions=false> are safe to delete?
-[2024-10-24T15:00:10.943639] U0171SJF00H: want to check before merging that MR, just in case :see_no_evil:
-[2024-10-24T15:02:31.923799] U02F2L89YTS: <@U0171SJF00H> Yes, that's only useful during the time the MR pipeline runs. After that, we don't use it or need it.
-Go ahead! :trashcan: :ok_hand:
-[2024-10-24T15:03:21.446489] U0171SJF00H: That's what I thought but didn't want to do something stupid :sweat_smile: thank you
-[2024-10-24T15:04:23.638389] U02F2L89YTS: Thanks for checking! Better safe than sorry :sweat_smile:
-[2024-10-24T15:10:24.949499] U0171SJF00H: Cool cool, that got applied, we've just got to wait until midnight for the lifecycler to kick in :crossed_fingers:
-[2024-10-24T15:13:04.772249] U02F2L89YTS: Thanks!!!
-[2024-10-24T15:14:46.140339] U0171SJF00H: If my math is correct, this could mean a few hundred $ of savings :smile: per month
-[2024-10-24T15:20:59.147379] U04AXB4GK52: Hello fellow infra folks, could you please take a look at <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/362|this MR> I've just submitted?
-[2024-10-24T16:54:59.495349] U0171SJF00H: approved, just one comment that I think you already know about, but left it just in case
-[2024-10-25T12:19:43.183859] U04AXB4GK52: <@U0171SJF00H> and <@U02F2L89YTS> thanks to Hubes' keen eye I took out the changes to rename the contcert automation user since it would induce regenerating access keys. The MR has been updated with the latest changes having taken that commit out if you could take another look Id appreciate it
-[2024-10-25T14:05:55.113149] U0171SJF00H: ^^ re-approved
 [2024-10-28T15:58:28.580459] U04AXB4GK52: <@U0171SJF00H> any insight in to this? <https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/jobs/28369309#L207>
 [2024-10-30T13:35:27.856779] U0171SJF00H: <@U04NNGY4QQ2> can you share that job log for the SSH issue you mentioned?
 [2024-10-30T13:57:13.990639] U04NHTDFS6P: We're being asked to answer some questions for CMDB IDs VHCL-004 through VHCL-008, VHCL-012, and VHCL-013 in <https://issues.redhat.com/browse/EXDSP-2922> ... Each STI has a page in confluence with questions about the service. It doesn't actually look too terrible, but I need help from this group. Any takers?
@@ -1768,3 +1755,18 @@ Eitan kindly added a commit where he addressed his own comment (thank you!) so I
 [2025-10-01T12:36:04.781299] U02F2L89YTS: BTW, now that we're cleaning/renaming things, maybe we should rename the `supply-chain-webserver` repo to `rhivos-webserver`, which is how we normally refers to and that is more clear.
 WDYT?
 [2025-10-01T12:38:44.816869] U02DXVBD5CP: it's fine by me
+[2025-10-02T13:42:43.069549] U0171SJF00H: getting dangerously close to merge request 666, but not quite there yet, <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/662> If anyone could take a look :)
+[2025-10-02T14:34:01.180759] U0171SJF00H: welp, that broke it :)
+[2025-10-02T14:41:34.862439] U03PV3B9Q7K: And it wasn't even !666.
+[2025-10-02T18:06:01.845249] U04QNH25QA1: Hi, We can build containers because of this broken link <https://download.eng.bos.redhat.com/brewroot/vol/rhel-9/packages/lftp/4.9.2/7.el9/x86_64/lftp-4.9.2-7.el9.x86_64.rpm>
+any idea?
+[2025-10-02T18:56:23.986519] U04JRTQ4LHK: afaiu the bos url has been deprecated
+[2025-10-02T18:56:29.197249] U04JRTQ4LHK: <https://issues.redhat.com/browse/DOS-457>
+[2025-10-02T18:57:13.926979] U04JRTQ4LHK: <https://redhat-internal.slack.com/archives/C04KRPW1HJ4/p1759344036427569>
+[2025-10-03T09:03:31.035529] U0171SJF00H: Well, that's surprising.. I heard nothing about that _at all_
+[2025-10-03T09:51:37.015359] U0171SJF00H: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/663>
+[2025-10-03T09:52:11.647139] U0171SJF00H: to fix the issue yesterday, I hate how terraform validation doesn't actually validate against the API in a dry-run mode... maybe pebkac though, but dissapointing that to catch some of these conflicts, you have to run apply...
+[2025-10-03T14:48:54.194579] U04AXB4GK52: Hi <@U04MGT65NQJ> and <@U0171SJF00H> if you're around to give :axe:  I would appreciate. This would help unblock our database synchronization process:
+
+<https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/664>
+[2025-10-03T15:39:15.338709] U04AXB4GK52: One more for aesthetics: <https://gitlab.cee.redhat.com/automotive/pipe-x/infrastructure/-/merge_requests/665>

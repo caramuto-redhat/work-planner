@@ -1,20 +1,8 @@
 # Slack Channel Dump
 # Channel ID: C04JDFLHJN6
-# Generated: 2025-10-01T23:12:03.767863
+# Generated: 2025-10-03T19:32:10.177674
 # Total Messages: 1000
 
-[2024-06-26T09:08:18.143669] U04JDAPLMSN: Hey folks, quick reminder to take a look at the MVP doc… and the Tech Preview column in there. Right now there are still quite some focus areas missing: <https://docs.google.com/document/d/1cZjwPjezbJIzfAHlf_4c5SBPlhlo2gHBf4Q6wxn_aJk/edit#heading=h.tralhudtifq4>
-
-Thanks!
-[2024-06-26T12:01:05.498829] U02JHD5HMGC: Are there any more demos planned for today?  Currently we have 2 listed on <https://docs.google.com/document/d/1RBwyl05Zl3OkKOi08eEIBwNOZcci_iI8WZDOH3yAVT0/edit#heading=h.zadei98xrlv>
-[2024-06-27T13:48:08.551329] U028G091SNM: can anyone on toolchain help me with testing this?
-<https://gitlab.cee.redhat.com/automotive/pipe-x/package-level-pipelines/-/blob/main/.gitlab/cki-trigger.yml>
-
-just want to run some tests for now
-[2024-07-01T10:00:04.948429] Unknown: Hi folks! The weekly ATC team meeting is coming up tomorrow. If you’ve already got topics, please add them to the agenda! Thanks!
-
-<https://docs.google.com/document/d/1o-GeT3NpCoEYZk0chZJHWPvmLKidvTRqPLwNqODFnCY/edit#heading=h.6q2rdenso77g>
-[2024-07-01T13:30:03.379899] Unknown: Reminder to add your demo items to the agenda here: <https://docs.google.com/document/d/1_DsyRxX0DtZJuHbEvDRsNmBb6kX-NlYyUWMpwfzchPI/edit#heading=h.cg7mqf8p7iyg>
 [2024-07-02T12:00:09.404219] Unknown: Hey folks, please add your weekly status to <https://docs.google.com/document/d/1JfTu9mH89aWYbuj3ApID3ADZYQB5P1P5lU-XGAx2GN0/edit#heading=h.g1reuk3pp72h|this document>. Thanks a lot!
 
 /cc focus area leads: <@UJJV82KRP>, <@U02F2L89YTS>, <@U0171SJF00H>, <@U02DXVBD5CP>, <@U02JHD5HMGC>
@@ -2686,3 +2674,10 @@ Also kernel-automotive is available
 • kernel-automotive-6.12.0-133.el10iv - <https://brewweb.engineering.redhat.com/brew/buildinfo?buildID=3857285>
 <@U04NNGY4QQ2> could you please enable RHIVOS 2 pipeline to see if images could be created successfully?
 [2025-10-01T13:41:14.700299] U02JHD5HMGC: The RHIVOS webserver cert expires tomorrow; has anyone requested new cert?
+[2025-10-02T06:51:55.918179] U04KLL3QSF4: Hi team,
+just letting you know that I will be taking a sick day for remainder of today as I've caught something. I will most likely miss today's Sprint Planning as a result.
+[2025-10-02T09:44:03.488569] U04JRTQ4LHK: Did the webserver go down? I can't access <https://rhivos.auto-toolchain.redhat.com/evidence-warehouse/contcert/rhivos-1.0.0.20250930/>
+[2025-10-02T15:25:31.737609] U04Q4USRZTM: Hi guys, I see <http://download.eng.bos.redhat.com|download.eng.bos.redhat.com> is not available.
+Who can I ping?
+[2025-10-03T15:09:19.613749] U03DM1LN4UW: I need some advice
+[2025-10-03T15:09:28.564559] U03DM1LN4UW: What GPG key are we signing with

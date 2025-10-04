@@ -1,7 +1,7 @@
 Slack Channel Dump
-Channel: #toolchain-release-readiness
+Channel: toolchain-release-readiness
 Channel ID: C04U16VAWL9
-Generated: 2025-10-01 23:12:06
+Generated: 2025-10-03 20:23:16
 Total Messages: 1000
 ================================================================================
 
@@ -581,7 +581,7 @@ From: Khaled El-Sayed
 :salute_o7:
 
 Message 109 - 2023-06-14 15:26
-From: Jim Bair
+From: Bot-B0TJQV7H
 ----------------------------------------
 fingers crossed
 
@@ -862,7 +862,9 @@ worked, in the future that job (self-test) should only take ~5 minutes to run.
 Message 156 - 2023-06-23 12:45
 From: Jochen Breuer
 ----------------------------------------
-@Ozan Unsal @Khaled El-Sayed In case you haven’t noticed yet:
+Let's play Friday Hypothetical: how much outrage and rebellion would erupt if someone would ask for
+ER3.rc2 today? Asking for a friend. From: Francisco da Rocha Sender: Slack Conversation @Ozan Unsal
+@Khaled El-Sayed In case you haven’t noticed yet:
 https://redhat-internal.slack.com/archives/C04RHEEGY30/p1687521623598999
 
 Message 157 - 2023-06-23 12:47
@@ -1478,7 +1480,9 @@ I see now, yes good catch
 Message 267 - 2023-07-12 12:18
 From: Juanje Ojeda
 ----------------------------------------
-First MR: https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/216
+GitLab CI pipelines Title: Fix: release rule needs to use the project name (!216) · Merge requests ·
+Red Hat / Edge / ci-cd / Pipe X / pipelines-as-code · GitLab First MR:
+https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/216
 
 Message 268 - 2023-07-12 12:19
 From: Juanje Ojeda
@@ -1518,7 +1522,9 @@ done
 Message 274 - 2023-07-12 13:11
 From: Juanje Ojeda
 ----------------------------------------
-There is a TF error in the pipeline upstream, in some jobs :confused:
+GitLab CI pipelines Title: build-sample-images: [aarch64, minimal, rpi4, yes, 3900000000, regular,
+img] (#4639796342) · Jobs · Red Hat / Edge / ci-cd / Pipe X / pipelines-as-code · GitLab There is a
+TF error in the pipeline upstream, in some jobs :confused:
 https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/jobs/4639796342 I'll re-try those
 jobs, but I pinned also TF in case it keep failing
 
@@ -2034,7 +2040,9 @@ Prettier in that page I suppose
 Message 367 - 2023-07-12 20:50
 From: Simon Walter
 ----------------------------------------
-that is a Qdrive3 nic. there is a service that was added
+This new service is needed to make the sip2 have networking. Title: target qdrive3: added stmmac
+package and service to fix MAC issues (!335) · Merge requests · CentOS / automotive / sample-images
+· GitLab that is a Qdrive3 nic. there is a service that was added
 https://gitlab.com/CentOS/automotive/sample-images/-/merge_requests/335
 
 Message 368 - 2023-07-12 20:50
@@ -3569,9 +3577,12 @@ I will make the announcement
 Message 629 - 2023-12-05 17:00
 From: Juanje Ojeda
 ----------------------------------------
-FYI, It looks like there will be a new step at the release, after the QE CTC testing cycle. They
-want P&S to gate the release:
-https://redhat-internal.slack.com/archives/C04RHEEGY30/p1701790657927399
+Talking to @Petr Sabata and @Jaime Flynn there is a desire to include a performance&scale gate
+within the release readiness process, goal would be to enable this by the ER6 release. ideally we
+would want to execute this on a stable release after the CTC testing, and challenging ourselves to
+fit within a 2 week window. From: Alex Calhoun Sender: Slack Conversation FYI, It looks like there
+will be a new step at the release, after the QE CTC testing cycle. They want P&S to gate the
+release: https://redhat-internal.slack.com/archives/C04RHEEGY30/p1701790657927399
 
 Message 630 - 2023-12-05 19:24
 From: Avihai Efrat
@@ -3681,10 +3692,13 @@ start Load Kernel Modules. [ 2.974305] systemd[1]: Failed to start Load Kernel M
 Message 645 - 2024-02-20 15:31
 From: Juanje Ojeda
 ----------------------------------------
-I created a MR for fixing the QA image for this issue, following the latest findings. If we merge
-that, we could rebuild the release and see if it works. Well, actually, we could re-trigger the QA
-image build and then the smoke-tests. That should give tell us if that works without rebuilding the
-whole thing. https://gitlab.com/redhat/edge/ci-cd/pipe-x/custom-images/-/merge_requests/20
+Update the QA image with the changes related to the ABL like bootloader added to the official images
+here: Title: qa: do not pass rootfs_uuid with ABL like bootloader (!20) · Merge requests · Red Hat /
+Edge / ci-cd / Pipe X / Custom Images · GitLab I created a MR for fixing the QA image for this
+issue, following the latest findings. If we merge that, we could rebuild the release and see if it
+works. Well, actually, we could re-trigger the QA image build and then the smoke-tests. That should
+give tell us if that works without rebuilding the whole thing.
+https://gitlab.com/redhat/edge/ci-cd/pipe-x/custom-images/-/merge_requests/20
 
 Message 646 - 2024-02-20 16:29
 From: Juanje Ojeda
@@ -3718,11 +3732,13 @@ From: Roni Eliezer
 Message 650 - 2024-05-22 11:18
 From: Juanje Ojeda
 ----------------------------------------
-@Ozan Unsal @Roni Eliezer So, the issue with the BASE_URL and the update job failing on the
-rhivos.git MR should be fixed. I thought it wasn't, but the job should work now fine. The new MR I
-created (https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/310) is for
-not running all the jobs, but now I'm not sure we need/want that. It'll make the pipeline shorter,
-but we won't test all the things with the new compose. WDYT? Should merge it or not?
+GitLab CI pipelines Title: rules: move down the pungi config rules, to avoid running problematic
+jobs (!310) · Merge requests · Red Hat / Edge / ci-cd / Pipe X / pipelines-as-code · GitLab @Ozan
+Unsal @Roni Eliezer So, the issue with the BASE_URL and the update job failing on the rhivos.git MR
+should be fixed. I thought it wasn't, but the job should work now fine. The new MR I created
+(https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/310) is for not
+running all the jobs, but now I'm not sure we need/want that. It'll make the pipeline shorter, but
+we won't test all the things with the new compose. WDYT? Should merge it or not?
 
 Message 651 - 2024-05-22 11:26
 From: Ozan Unsal
@@ -4553,8 +4569,12 @@ will create the release MR configs. Therefore, we won't have the similar problem
 Message 795 - 2024-05-29 20:20
 From: Juanje Ojeda
 ----------------------------------------
-The kernel team asked us for a last minute change. A important one. Here is the conversation and the
-decisions made: https://redhat-internal.slack.com/archives/C04JDFLHJN6/p1717010467078619
+So for dev preview, we want to use this kernel:
+https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=61509659 (aka
+https://brew-task-repos.engineering.redhat.com/repos/official/kernel-automotive/5.14.0/427.20.1.382.el9iv/)
+From: Jarod Wilson Sender: Thread in Slack Conversation The kernel team asked us for a last minute
+change. A important one. Here is the conversation and the decisions made:
+https://redhat-internal.slack.com/archives/C04JDFLHJN6/p1717010467078619
 
 Message 796 - 2024-05-29 20:21
 From: Juanje Ojeda
@@ -4601,7 +4621,9 @@ hmmm probably it is because of the rules again
 Message 803 - 2024-05-29 22:52
 From: Ozan Unsal
 ----------------------------------------
-probably these report upload job is skipped due to following line
+GitLab CI pipelines Title: Fix the pungi related rules by usingt he right variable
+PUNGI_CONFIG_PROJECT and fixing the order (2951796c) · Commits · Red Hat / Edge / ci-cd / Pipe X /
+pipelines-as-code · GitLab probably these report upload job is skipped due to following line
 https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/commit/2951796c3922e750b5788f9dc3724dd0dfb9aeac#38269add0f6bf210[…]b995cc81d63_20_25
 (https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/commit/2951796c3922e750b5788f9dc3724dd0dfb9aeac#38269add0f6bf210f955aa4ce4b87b995cc81d63_20_25)
 
@@ -4633,7 +4655,8 @@ rhivos-1.0-er6-rc1 (https://brewweb.engineering.redhat.com/brew/taginfo?tagID=14
 Message 807 - 2024-05-30 05:55
 From: Roni Eliezer
 ----------------------------------------
-Need another approval, thx:)
+ID: VROOM-19816 Title: Fix upload report jobs not trigger (!312) · Merge requests · Red Hat / Edge /
+ci-cd / Pipe X / pipelines-as-code · GitLab Need another approval, thx:)
 https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/312
 
 Message 808 - 2024-05-30 07:09
@@ -4682,12 +4705,15 @@ there a reason we don't use rhivos-1.0.z like RHEL does?
 Message 815 - 2024-08-27 15:23
 From: Juanje Ojeda
 ----------------------------------------
-@Ozan Unsal @Kanitha Chim @Hubert Stefanski I created two MRs related to the request from QE about
-adding new development branches based on the newest RHEL versions. Something we'll probably need to
-do soon also for upstream with Centos... This add some metadata to the config files and the info.txt
-which makes easier to pinpoint wich version of the upstream distro we're using. Could you review
-them? • Upstream: https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/324
-• Downstream:
+Add the upstream distro (CentOS Stream) version to the config and info.txt, so we can maintain
+different parallel builds based on different CentOS Stream versions, and be able... Title: Add the
+upstream distro (centos) to the config and the info.txt file (!324) · Merge requests · Red Hat /
+Edge / ci-cd / Pipe X / pipelines-as-code · GitLab @Ozan Unsal @Kanitha Chim @Hubert Stefanski I
+created two MRs related to the request from QE about adding new development branches based on the
+newest RHEL versions. Something we'll probably need to do soon also for upstream with Centos... This
+add some metadata to the config files and the info.txt which makes easier to pinpoint wich version
+of the upstream distro we're using. Could you review them? • Upstream:
+https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/324 • Downstream:
 https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/merge_requests/374
 
 Message 816 - 2024-08-27 15:34
@@ -4715,11 +4741,14 @@ Now it shows the right info :slightly_smiling_face:
 Message 820 - 2024-08-29 18:46
 From: Juanje Ojeda
 ----------------------------------------
-Checking for more missing stuff related to the nightly and the new releases, I found the culprit of
-a few issues with the releases. The build and smoke-test jobs send the variable RELEASE, but they
-don't have the rule for the release tag so, it always send the one defined in the config.yml file,
-not the one send via the tag at the rhivos.git repo :confused: I created two MR for fixing that.
-Please have a look at them: •
+We send the variable RELEASE with the builds and smoke-tests, but if we don't use the rule for
+release tags, its value will be always the default from... Title: Ensure we pass the tag with the
+release name to the RELEASE variable (!326) · Merge requests · Red Hat / Edge / ci-cd / Pipe X /
+pipelines-as-code · GitLab Checking for more missing stuff related to the nightly and the new
+releases, I found the culprit of a few issues with the releases. The build and smoke-test jobs send
+the variable RELEASE, but they don't have the rule for the release tag so, it always send the one
+defined in the config.yml file, not the one send via the tag at the rhivos.git repo :confused: I
+created two MR for fixing that. Please have a look at them: •
 https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/326 •
 https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/merge_requests/377
 
@@ -4808,7 +4837,10 @@ all went :slightly_smiling_face:
 Message 831 - 2024-10-30 10:08
 From: Juanje Ojeda
 ----------------------------------------
-The deploy from Testing Farm yesterday broke our pipelines :disappointed: More info here:
+Hi, any idea why result.xunit is "null"
+https://api.dev.testing-farm.io/v0.1/requests/def56c57-7c04-49f2-9571-f3fbe3c5213b From: Roni
+Eliezer Sender: Thread in Slack Conversation The deploy from Testing Farm yesterday broke our
+pipelines :disappointed: More info here:
 https://redhat-internal.slack.com/archives/C03BRN71JAF/p1730240102967429 There was a breaking change
 that is affecting some jobs, that's why the release pipeline couldn't finish last night or this
 morning :confused:
@@ -4853,7 +4885,11 @@ From: Ozan Unsal
 Message 838 - 2024-10-31 19:20
 From: Juanje Ojeda
 ----------------------------------------
-Ouch :disappointed: We might need to stop the build :disappointed:
+It looks (from the first tests from @Stephen Bertram) that it's working. He's double checking to be
+sure we don't have issues flashing the image, as the boot image is a bit bigger now. Eric was
+concern about it. If everything goes fine and he confirm the flashing, we'll trigger the build today
+:slightly_smiling_face: From: Juanje Ojeda Sender: Thread in Slack Conversation Ouch :disappointed:
+We might need to stop the build :disappointed:
 https://redhat-internal.slack.com/archives/C04RHEEGY30/p1730395178302619
 
 Message 839 - 2024-10-31 19:23
@@ -4875,10 +4911,16 @@ thanks @Sameera Kalgudi
 Message 842 - 2024-11-04 09:17
 From: Avihai Efrat
 ----------------------------------------
-Hi folks good morning and happy Monday :slightly_smiling_face: FYI about Rachel mentioning that she
-missed sudo packages in tech preview and that the kernel debug issue and fix seems to effect only
-debug-kernel and not the usual kernel we use in production CTC. I remember @Juanje Ojeda mentioned
-he planned to take this day off.
+@Juanje Ojeda fyi @Petr Matyas did a test run against systemd, we are missing the sudo package, not
+sure what other deps are missing from the installed image. Also seems like tmt-reboot is still
+broken. See https://artifacts.osci.redhat.com/testing-farm/744fc750-b806-421d-893f-ab6f8502fb50/ on
+a side note, @Stephen Bertram confirmed VROOM-23809 (https://issues.redhat.com/browse/VROOM-23809)
+should not affect our production CTC test run, only the debug kernel testing which is planned later
+on during the next certification round, so we shouldn't block on that. From: Rachel Sibley Sender:
+Slack Conversation Hi folks good morning and happy Monday :slightly_smiling_face: FYI about Rachel
+mentioning that she missed sudo packages in tech preview and that the kernel debug issue and fix
+seems to effect only debug-kernel and not the usual kernel we use in production CTC. I remember
+@Juanje Ojeda mentioned he planned to take this day off.
 @Ozan Unsal @Kanitha Chim can you checkout the mentioned missing sudo package and see if we can
 advance with tech preview release on our side?
 Please be aware that Robert is also in PTO today so ping Simon or Miro directly on #C03BRN71JAF|
@@ -4907,9 +4949,12 @@ make it with the fix :disappointed:
 Message 846 - 2024-11-04 14:49
 From: Juanje Ojeda
 ----------------------------------------
-We're about to trigger the release pipeline. We're waiting on this MR, so the QA image have another
-missing package: https://gitlab.com/redhat/edge/ci-cd/pipe-x/custom-images/-/merge_requests/46 Then
-we'll trigger the release pipeline.
+The systemd tests are failing with this error: Python ImportError: No module named 'lxml'... Title:
+qa: add missing python3-lxml dependency. (!46) · Merge requests · Red Hat / Edge / ci-cd / Pipe X /
+Custom Images · GitLab We're about to trigger the release pipeline. We're waiting on this MR, so the
+QA image have another missing package:
+https://gitlab.com/redhat/edge/ci-cd/pipe-x/custom-images/-/merge_requests/46 Then we'll trigger the
+release pipeline.
 
 Message 847 - 2024-11-04 15:09
 From: Juanje Ojeda
@@ -4967,10 +5012,13 @@ was already triggered.
 Message 856 - 2024-11-25 14:42
 From: Juanje Ojeda
 ----------------------------------------
-@Kanitha Chim @Hubert Stefanski Could you review these MRs? We want to be able to pin the
-automotive-image-builder and the automotive-osbuild container, so we can run safer releases. •
-Upstream: https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/346 •
-Downstream:
+Add automotive-image-builder (AIB) and automotive-osbuild container variables to be able to pin
+them. Add more explicit variables for the sample-images repo and ref to avoid... Title: Add
+automotive-image-builder (AIB) and osbuild container variables (!346) · Merge requests · Red Hat /
+Edge / ci-cd / Pipe X / pipelines-as-code · GitLab @Kanitha Chim @Hubert Stefanski Could you review
+these MRs? We want to be able to pin the automotive-image-builder and the automotive-osbuild
+container, so we can run safer releases. • Upstream:
+https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/346 • Downstream:
 https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/merge_requests/418
 The upstream one has more changes, but I split the changes into commits, to make it more digestible.
 Not big MRs, but some changes there.
@@ -4978,8 +5026,13 @@ Not big MRs, but some changes there.
 Message 857 - 2024-11-25 14:56
 From: Juanje Ojeda
 ----------------------------------------
-Thanks There is another MR related to that, but I still need to update the unit tests. But In case
-you want to start reviewing it, here it's:
+Refactor for the clone-repo script so it can better support any kind of refs (commit sha, tags,
+branches) and be able to use a specific automotive-image-builder version instead... Title: Draft:
+Refactor clone-repo to support aib pinning (!174) · Merge requests · Red Hat / Edge / ci-cd / Pipe X
+/ create-osbuild · GitLab Do not merge. This MR is for testing changes on other repos. Title: Draft:
+Test trigger auto ci (!144) · Merge requests · CentOS / automotive / src / automotive-image-builder
+· GitLab Thanks There is another MR related to that, but I still need to update the unit tests. But
+In case you want to start reviewing it, here it's:
 https://gitlab.com/redhat/edge/ci-cd/pipe-x/create-osbuild/-/merge_requests/174
 All the MRs were tested together here:
 https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/merge_requests/144
@@ -4987,13 +5040,18 @@ https://gitlab.com/CentOS/automotive/src/automotive-image-builder/-/merge_reques
 Message 858 - 2024-11-25 17:46
 From: Juanje Ojeda
 ----------------------------------------
-@Kanitha Chim @Ozan Unsal @Hubert Stefanski now the create-osbuild has the tests updated and it's
-ready to be merged. Could I have some reviews?
+Refactor for the clone-repo script so it can better support any kind of refs (commit sha, tags,
+branches) and be able to use a specific automotive-image-builder version instead... Title: Refactor
+clone-repo to support aib pinning (!174) · Merge requests · Red Hat / Edge / ci-cd / Pipe X /
+create-osbuild · GitLab @Kanitha Chim @Ozan Unsal @Hubert Stefanski now the create-osbuild has the
+tests updated and it's ready to be merged. Could I have some reviews?
 https://gitlab.com/redhat/edge/ci-cd/pipe-x/create-osbuild/-/merge_requests/174
 
 Message 859 - 2024-11-26 15:06
 From: Juanje Ojeda
 ----------------------------------------
+Use the automotive-image-builder stable branch for the nightly builds. Title: Pin the stable branch
+for the aib (!347) · Merge requests · Red Hat / Edge / ci-cd / Pipe X / pipelines-as-code · GitLab
 @Roni Eliezer @Ozan Unsal @Hubert Stefanski We have already a stable branch for a-i-b that we want
 to test against for the nightly builds. Could you approve these MRs for pinning that branch? •
 upstream: https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/347 •
@@ -5100,7 +5158,10 @@ there and I don't want to make the thread a mess with too many topics.
 Message 876 - 2024-12-16 21:18
 From: Juanje Ojeda
 ----------------------------------------
-It looks like the tf-requests bug has been fixed
+test_images_info.json file is generated after board smoke-tests. Therefore, that file cannot be used
+with tf-request. This causes wrong tf-requests, thus it may cause wrong test cases. Title: Revert
+changes for board smoke-tests (!63) · Merge requests · Red Hat / Edge / ci-cd / Pipe X / Testing
+Farm Requests · GitLab It looks like the tf-requests bug has been fixed
 (https://gitlab.com/redhat/edge/ci-cd/pipe-x/tf-requests/-/merge_requests/63) and the
 `selinux-policy` exception has been approved, so we updated it in the compose
 (https://gitlab.cee.redhat.com/automotive/rhivos/-/merge_requests/531). There is still one exception
@@ -5116,10 +5177,17 @@ tomorrow.
 Message 877 - 2024-12-17 09:00
 From: Juanje Ojeda
 ----------------------------------------
-I finally finished this, which we suppose to have it ready before the TP build, but with all that
-has been happening I didn't have time to finish it. Maybe we can have it after all. It's for
-building the images only using packages and tools from the RHIVOS compose. I'd appreciate the
-reviews: • https://gitlab.com/redhat/edge/ci-cd/pipe-x/create-osbuild/-/merge_requests/176 •
+This new functionality uses the builder container image built from the distro compose, either from
+the pipeline's compose or the latest build's compose. Some changes: Title: Add the builder
+environment from the compose (!176) · Merge requests · Red Hat / Edge / ci-cd / Pipe X /
+create-osbuild · GitLab Add jobs for building and publishing the builder container image for the
+nightly builds. It'll build a container image using the pipeline's compose with the Title: Publish
+builder container image (!350) · Merge requests · Red Hat / Edge / ci-cd / Pipe X /
+pipelines-as-code · GitLab I finally finished this, which we suppose to have it ready before the TP
+build, but with all that has been happening I didn't have time to finish it. Maybe we can have it
+after all. It's for building the images only using packages and tools from the RHIVOS compose. I'd
+appreciate the reviews: •
+https://gitlab.com/redhat/edge/ci-cd/pipe-x/create-osbuild/-/merge_requests/176 •
 https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/merge_requests/350 •
 https://gitlab.cee.redhat.com/automotive/pipe-x/downstream-pipelines-as-code/-/merge_requests/430
 Those MRs need to be merged in that other. The first allow us to build the container image for
@@ -5301,24 +5369,39 @@ https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/RHIVOS-1/RHIVOS-1.0-Tec
 everyone for the support and the approvals :slightly_smiling_face:
 
 Message 903 - 2025-03-16 23:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will instantiate self maintenance ten minutes from now.
+The maintenance work is expected to last approximately five minutes. During this time the service
+might be slower than usual or unavailable. A separate notification will be sent once the maintenance
+is over. Sorry for the inconvenience. In case the service is not available at all within 20 minutes
+please contact the Rhivos Autotoolchain team :yellow_alert:
 
 Message 904 - 2025-03-23 23:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will instantiate self maintenance ten minutes from now.
+The maintenance work is expected to last approximately five minutes. During this time the service
+might be slower than usual or unavailable. A separate notification will be sent once the maintenance
+is over. Sorry for the inconvenience. In case the service is not available at all within 20 minutes
+please contact the Rhivos Autotoolchain team :yellow_alert:
 
 Message 905 - 2025-03-30 23:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will instantiate self maintenance ten minutes from now.
+The maintenance work is expected to last approximately five minutes. During this time the service
+might be slower than usual or unavailable. A separate notification will be sent once the maintenance
+is over. Sorry for the inconvenience. In case the service is not available at all within 20 minutes
+please contact the Rhivos Autotoolchain team :yellow_alert:
 
 Message 906 - 2025-04-01 14:49
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+test Tue Apr  1 02:49:15 PM UTC 2025
 
 Message 907 - 2025-04-01 16:05
 From: Juanje Ojeda
@@ -5340,9 +5423,14 @@ https://issues.redhat.com/browse/VROOM-23401 I guess we don't do that anymore, r
 CDN and Errata? What would be the equivalent (if we have one) for that task, for this release?
 
 Message 910 - 2025-04-06 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will instantiate self maintenance ten minutes from now.
+The maintenance work is expected to last approximately five minutes. During this time the service
+might be slower than usual or unavailable. A separate notification will be sent once the maintenance
+is over. Sorry for the inconvenience. In case the service is not available at all within 20 minutes
+please contact the Rhivos Autotoolchain team :yellow_alert:
 
 Message 911 - 2025-04-07 16:40
 From: Eitan Raviv
@@ -5500,9 +5588,14 @@ From: Eitan Raviv
 :green_alert: All runners pools are now back online
 
 Message 932 - 2025-04-13 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will instantiate self maintenance ten minutes from now.
+The maintenance work is expected to last approximately five minutes. During this time the service
+might be slower than usual or unavailable. A separate notification will be sent once the maintenance
+is over. Sorry for the inconvenience. In case the service is not available at all within 20 minutes
+please contact the Rhivos Autotoolchain team :yellow_alert:
 
 Message 933 - 2025-04-17 21:33
 From: Ozan Unsal
@@ -5519,49 +5612,76 @@ Sorry for the inconvenience, and thanks for your understanding. Please use the u
 moving forward. Let me know if you have any questions!
 
 Message 934 - 2025-04-20 04:44
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will undergo an update thirty minutes from now. The update
+work is expected to last approximately thirty minutes. During this time the service might be slower
+than usual or unavailable. A separate notification will be sent once the maintenance is over. Sorry
+for the inconvenience. :yellow_alert:
 
 Message 935 - 2025-04-20 05:17
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel TSince there are a lot of pipelines running the update is postponed by 12 hours
+:yellow_alert:
 
 Message 936 - 2025-04-20 16:25
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will undergo an update one hour from now. The update work
+is expected to last approximately thirty minutes. During this time the service might be slower than
+usual or unavailable. A separate notification will be sent once the maintenance is over. Sorry for
+the inconvenience. :yellow_alert:
 
 Message 937 - 2025-04-20 20:30
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+completed maintenance and is now up and running. :green_alert:
 
 Message 938 - 2025-04-27 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) will instantiate self maintenance ten minutes from now.
+The maintenance work is expected to last approximately five minutes. During this time the service
+might be slower than usual or unavailable. A separate notification will be sent once the maintenance
+is over. Sorry for the inconvenience. In case the service is not available at all within 20 minutes
+please contact the Rhivos Autotoolchain team :yellow_alert:
 
 Message 939 - 2025-04-27 23:12
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+!channel The RHIVOS webserver at rhivos.auto-toolchain.redhat.com
+(http://rhivos.auto-toolchain.redhat.com) has completed its maintenance. Service should be back to
+normal. In case you are experiencing any degradation please contact the Rhivos Autotoolchain team
+:green_alert:
 
 Message 940 - 2025-04-29 04:26
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Relase, Gating and Services runner pools, upsteam and downstream, will be updated
+at 04:40UTC. The update will last approximately 10 minutes. During the update jobs already running
+may fail due to instance rollover. A separate message will be sent once the update is finished.
+:yellow_alert:
 
 Message 941 - 2025-04-29 05:03
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Relase, Gating and Services runner pools, upstream and downstream have been
+updated successfully and are back online. :green_alert:
 
 Message 942 - 2025-05-04 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 943 - 2025-05-05 18:00
 From: Juanje Ojeda
@@ -5690,16 +5810,24 @@ From: Robert O'Brien
 24 boards enabled in the pool, and all 24 have jobs running now.
 
 Message 958 - 2025-05-11 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 959 - 2025-05-14 07:34
 From: Avihai Efrat
 ----------------------------------------
-HI @Ozan Unsal @Juanje Ojeda, It seems we have all that's needed to start RC2, checkout more details
-in the #C04RHEEGY30|. Are you around to check if we can start RC2 with the suggested changes and
-answer in the #C04RHEEGY30| thread?
+@Juanje Ojeda @Ozan Unsal @Avihai Efrat since it's been merged 2h ago, can you please rerun/restart
+a nightly pipeline? or just start RC2 perhaps, but a nightly would be helpful too anyway there's no
+nightly today...so that's perhaps a good idea regardless;) From: Michal Skrivanek Sender: Thread in
+Slack Conversation HI @Ozan Unsal @Juanje Ojeda, It seems we have all that's needed to start RC2,
+checkout more details in the #C04RHEEGY30|. Are you around to check if we can start RC2 with the
+suggested changes and answer in the #C04RHEEGY30| thread?
 Thank you both :pray:
 CC: @Paul Caramuto @Kanitha Chim @Marcel Banas @Sameera Kalgudi
 
@@ -5739,39 +5867,58 @@ RHIVOS-1.1-20250514.t.3-repoclosure-RHIVOS.aarch64 unresolved deps (1): kmod-kvd
 1 Cleaning up project directory and file based variables 00:00 ERROR: Job failed: exit code 1```
 
 Message 961 - 2025-05-18 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 962 - 2025-05-22 04:43
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Release, Gating, Services and FOA runner pools, upsteam and downstream, will be
+stopped for an update at 07:00UTC. The update will last approximately 30 minutes. During the update
+service will be unavailabe. A separate message will be sent once the update is finished.
+:yellow_alert:
 
 Message 963 - 2025-05-22 05:29
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Release, Gating, Services and FOA runner pools, upstream and downstream have been
+updated successfully and are back online. :green_alert:
 
 Message 964 - 2025-05-25 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 965 - 2025-05-27 07:37
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Release, Gating, Services and FOA runner pools, upsteam and downstream, will be
+stopped for an update at 07:45UTC. The update will last approximately 30 minutes. During the update
+service will be unavailabe. A separate message will be sent once the update is finished.
+:yellow_alert:
 
 Message 966 - 2025-05-27 08:37
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Release, Gating, Services and FOA runner pools, upstream and downstream have been
+updated successfully and are back online. :green_alert:
 
 Message 967 - 2025-05-28 04:45
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Release, Gating, Services and FOA runner pools, upstream and downstream have been
+updated successfully and are back online. :green_alert:
 
 Message 968 - 2025-05-28 14:03
 From: Juanje Ojeda
@@ -5782,9 +5929,14 @@ we said that we should lock only after the GA is out. Or at least when we know t
 to build any other RC.
 
 Message 969 - 2025-06-01 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 970 - 2025-06-04 14:40
 From: Juanje Ojeda
@@ -5836,24 +5988,44 @@ It passed :white_check_mark: :slightly_smiling_face: Habemus RC3:
 https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/RHIVOS-1/RHIVOS-1.0.0-RC3/
 
 Message 978 - 2025-06-08 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 979 - 2025-06-15 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 980 - 2025-06-22 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 981 - 2025-06-29 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 982 - 2025-07-02 05:09
 From: Eitan Raviv
@@ -5863,92 +6035,165 @@ an update at 05:20UTC. The update will last approximately 30 minutes. During the
 be unavailable. A separate message will be sent once the update is finished. :yellow_alert:
 
 Message 983 - 2025-07-02 05:34
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Release, Gating, Services and FOA runner pools, upstream and downstream have been
+updated successfully and are back online. :green_alert:
 
 Message 984 - 2025-07-06 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 985 - 2025-07-13 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 986 - 2025-07-17 05:59
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will undergo maintenance work ten minutes from now at 06:10 UTC. The maintenance is expected to last
+approximately thirty minutes. During this time the service will be unavailable. A separate
+notification will be sent once the maintenance is over. Sorry for the inconvenience. :yellow_alert:
 
 Message 987 - 2025-07-17 06:23
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+completed maintenance and is now up and running. :green_alert:
 
 Message 988 - 2025-07-20 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 989 - 2025-07-27 23:02
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 990 - 2025-07-27 23:12
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+has completed its maintenance. Service should be back to normal. In case you are experiencing any
+degradation please contact the Rhivos Autotoolchain team :green_alert:
 
 Message 991 - 2025-07-31 19:57
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+All Pipe-X, Pipe-X Release, Gating, Services and FOA runner pools, upstream and downstream have been
+updated successfully and are back online. :green_alert:
 
 Message 992 - 2025-08-03 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 993 - 2025-08-10 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 994 - 2025-08-17 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 995 - 2025-08-24 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 996 - 2025-08-31 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 997 - 2025-09-07 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 998 - 2025-09-14 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 999 - 2025-09-21 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
 Message 1000 - 2025-09-28 22:00
-From: Unknown
+From: Bot-B05NMKVG
 ----------------------------------------
-*Alert*
+The RHIVOS webserver at rhivos.auto-toolchain.redhat.com (http://rhivos.auto-toolchain.redhat.com)
+will instantiate self maintenance ten minutes from now. The maintenance work is expected to last
+approximately five minutes. During this time the service might be slower than usual or unavailable.
+A separate notification will be sent once the maintenance is over. Sorry for the inconvenience. In
+case the service is not available at all within 20 minutes please contact the Rhivos Autotoolchain
+team :yellow_alert:
 
