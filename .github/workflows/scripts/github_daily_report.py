@@ -442,20 +442,32 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
     channels = team_data.get('channels', {})
     jira_tickets = team_data.get('jira_tickets', {})
     
-    # Extract sprint information from tickets
+    # Extract sprint information from tickets - check multiple possible field names
     def get_most_common_sprint(tickets):
         sprint_counts = {}
         for issue in tickets:
             if isinstance(issue, dict):
                 sprint_name = None
-                if 'customfield_10020' in issue:
-                    sprint_data = issue.get('customfield_10020', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
-                elif 'sprint' in issue:
-                    sprint_data = issue.get('sprint', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
+                
+                # Check multiple possible sprint field names
+                sprint_fields_to_check = [
+                    'customfield_10020',  # Common Sprint field
+                    'customfield_10021',  # Alternative Sprint field
+                    'sprint',            # Direct sprint field
+                    'Active Sprint',     # Exact field name you mentioned
+                    'active_sprint',     # Snake case version
+                    'activeSprint'       # Camel case version
+                ]
+                
+                for field_name in sprint_fields_to_check:
+                    if field_name in issue:
+                        sprint_data = issue.get(field_name, [])
+                        if sprint_data and len(sprint_data) > 0:
+                            if isinstance(sprint_data[0], dict):
+                                sprint_name = sprint_data[0].get('name', sprint_data[0].get('value', 'Unknown Sprint'))
+                            else:
+                                sprint_name = str(sprint_data[0])
+                            break
                 
                 if sprint_name and sprint_name != 'Unknown Sprint':
                     sprint_counts[sprint_name] = sprint_counts.get(sprint_name, 0) + 1
@@ -466,7 +478,15 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
     
     # Get sprint name from team tickets
     team_tickets = jira_tickets.get('toolchain', [])
+    
+    # Debug: Print available fields from first ticket
+    if team_tickets and isinstance(team_tickets[0], dict):
+        print(f'  🔍 Debug: Available fields in first ticket: {list(team_tickets[0].keys())}')
+        sprint_fields_found = [field for field in team_tickets[0].keys() if 'sprint' in field.lower() or 'active' in field.lower()]
+        print(f'  🔍 Debug: Sprint-related fields found: {sprint_fields_found}')
+    
     active_sprint = get_most_common_sprint(team_tickets)
+    print(f'  🔍 Debug: Detected active sprint: {active_sprint}')
     
     # Create sprint-aware section title
     sprint_title = f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
@@ -558,18 +578,27 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
                 priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
                 updated = issue.get('updated', 'Unknown')
                 
-                # Get sprint information
+                # Get sprint information - check multiple possible field names
                 sprint_info = "No Sprint"
-                if 'customfield_10020' in issue:  # Common Sprint field
-                    sprint_data = issue.get('customfield_10020', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
-                        sprint_info = f"🏃 {sprint_name}"
-                elif 'sprint' in issue:  # Alternative Sprint field
-                    sprint_data = issue.get('sprint', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
-                        sprint_info = f"🏃 {sprint_name}"
+                sprint_fields_to_check = [
+                    'customfield_10020',  # Common Sprint field
+                    'customfield_10021',  # Alternative Sprint field
+                    'sprint',            # Direct sprint field
+                    'Active Sprint',     # Exact field name you mentioned
+                    'active_sprint',     # Snake case version
+                    'activeSprint'       # Camel case version
+                ]
+                
+                for field_name in sprint_fields_to_check:
+                    if field_name in issue:
+                        sprint_data = issue.get(field_name, [])
+                        if sprint_data and len(sprint_data) > 0:
+                            if isinstance(sprint_data[0], dict):
+                                sprint_name = sprint_data[0].get('name', sprint_data[0].get('value', 'Unknown Sprint'))
+                            else:
+                                sprint_name = str(sprint_data[0])
+                            sprint_info = f"🏃 {sprint_name}"
+                            break
                 
                 # Get project information
                 project_key = issue.get('project', {}).get('key', 'Unknown') if isinstance(issue.get('project'), dict) else 'Unknown'
