@@ -33,7 +33,8 @@ try:
         list_teams_tool,
         list_organizations_tool,
         dump_jira_team_data_tool,
-        read_jira_team_data_tool
+        read_jira_team_data_tool,
+        register_jira_report_tools
     )
     
     # Create Jira client and config
@@ -50,7 +51,10 @@ try:
     mcp.tool()(dump_jira_team_data_tool(jira_client, jira_config))
     mcp.tool()(read_jira_team_data_tool(jira_client, jira_config))
     
-    print("✅ Registered Jira connector with 8 tools")
+    # Register Jira report tools
+    register_jira_report_tools(mcp)
+    
+    print("✅ Registered Jira connector with 8 tools + 3 report tools")
 except Exception as e:
     print(f"❌ Failed to register Jira connector: {e}")
 

@@ -1,117 +1,51 @@
 # Work Planner MCP Server Schedule Configuration
-# This file defines when and how often to collect data from various services
+# Simplified configuration inspired by jira-report-mpc project
 
 # Global settings
 global:
   timezone: "UTC"
-  retention_days: 30  # How long to keep old dumps
-  max_age_hours: 24   # Maximum age before forcing fresh dump
+  retention_days: 30
+  max_age_hours: 24
 
-# Global Schedule - runs when configured services should execute
-# When global_schedule: true on individual services, they will use this schedule
-# Otherwise, they use their individual schedule
-schedule: "0 6 * * *"  # Daily at 6 AM UTC - default global schedule
+# Simple daily schedule - runs at 6 AM UTC daily
+schedule: "0 6 * * *"
 
-# Slack data collection schedule
-slack:
+# Teams configuration
+teams:
+  - name: "toolchain"
+    slack_channels: "all"
+    jira_filter: "All In Progress"
+  - name: "foa"
+    slack_channels: "all"
+    jira_filter: "All In Progress"
+  - name: "assessment"
+    slack_channels: "all"
+    jira_filter: "All In Progress"
+  - name: "boa"
+    slack_channels: "all"
+    jira_filter: "All In Progress"
+
+# Email configuration
+email:
   enabled: true
-  global_schedule: true  # Use global schedule instead of individual schedule
-  schedule: "0 6 * * *"  # Individual schedule (ignored when global_schedule: true)
-  include_attachments: false  # Set to true to include file attachments
-  teams:
-    - name: "toolchain"
-      channels: "all"  # Dump all channels for this team
-      max_age_hours: 24
-    - name: "foa"
-      channels: "all"
-      max_age_hours: 24
-    - name: "assessment"
-      channels: "all"
-      max_age_hours: 24
-    - name: "boa"
-      channels: "all"
-      max_age_hours: 24
-  # Individual channels can also be specified
-  #individual_channels:
-    #- channel_id: "C04JDFLHJN6"
-    #  max_age_hours: 12  # More frequent for important channels
-    #- channel_id: "C05BYR06B0V"
-    #  max_age_hours: 12
+  template: "team_daily_report"
+  send_to_team: true
+  include_ai_analysis: true
 
-# Jira data collection schedule
-jira:
-  enabled: true
-  global_schedule: true  # Use global schedule instead of individual schedule
-  schedule: "0 7 * * *"  # Individual schedule (ignored when global_schedule: true)
-  teams:
-    - name: "toolchain"
-      tickets: "All In Progress"
-      max_age_hours: 24
-    - name: "foa"
-      tickets: "All In Progress"
-      max_age_hours: 24
-    - name: "assessment"
-      tickets: "All In Progress"
-      max_age_hours: 24
-    - name: "boa"
-      tickets: "All In Progress"
-      max_age_hours: 24
+# Data collection settings
+data_collection:
+  slack:
+    enabled: true
+    include_attachments: false
+  jira:
+    enabled: true
+  ai_analysis:
+    enabled: true
+    provider: "gemini"
 
-# AI Summary schedule (includes email sending)
-ai_summary:
-  enabled: true  # Enabled for testing
-  global_schedule: true  # Use global schedule instead of individual schedule
-  schedule: "0 9 * * *"  # Daily at 9 AM UTC (used when global_schedule: false)
-  
-  # Analysis types to perform
-  slack_analysis: true
-  jira_analysis: true
-  email_summary: true
-  
-  # Email sending configuration
-  email:
-    enabled: true  # Enable automatic email sending after analysis
-    send_to_team: true  # Send to team-specific recipients
-    send_to_admin: false  # Also send copy to admin recipients
-    include_attachments: false  # Attach dump files to email
-    template: "daily_summary"  # Email template to use
-    
-  # Teams are configured in email.yaml recipients section
-  teams: ["toolchain", "foa", "assessment", "boa"]
-
-# Data retention and cleanup
+# Cleanup settings
 cleanup:
   enabled: true
-  global_schedule: false  # Run on its own schedule (weekly cleanup)
-  schedule: "0 2 * * 0"  # Weekly on Sunday at 2 AM UTC
+  schedule: "0 2 * * 0"  # Weekly cleanup on Sunday
   retention_days: 30
-  keep_latest: 10  # Always keep the 10 most recent dumps
-  compress_old: true  # Compress dumps older than 7 days
-
-# Notification settings
-notifications:
-  enabled: true
-  slack_channel: "D04N6RZM2RK"  # Paul Caramuto channel
-  on_success: true
-  on_failure: true
-  on_warning: true
-
-
-# For future use
-# AI Analysis schedule
-#slack_analysis:
-#  enabled: true  # Disabled by default
-#  global_schedule: true  # Use individual schedule (runs separately)
-#  schedule: "0 8 * * *"  # Daily at 8 AM UTC (used when global_schedule: false)
-#  teams:
-#    - name: "toolchain"
-#      channels: "all"
-#      max_age_hours: 24
-
-#jira_analysis:
-#  enabled: true  # Disabled by default
-#  global_schedule: true  # Use individual schedule (runs separately)
-#  schedule: "0 8 * * *"  # Daily at 8 AM UTC (used when global_schedule: false)
-#  teams:
-#    - name: "toolchain"
-#      max_age_hours: 24
+  keep_latest: 10

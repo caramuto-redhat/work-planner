@@ -1,0 +1,202 @@
+name: Daily Team Report - Jira & Slack Summary
+
+on:
+  schedule:
+    # Run every day at 6 AM UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  daily-team-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Generate Daily Team Report
+      env:
+        SLACK_XOXC_TOKEN: ${{ secrets.SLACK_XOXC_TOKEN }}
+        SLACK_XOXD_TOKEN: ${{ secrets.SLACK_XOXD_TOKEN }}
+        JIRA_URL: ${{ secrets.JIRA_URL }}
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_TOKEN }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      run: |
+        python -c "
+        import os
+        import json
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        from datetime import datetime
+        
+        print('🚀 Starting Daily Team Report Generation...')
+        
+        # Collect and analyze data for each team
+        teams = ['toolchain', 'foa', 'assessment', 'boa']
+        
+        for team in teams:
+            print(f'\\n📊 Processing team: {team.upper()}')
+            
+            # Collect Slack data
+            slack_summary = 'No Slack data available'
+            try:
+                from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool, read_slack_data_tool
+                from connectors.slack.client import SlackClient
+                from connectors.slack.config import SlackConfig
+                
+                slack_config = SlackConfig.load('config/slack.yaml')
+                slack_client = SlackClient(slack_config)
+                
+                # Find team channels
+                slack_channels = slack_config.get('slack_channels', {})
+                team_channels = [ch_id for ch_id, team_name in slack_channels.items() if team_name == team]
+                
+                if team_channels:
+                    # Collect data for team channels
+                    dump_tool = dump_slack_data_tool(slack_client, slack_config)
+                    read_tool = read_slack_data_tool(slack_client, slack_config)
+                    
+                    for channel_id in team_channels:
+                        try:
+                            dump_tool(channel_id)
+                            result = read_tool(channel_id)
+                            if result.get('success'):
+                                slack_summary = f'Slack data collected from {len(team_channels)} channels'
+                                break
+                        except Exception as e:
+                            print(f'  ⚠️  Slack channel {channel_id}: {e}')
+                            continue
+                
+            except Exception as e:
+                print(f'  ❌ Slack collection failed: {e}')
+            
+            # Collect Jira data
+            jira_summary = 'No Jira data available'
+            jira_details = []
+            try:
+                from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
+                from connectors.jira.client import JiraClient
+                from connectors.jira.config import JiraConfig
+                
+                jira_config = JiraConfig.load('config/jira.yaml')
+                jira_client = JiraClient(jira_config)
+                dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
+                
+                print(f'  🎫 Collecting Jira data for {team}...')
+                result = dump_tool(team, 'All In Progress')
+                
+                # Read the JSON dump
+                dump_dir = 'jira_dumps'
+                json_file = f'{team}_all_in_progress_jira_dump.json'
+                json_path = f'{dump_dir}/{json_file}'
+                
+                if os.path.exists(json_path):
+                    with open(json_path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    
+                    issues = data.get('issues', [])
+                    jira_summary = f'{len(issues)} tickets in progress'
+                    
+                    # Format ticket details (inspired by jira-report-mpc)
+                    for issue in issues[:10]:  # Limit to 10 most recent
+                        ticket_info = f\"\"\"
+        ==========
+        Issue: {issue.get('key', 'N/A')}
+        ({jira_config.get('jira_url', '')}/browse/{issue.get('key', '')})
+        Owner: {issue.get('assignee', {}).get('displayName', 'Unassigned')}
+        Summary: {issue.get('summary', 'No summary')}
+        Status: {issue.get('status', {}).get('name', 'Unknown')}
+        Updated: {issue.get('updated', 'Unknown')}
+        \"\"\"
+                        jira_details.append(ticket_info.strip())
+                
+            except Exception as e:
+                print(f'  ❌ Jira collection failed: {e}')
+            
+            # Generate AI summary if available
+            ai_summary = 'AI analysis not available'
+            try:
+                from connectors.gemini.tools.ai_summary_tool import ai_summary_tool
+                from connectors.gemini.client import GeminiClient
+                from connectors.gemini.config import GeminiConfig
+                
+                gemini_config = GeminiConfig()
+                gemini_client = GeminiClient(gemini_config.get_config())
+                ai_tool_func = ai_summary_tool(gemini_client, gemini_config.get_config())
+                
+                print(f'  🤖 Generating AI summary for {team}...')
+                result = ai_tool_func(team=team, send_email=False)
+                if result.get('success'):
+                    ai_summary = result.get('summary', 'AI analysis completed')
+                
+            except Exception as e:
+                print(f'  ⚠️  AI analysis failed: {e}')
+            
+            # Create email content (inspired by jira-report-mpc format)
+            email_body = f\"\"\"
+        <h2>📊 {team.upper()} Team Daily Report</h2>
+        
+        <p><strong>Date:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+        <p><strong>Team:</strong> {team.upper()}</p>
+        
+        <h3>📱 Slack Activity</h3>
+        <p>{slack_summary}</p>
+        
+        <h3>🎫 Jira Tickets - In Progress</h3>
+        <p><strong>{jira_summary}</strong></p>
+        
+        {''.join(f'<pre>{detail}</pre>' for detail in jira_details) if jira_details else '<p>No tickets found</p>'}
+        
+        <h3>🤖 AI Analysis</h3>
+        <p>{ai_summary}</p>
+        
+        <hr>
+        <p><em>Generated by Work Planner MCP Server</em></p>
+        \"\"\"
+            
+            # Send email
+            try:
+                email_username = os.getenv('EMAIL_USERNAME')
+                email_password = os.getenv('EMAIL_PASSWORD') 
+                email_from = os.getenv('EMAIL_FROM')
+                
+                msg = MIMEMultipart('alternative')
+                msg['Subject'] = f'📊 {team.upper()} Team Daily Report - {datetime.now().strftime(\"%Y-%m-%d\")}'
+                msg['From'] = email_from
+                msg['To'] = email_from
+                
+                # Add HTML content
+                html_part = MIMEText(email_body, 'html')
+                msg.attach(html_part)
+                
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.starttls()
+                server.login(email_username, email_password)
+                server.send_message(msg)
+                server.quit()
+                
+                print(f'  ✅ Daily report email sent for {team.upper()} team!')
+                
+            except Exception as e:
+                print(f'  ❌ Failed to send email for {team}: {e}')
+                continue
+        
+        print('\\n🎉 Daily Team Report generation completed!')
+        print('📧 Check your email for team reports!')
+        "
