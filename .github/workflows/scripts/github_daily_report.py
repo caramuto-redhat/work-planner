@@ -453,13 +453,25 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
                 if 'customfield_12310940' in issue:
                     sprint_data = issue.get('customfield_12310940', [])
                     if sprint_data and len(sprint_data) > 0:
-                        # Extract sprint name from the sprint object string
-                        sprint_string = str(sprint_data[0])
-                        # Look for name= pattern in the sprint object
+                        # Look for the ACTIVE sprint, not just the first one
                         import re
-                        name_match = re.search(r'name=([^,]+)', sprint_string)
-                        if name_match:
-                            sprint_name = name_match.group(1)
+                        for sprint_string in sprint_data:
+                            sprint_str = str(sprint_string)
+                            # Check if this sprint is ACTIVE
+                            state_match = re.search(r'state=([^,]+)', sprint_str)
+                            if state_match and state_match.group(1) == 'ACTIVE':
+                                # Extract sprint name from the active sprint
+                                name_match = re.search(r'name=([^,]+)', sprint_str)
+                                if name_match:
+                                    sprint_name = name_match.group(1)
+                                    break
+                        
+                        # If no active sprint found, fall back to first sprint
+                        if not sprint_name:
+                            sprint_string = str(sprint_data[0])
+                            name_match = re.search(r'name=([^,]+)', sprint_string)
+                            if name_match:
+                                sprint_name = name_match.group(1)
                 
                 # Fallback to other sprint field names
                 if not sprint_name:
@@ -615,14 +627,27 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
                 if 'customfield_12310940' in issue:
                     sprint_data = issue.get('customfield_12310940', [])
                     if sprint_data and len(sprint_data) > 0:
-                        # Extract sprint name from the sprint object string
-                        sprint_string = str(sprint_data[0])
-                        # Look for name= pattern in the sprint object
+                        # Look for the ACTIVE sprint, not just the first one
                         import re
-                        name_match = re.search(r'name=([^,]+)', sprint_string)
-                        if name_match:
-                            sprint_name = name_match.group(1)
-                            sprint_info = f"🏃 {sprint_name}"
+                        for sprint_string in sprint_data:
+                            sprint_str = str(sprint_string)
+                            # Check if this sprint is ACTIVE
+                            state_match = re.search(r'state=([^,]+)', sprint_str)
+                            if state_match and state_match.group(1) == 'ACTIVE':
+                                # Extract sprint name from the active sprint
+                                name_match = re.search(r'name=([^,]+)', sprint_str)
+                                if name_match:
+                                    sprint_name = name_match.group(1)
+                                    sprint_info = f"🏃 {sprint_name}"
+                                    break
+                        
+                        # If no active sprint found, fall back to first sprint
+                        if sprint_info == "No Sprint":
+                            sprint_string = str(sprint_data[0])
+                            name_match = re.search(r'name=([^,]+)', sprint_string)
+                            if name_match:
+                                sprint_name = name_match.group(1)
+                                sprint_info = f"🏃 {sprint_name}"
                 
                 # Fallback to other sprint field names
                 if sprint_info == "No Sprint":
