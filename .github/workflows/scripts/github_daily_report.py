@@ -1088,7 +1088,7 @@ def main():
     jira_config = JiraConfig.load("config/jira.yaml")
     jira_client = JiraClient(jira_config)
     
-    gemini_config = GeminiConfig.load("config/gemini.yaml")
+    gemini_config = GeminiConfig("config/gemini.yaml")
     gemini_client = GeminiClient(gemini_config)
     
     teams = ['toolchain', 'foa', 'assessment', 'boa']
