@@ -506,7 +506,8 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
     
     active_sprint = get_most_common_sprint(team_tickets)
     print(f'  🔍 Debug: Detected active sprint: {active_sprint}')
-    print(f'  🔍 Debug: Sprint title will be: {"🎫 Active Sprint \"" + active_sprint + "\" Tickets" if active_sprint else "🎫 Active Sprint Tickets"}')
+    sprint_title_debug = f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
+    print(f'  🔍 Debug: Sprint title will be: {sprint_title_debug}')
     
     # Create sprint-aware section title
     sprint_title = f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
