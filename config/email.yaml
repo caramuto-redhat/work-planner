@@ -15,6 +15,7 @@ provider:
 
 # Recipients Configuration
 recipients:
+  default: ["pacaramu@redhat.com"]
   email: "pacaramu@redhat.com"
 
 # Email Templates - Clean format inspired by jira-report-mpc

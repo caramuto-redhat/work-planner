@@ -48,10 +48,10 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         print(f'  📱 Successfully imported Slack tools')
         
         slack_config = SlackConfig.load('config/slack.yaml')
-        slack_client = SlackClient(slack_config.get_config())
+        slack_client = SlackClient(slack_config)
         
         # Find team channels
-        slack_channels = slack_config.get_config().get('slack_channels', {})
+        slack_channels = slack_config.get('slack_channels', {})
         team_channels = [ch_id for ch_id, team_name in slack_channels.items() if team_name == team]
         
         print(f'  📱 Found {len(team_channels)} channels for {team}')
@@ -108,7 +108,8 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         print(f'  🎫 Collecting Jira data for {team}...')
         
         # Build JQL query for team
-        team_config = jira_config.get_team_config(team)
+        teams_config = jira_config.get('teams', {})
+        team_config = teams_config.get(team, {})
         if not team_config:
             print(f'  ⚠️  No team config found for {team}')
             return jira_data
@@ -289,7 +290,7 @@ def main():
         email_body = create_email_content(team_data, ai_summary)
         
         # Send email using existing MCP email client
-        send_email(team, email_body)
+        send_team_email(team, team_data)
     
     print('\n🎉 Daily Team Report generation completed!')
     print('📧 Check your email for team reports!')
