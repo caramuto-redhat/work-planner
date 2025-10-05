@@ -55,6 +55,7 @@ jobs:
             
             # Collect Slack data
             slack_summary = 'No Slack data available'
+            slack_details = []
             try:
                 from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool, read_slack_data_tool
                 from connectors.slack.client import SlackClient
@@ -67,6 +68,8 @@ jobs:
                 slack_channels = slack_config.get('slack_channels', {})
                 team_channels = [ch_id for ch_id, team_name in slack_channels.items() if team_name == team]
                 
+                print(f'  📱 Found {len(team_channels)} channels for {team}')
+                
                 if team_channels:
                     # Collect data for team channels
                     dump_tool = dump_slack_data_tool(slack_client, slack_config)
@@ -74,10 +77,22 @@ jobs:
                     
                     for channel_id in team_channels:
                         try:
-                            dump_tool(channel_id)
-                            result = read_tool(channel_id)
-                            if result.get('success'):
-                                slack_summary = f'Slack data collected from {len(team_channels)} channels'
+                            print(f'  📱 Processing channel: {channel_id}')
+                            dump_result = dump_tool(channel_id)
+                            print(f'  📱 Dump result: {dump_result}')
+                            
+                            read_result = read_tool(channel_id)
+                            print(f'  📱 Read result: {read_result}')
+                            
+                            if read_result.get('success'):
+                                data = read_result.get('data', {})
+                                messages = data.get('messages', [])
+                                slack_summary = f'Slack data collected from {len(team_channels)} channels ({len(messages)} messages)'
+                                
+                                # Get recent messages for summary
+                                recent_messages = messages[-5:] if messages else []
+                                for msg in recent_messages:
+                                    slack_details.append(f'  - {msg.get(\"user\", \"Unknown\")}: {msg.get(\"text\", \"No text\")[:100]}...')
                                 break
                         except Exception as e:
                             print(f'  ⚠️  Slack channel {channel_id}: {e}')
@@ -99,12 +114,15 @@ jobs:
                 dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
                 
                 print(f'  🎫 Collecting Jira data for {team}...')
-                result = dump_tool(team, 'All In Progress')
+                dump_result = dump_tool(team, 'All In Progress')
+                print(f'  🎫 Dump result: {dump_result}')
                 
                 # Read the JSON dump
                 dump_dir = 'jira_dumps'
                 json_file = f'{team}_all_in_progress_jira_dump.json'
                 json_path = f'{dump_dir}/{json_file}'
+                
+                print(f'  🎫 Looking for dump file: {json_path}')
                 
                 if os.path.exists(json_path):
                     with open(json_path, 'r', encoding='utf-8') as f:
@@ -112,6 +130,8 @@ jobs:
                     
                     issues = data.get('issues', [])
                     jira_summary = f'{len(issues)} tickets in progress'
+                    
+                    print(f'  🎫 Found {len(issues)} issues for {team}')
                     
                     # Format ticket details (inspired by jira-report-mpc)
                     for issue in issues[:10]:  # Limit to 10 most recent
@@ -125,6 +145,8 @@ jobs:
         Updated: {issue.get('updated', 'Unknown')}
         \"\"\"
                         jira_details.append(ticket_info.strip())
+                else:
+                    print(f'  ⚠️  Jira dump file not found: {json_path}')
                 
             except Exception as e:
                 print(f'  ❌ Jira collection failed: {e}')
@@ -142,6 +164,7 @@ jobs:
                 
                 print(f'  🤖 Generating AI summary for {team}...')
                 result = ai_tool_func(team=team, send_email=False)
+                print(f'  🤖 AI result: {result}')
                 if result.get('success'):
                     ai_summary = result.get('summary', 'AI analysis completed')
                 
@@ -157,6 +180,7 @@ jobs:
         
         <h3>📱 Slack Activity</h3>
         <p>{slack_summary}</p>
+        {''.join(f'<p>{detail}</p>' for detail in slack_details) if slack_details else ''}
         
         <h3>🎫 Jira Tickets - In Progress</h3>
         <p><strong>{jira_summary}</strong></p>
