@@ -1,6 +1,6 @@
 """
 Email Configuration Manager for Work Planner MCP Server
-Loads and manages email configuration from config/email.yaml
+Loads and manages email configuration from config/mail_template.yaml
 """
 
 import os
@@ -12,7 +12,7 @@ class EmailConfig:
     
     def __init__(self, config_path: Optional[str] = None):
         """Initialize email configuration"""
-        self.config_path = config_path or os.path.join('config', 'email.yaml')
+        self.config_path = config_path or os.path.join('config', 'mail_template.yaml')
         self.config = self._load_config()
     
     def _load_config(self) -> Dict[str, Any]:
