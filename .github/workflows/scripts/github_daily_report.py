@@ -71,14 +71,29 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                         
                         if messages:
                             slack_data['messages_count'] = len(messages)
-                            slack_data['summary'] = f'Slack data collected from {len(team_channels)} channels ({len(messages)} messages)'
+                            slack_data['summary'] = f'📱 {len(messages)} messages from {len(team_channels)} channels'
                             
-                            # Get recent messages for summary
-                            recent_messages = messages[-5:] if messages else []
+                            # Get recent messages for summary (inspired by jira-report-mpc)
+                            recent_messages = messages[-10:] if messages else []
                             for msg in recent_messages:
                                 user = msg.get('user', 'Unknown')
                                 text = msg.get('text', 'No text')
-                                slack_data['details'].append(f'  - {user}: {text[:100]}...')
+                                timestamp = msg.get('ts', '')
+                                
+                                # Format timestamp
+                                if timestamp:
+                                    try:
+                                        from datetime import datetime
+                                        dt = datetime.fromtimestamp(float(timestamp))
+                                        time_str = dt.strftime('%H:%M')
+                                    except:
+                                        time_str = 'Unknown'
+                                else:
+                                    time_str = 'Unknown'
+                                
+                                # Clean up text (remove formatting)
+                                clean_text = text.replace('<', '&lt;').replace('>', '&gt;')
+                                slack_data['details'].append(f'[{time_str}] {user}: {clean_text[:150]}...')
                             break
                         else:
                             print(f'  ⚠️  No messages found in channel {channel_id}')
@@ -125,7 +140,7 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         
         if issues:
             jira_data['issues_count'] = len(issues)
-            jira_data['summary'] = f'{len(issues)} tickets in progress'
+            jira_data['summary'] = f'🎫 {len(issues)} tickets in progress'
             
             # Format ticket details (inspired by jira-report-mpc)
             for issue in issues[:10]:  # Limit to 10 most recent
@@ -136,6 +151,7 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                     summary = issue.get('summary', 'No summary')
                     status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
                     updated = issue.get('updated', 'Unknown')
+                    priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
                 else:
                     # If issue is a string, use it as-is
                     key = str(issue)
@@ -143,6 +159,18 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                     summary = str(issue)
                     status = 'Unknown'
                     updated = 'Unknown'
+                    priority = 'Medium'
+                
+                # Format updated date
+                if updated != 'Unknown':
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(updated.replace('Z', '+00:00'))
+                        updated_str = dt.strftime('%Y-%m-%d %H:%M')
+                    except:
+                        updated_str = updated
+                else:
+                    updated_str = 'Unknown'
                 
                 ticket_info = f"""
 ==========
@@ -150,8 +178,8 @@ Issue: {key}
 ({jira_config.get('jira_url', '')}/browse/{key})
 Owner: {assignee}
 Summary: {summary}
-Status: {status}
-Updated: {updated}
+Status: {status} | Priority: {priority}
+Updated: {updated_str}
 """
                 jira_data['details'].append(ticket_info.strip())
         else:
@@ -162,8 +190,10 @@ Updated: {updated}
     
     return {
         'team': team,
-        'slack': slack_data,
-        'jira': jira_data
+        'slack_summary': slack_data.get('summary', 'No Slack data available'),
+        'slack_details': slack_data.get('details', []),
+        'jira_summary': jira_data.get('summary', 'No Jira data available'),
+        'jira_details': jira_data.get('details', [])
     }
 
 
@@ -184,15 +214,32 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> str:
         # Prepare data for AI analysis
         slack_summary = team_data.get('slack_summary', 'No Slack data available')
         jira_summary = team_data.get('jira_summary', 'No Jira data available')
+        slack_details = team_data.get('slack_details', [])
+        jira_details = team_data.get('jira_details', [])
         
+        # Create detailed prompt with actual data
         prompt = f"""
         Analyze the following team data for {team_data["team"]} team:
         
-        Slack Activity: {slack_summary}
-        Jira Tickets: {jira_summary}
+        SLACK ACTIVITY:
+        {slack_summary}
         
-        Provide a brief analysis of team activity, any blockers, and suggestions for improvement.
-        Keep it concise and actionable.
+        Recent Messages:
+        {chr(10).join(slack_details[:5]) if slack_details else 'No recent messages'}
+        
+        JIRA TICKETS:
+        {jira_summary}
+        
+        Ticket Details:
+        {chr(10).join(jira_details[:5]) if jira_details else 'No tickets found'}
+        
+        Please provide:
+        1. A brief summary of team activity
+        2. Any blockers or issues identified
+        3. Suggestions for improvement
+        4. Key accomplishments
+        
+        Keep it concise and actionable (2-3 sentences max).
         """
         
         # Call Gemini API directly
@@ -256,18 +303,22 @@ def send_email(team: str, email_body: str) -> bool:
             
         email_client = EmailClient(config)
         
-        # Prepare summary data for daily_summary template
+        # Prepare summary data for daily_summary template (inspired by jira-report-mpc)
+        slack_details_html = ''.join(f'<p style="margin: 5px 0; font-family: monospace; font-size: 12px;">{detail}</p>' for detail in team_data.get('slack_details', []))
+        jira_details_html = ''.join(f'<pre style="background: #f5f5f5; padding: 10px; margin: 5px 0; border-left: 3px solid #007acc;">{detail}</pre>' for detail in team_data.get('jira_details', []))
+        
         summary_data = {
             'content': f"""
 <h3>📱 Slack Activity</h3>
-<p>{team_data.get('slack_summary', 'No Slack data available')}</p>
+<p><strong>{team_data.get('slack_summary', 'No Slack data available')}</strong></p>
+{slack_details_html if slack_details_html else '<p>No recent messages</p>'}
 
 <h3>🎫 Jira Tickets - In Progress</h3>
 <p><strong>{team_data.get('jira_summary', 'No Jira data available')}</strong></p>
-{chr(10).join(team_data.get('jira_details', []))}
+{jira_details_html if jira_details_html else '<p>No tickets found</p>'}
 
 <h3>🤖 AI Analysis</h3>
-<p>{team_data.get('ai_summary', 'AI analysis not available')}</p>
+<p style="background: #e8f4fd; padding: 15px; border-left: 4px solid #007acc; margin: 10px 0;">{team_data.get('ai_summary', 'AI analysis not available')}</p>
 """
         }
         
@@ -307,18 +358,22 @@ def send_team_email(team: str, team_data: Dict[str, Any]) -> bool:
             
         email_client = EmailClient(config)
         
-        # Prepare summary data for daily_summary template
+        # Prepare summary data for daily_summary template (inspired by jira-report-mpc)
+        slack_details_html = ''.join(f'<p style="margin: 5px 0; font-family: monospace; font-size: 12px;">{detail}</p>' for detail in team_data.get('slack_details', []))
+        jira_details_html = ''.join(f'<pre style="background: #f5f5f5; padding: 10px; margin: 5px 0; border-left: 3px solid #007acc;">{detail}</pre>' for detail in team_data.get('jira_details', []))
+        
         summary_data = {
             'content': f"""
 <h3>📱 Slack Activity</h3>
-<p>{team_data.get('slack_summary', 'No Slack data available')}</p>
+<p><strong>{team_data.get('slack_summary', 'No Slack data available')}</strong></p>
+{slack_details_html if slack_details_html else '<p>No recent messages</p>'}
 
 <h3>🎫 Jira Tickets - In Progress</h3>
 <p><strong>{team_data.get('jira_summary', 'No Jira data available')}</strong></p>
-{chr(10).join(team_data.get('jira_details', []))}
+{jira_details_html if jira_details_html else '<p>No tickets found</p>'}
 
 <h3>🤖 AI Analysis</h3>
-<p>{team_data.get('ai_summary', 'AI analysis not available')}</p>
+<p style="background: #e8f4fd; padding: 15px; border-left: 4px solid #007acc; margin: 10px 0;">{team_data.get('ai_summary', 'AI analysis not available')}</p>
 """
         }
         
