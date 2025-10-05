@@ -626,12 +626,46 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
             </div>
             """
         
+        # Sort tickets by priority: In Progress + Active Sprint first, then In Progress + No/Other Sprint
+        def get_ticket_sort_key(issue):
+            if not isinstance(issue, dict):
+                return (2, '')  # Lowest priority for invalid tickets
+            
+            # Get status
+            status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
+            
+            # Only process In Progress tickets (all tickets should be In Progress)
+            if status != 'In Progress':
+                return (2, issue.get('key', ''))  # Lowest priority for non-In Progress
+            
+            # Check for active sprint
+            has_active_sprint = False
+            if 'customfield_12310940' in issue:
+                sprint_data = issue.get('customfield_12310940', [])
+                if sprint_data and len(sprint_data) > 0:
+                    import re
+                    for sprint_string in sprint_data:
+                        sprint_str = str(sprint_string)
+                        state_match = re.search(r'state=([^,]+)', sprint_str)
+                        if state_match and state_match.group(1) == 'ACTIVE':
+                            has_active_sprint = True
+                            break
+            
+            # Determine priority for In Progress tickets
+            if has_active_sprint:
+                return (0, issue.get('key', ''))  # Highest priority: In Progress + Active Sprint
+            else:
+                return (1, issue.get('key', ''))  # Lower priority: In Progress + No/Other Sprint
+        
+        # Sort tickets
+        sorted_tickets = sorted(tickets, key=get_ticket_sort_key)
+        
         tickets_html = f"""
         <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
-            <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title} ({len(tickets)} tickets)</h4>
+            <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title} ({len(sorted_tickets)} tickets)</h4>
         """
         
-        for issue in tickets[:10]:  # Limit to 10 tickets
+        for issue in sorted_tickets[:10]:  # Limit to 10 tickets
             if isinstance(issue, dict):
                 key = issue.get('key', 'N/A')
                 assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
