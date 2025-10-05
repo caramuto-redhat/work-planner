@@ -30,6 +30,48 @@ sys.path.insert(0, project_root)
 print(f'🔍 Project root: {project_root}')
 print(f'🔍 Python path: {sys.path[:3]}...')
 
+async def _get_user_display_name(slack_client, user_id: str, user_mapping: dict, bot_mapping: dict) -> str:
+    """Get user display name from Slack API or fallback to mapping"""
+    try:
+        # Try to get user info from Slack API
+        import httpx
+        
+        headers = {
+            "Authorization": f"Bearer {slack_client.xoxc_token}",
+            "Content-Type": "application/json",
+        }
+        cookies = {"d": slack_client.xoxd_token}
+        
+        url = f"{slack_client.base_url}/users.info"
+        payload = {"user": user_id}
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, headers=headers, cookies=cookies, json=payload, timeout=10.0)
+            response.raise_for_status()
+            data = response.json()
+            
+            if data.get("ok"):
+                user_info = data.get("user", {})
+                # Try different name fields in order of preference
+                display_name = (user_info.get("profile", {}).get("display_name") or 
+                              user_info.get("profile", {}).get("real_name") or 
+                              user_info.get("name") or 
+                              user_info.get("real_name"))
+                
+                if display_name:
+                    return display_name
+                    
+    except Exception as e:
+        print(f'  ⚠️  Could not get user info for {user_id}: {e}')
+    
+    # Fallback to manual mapping
+    if user_id in user_mapping:
+        return user_mapping[user_id]
+    elif user_id in bot_mapping:
+        return bot_mapping[user_id]
+    else:
+        return f"User {user_id}"  # Final fallback
+
 def collect_team_data(team: str) -> Dict[str, Any]:
     """Collect Slack and Jira data for a team using existing MCP tools"""
     print(f'📊 Collecting data for team: {team.upper()}')
@@ -86,9 +128,12 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                             # Get recent messages for summary (inspired by jira-report-mpc)
                             recent_messages = messages[-10:] if messages else []
                             
-                            # Get user and bot mapping from config (use existing work-planner mapping system)
+                            # Get user and bot mapping from config (fallback)
                             user_mapping = slack_config.get('user_display_names', {})
                             bot_mapping = slack_config.get('bot_display_names', {})
+                            
+                            # Cache for user info to avoid repeated API calls
+                            user_info_cache = {}
                             
                             print(f'  📱 Using user mapping with {len(user_mapping)} users and {len(bot_mapping)} bots')
                             
@@ -97,13 +142,12 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                                 text = msg.get('text', 'No text')
                                 timestamp = msg.get('ts', '')
                                 
-                                # Map user ID to display name (check both user and bot mappings)
-                                if user_id in user_mapping:
-                                    user_display_name = user_mapping[user_id]
-                                elif user_id in bot_mapping:
-                                    user_display_name = bot_mapping[user_id]
+                                # Get user display name (try API first, then fallback to mapping)
+                                if user_id not in user_info_cache:
+                                    user_display_name = asyncio.run(_get_user_display_name(slack_client, user_id, user_mapping, bot_mapping))
+                                    user_info_cache[user_id] = user_display_name
                                 else:
-                                    user_display_name = f"User {user_id}"  # Fallback for unmapped users
+                                    user_display_name = user_info_cache[user_id]
                                 
                                 # Format timestamp
                                 if timestamp:
