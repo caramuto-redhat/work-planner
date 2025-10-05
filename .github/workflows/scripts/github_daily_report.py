@@ -129,14 +129,29 @@ def collect_team_data(team: str) -> Dict[str, Any]:
             
             # Format ticket details (inspired by jira-report-mpc)
             for issue in issues[:10]:  # Limit to 10 most recent
+                # Handle both dict and string issue formats
+                if isinstance(issue, dict):
+                    key = issue.get('key', 'N/A')
+                    assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
+                    summary = issue.get('summary', 'No summary')
+                    status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
+                    updated = issue.get('updated', 'Unknown')
+                else:
+                    # If issue is a string, use it as-is
+                    key = str(issue)
+                    assignee = 'Unknown'
+                    summary = str(issue)
+                    status = 'Unknown'
+                    updated = 'Unknown'
+                
                 ticket_info = f"""
 ==========
-Issue: {issue.get('key', 'N/A')}
-({jira_config.get('jira_url', '')}/browse/{issue.get('key', '')})
-Owner: {issue.get('assignee', {}).get('displayName', 'Unassigned')}
-Summary: {issue.get('summary', 'No summary')}
-Status: {issue.get('status', {}).get('name', 'Unknown')}
-Updated: {issue.get('updated', 'Unknown')}
+Issue: {key}
+({jira_config.get('jira_url', '')}/browse/{key})
+Owner: {assignee}
+Summary: {summary}
+Status: {status}
+Updated: {updated}
 """
                 jira_data['details'].append(ticket_info.strip())
         else:
@@ -271,6 +286,57 @@ def send_email(team: str, email_body: str) -> bool:
         return False
 
 
+def send_team_email(team: str, team_data: Dict[str, Any]) -> bool:
+    """Send email for team using existing MCP email client"""
+    try:
+        print(f'  📧 Attempting to import Email tools...')
+        from connectors.email.client import EmailClient
+        from connectors.email.config import EmailConfig
+        
+        print(f'  📧 Successfully imported Email tools')
+        
+        email_config = EmailConfig()
+        config = email_config.get_config()
+        print(f'  📧 Email config loaded: {bool(config)}')
+        print(f'  📧 Config keys: {list(config.keys()) if config else "None"}')
+        
+        # Validate config before creating client
+        if not email_config.validate_config():
+            print(f'  ❌ Email config validation failed')
+            return False
+            
+        email_client = EmailClient(config)
+        
+        # Prepare summary data for daily_summary template
+        summary_data = {
+            'content': f"""
+<h3>📱 Slack Activity</h3>
+<p>{team_data.get('slack_summary', 'No Slack data available')}</p>
+
+<h3>🎫 Jira Tickets - In Progress</h3>
+<p><strong>{team_data.get('jira_summary', 'No Jira data available')}</strong></p>
+{chr(10).join(team_data.get('jira_details', []))}
+
+<h3>🤖 AI Analysis</h3>
+<p>{team_data.get('ai_summary', 'AI analysis not available')}</p>
+"""
+        }
+        
+        # Send email using send_daily_summary method (which uses daily_summary template)
+        result = email_client.send_daily_summary(team, summary_data)
+        
+        if result.get('success'):
+            print(f'  ✅ Email sent successfully for {team.upper()} team!')
+            return True
+        else:
+            print(f'  ❌ Email failed: {result.get("error")}')
+            return False
+            
+    except Exception as e:
+        print(f'  ❌ Email sending failed: {e}')
+        return False
+
+
 def main():
     """Main function for GitHub Actions"""
     print('🚀 Starting Daily Team Report Generation...')
@@ -285,9 +351,7 @@ def main():
         
         # Generate AI analysis using existing MCP tools
         ai_summary = generate_ai_analysis(team_data)
-        
-        # Create email content
-        email_body = create_email_content(team_data, ai_summary)
+        team_data['ai_summary'] = ai_summary
         
         # Send email using existing MCP email client
         send_team_email(team, team_data)
