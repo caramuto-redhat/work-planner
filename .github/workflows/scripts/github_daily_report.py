@@ -281,9 +281,9 @@ def collect_team_data(team: str) -> Dict[str, Any]:
             team_data['jira_tickets']['toolchain'] = toolchain_issues[:15]  # Limit to 15
             team_data['total_tickets'] += len(toolchain_issues)
             
-            # SP organization tickets - filter by SP members across all projects
+            # SP organization tickets - filter by SP members AND team's AssignedTeam
             if sp_members_str:
-                sp_jql = f'(project = "Automotive Feature Teams" OR project = "SP-RHIVOS") AND assignee in ("{sp_members_str}") AND status IN ("In Progress", "To Do", "In Review") ORDER BY updated DESC'
+                sp_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND assignee in ("{sp_members_str}") AND status IN ("In Progress", "To Do", "In Review") ORDER BY updated DESC'
                 print(f'  🎫 SP Organization JQL: {sp_jql}')
                 
                 sp_issues = jira_client.search_issues(sp_jql)
