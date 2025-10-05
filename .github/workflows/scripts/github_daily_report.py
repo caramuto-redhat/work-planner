@@ -167,291 +167,361 @@ def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict,
     return clean_text
 
 def collect_team_data(team: str) -> Dict[str, Any]:
-    """Collect Slack and Jira data for a team using existing MCP tools"""
+    """Collect Slack and Jira data for a team with per-channel summaries and organized tickets"""
     print(f'📊 Collecting data for team: {team.upper()}')
     
-    # Initialize Slack data
-    slack_data = {
-        'summary': 'No Slack data available',
-        'details': [],
-        'messages_count': 0
+    # Initialize data structure
+    team_data = {
+        'team': team,
+        'channels': {},  # Per-channel data
+        'jira_tickets': {
+            'toolchain': [],  # Toolchain team tickets
+            'sp_organization': []  # SP organization tickets
+        },
+        'total_messages': 0,
+        'total_tickets': 0
     }
     
-    # Initialize Jira data  
-    jira_data = {
-        'summary': 'No Jira data available',
-        'details': [],
-        'issues_count': 0
-    }
-    
-    # Collect Slack data using existing MCP tools
+    # Collect Slack data per channel
     try:
-        print(f'  📱 Attempting to import Slack tools...')
-        from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool, read_slack_data_tool
+        print(f'  📱 Collecting Slack data...')
         from connectors.slack.client import SlackClient
         from connectors.slack.config import SlackConfig
-        
-        print(f'  📱 Successfully imported Slack tools')
         
         slack_config = SlackConfig.load('config/slack.yaml')
         slack_client = SlackClient(slack_config)
         
         # Find team channels
         slack_channels = slack_config.get('slack_channels', {})
-        team_channels = [ch_id for ch_id, team_name in slack_channels.items() if team_name == team]
+        team_channels = {ch_id: ch_name for ch_id, ch_name in slack_channels.items() if ch_name == team}
         
         print(f'  📱 Found {len(team_channels)} channels for {team}')
         
+        # Get user mappings
+        user_mapping = slack_config.get('user_display_names', {})
+        bot_mapping = slack_config.get('bot_display_names', {})
+        unknown_users = slack_config.get('unknown_users', {})
+        user_mapping.update(unknown_users)
+        
         if team_channels:
-            # Call Slack API directly to avoid MCP tool async issues
             import asyncio
             
-            for channel_id in team_channels:
+            for channel_id, channel_name in team_channels.items():
                 try:
-                    print(f'  📱 Processing channel: {channel_id}')
+                    print(f'  📱 Processing channel: {channel_name} ({channel_id})')
                     
-                    # Test conversations.members API first
-                    print(f'  🔍 Testing conversations.members API for channel {channel_id}')
-                    members_result = asyncio.run(_test_conversations_members(slack_client, channel_id))
+                    # Get messages from last 7 days
+                    messages = asyncio.run(slack_client.get_channel_history(channel_id))
+                    print(f'  📱 Retrieved {len(messages)} messages from {channel_name}')
                     
-                    # Call Slack API directly using async
-                    try:
-                        messages = asyncio.run(slack_client.get_channel_history(channel_id))
-                        print(f'  📱 Retrieved {len(messages)} messages from {channel_id}')
+                    if messages:
+                        # Filter messages from last 7 days
+                        from datetime import datetime, timedelta
+                        seven_days_ago = datetime.now() - timedelta(days=7)
                         
-                        if messages:
-                            slack_data['messages_count'] = len(messages)
-                            slack_data['summary'] = f'📱 {len(messages)} messages from {len(team_channels)} channels'
-                            
-                            # Get recent messages for summary (inspired by jira-report-mpc)
-                            recent_messages = messages[-10:] if messages else []
-                            
-                            # Get user and bot mapping from config (fallback)
-                            user_mapping = slack_config.get('user_display_names', {})
-                            bot_mapping = slack_config.get('bot_display_names', {})
-                            unknown_users = slack_config.get('unknown_users', {})
-                            
-                            # Merge unknown_users into user_mapping for fallback
-                            user_mapping.update(unknown_users)
-                            
-                            # Cache for user info to avoid repeated API calls
-                            user_info_cache = {}
-                            
-                            print(f'  📱 Using user mapping with {len(user_mapping)} users and {len(bot_mapping)} bots')
-                            
-                            for msg in recent_messages:
-                                user_id = msg.get('user', 'Unknown')
-                                text = msg.get('text', 'No text')
-                                timestamp = msg.get('ts', '')
-                                
-                                # Get user display name (try API first, then fallback to mapping)
-                                if user_id not in user_info_cache:
-                                    print(f'  🔍 API lookup for sender {user_id}...')
-                                    user_display_name = asyncio.run(_get_user_display_name(slack_client, user_id, user_mapping, bot_mapping))
-                                    user_info_cache[user_id] = user_display_name
-                                else:
-                                    user_display_name = user_info_cache[user_id]
-                                
-                                # Format timestamp
-                                if timestamp:
-                                    try:
-                                        from datetime import datetime
-                                        dt = datetime.fromtimestamp(float(timestamp))
-                                        time_str = dt.strftime('%H:%M')
-                                    except:
-                                        time_str = 'Unknown'
-                                else:
-                                    time_str = 'Unknown'
-                                
-                                # Clean up text and map user mentions
-                                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping, slack_client, user_info_cache)
-                                slack_data['details'].append(f'[{time_str}] {user_display_name}: {clean_text[:150]}...')
-                            break
-                        else:
-                            print(f'  ⚠️  No messages found in channel {channel_id}')
-                            
-                    except Exception as async_error:
-                        print(f'  ⚠️  Async error for channel {channel_id}: {async_error}')
-                        continue
+                        recent_messages = []
+                        for msg in messages:
+                            try:
+                                timestamp = float(msg.get('ts', '0'))
+                                msg_date = datetime.fromtimestamp(timestamp)
+                                if msg_date >= seven_days_ago:
+                                    recent_messages.append(msg)
+                            except:
+                                continue
+                        
+                        print(f'  📱 Found {len(recent_messages)} messages from last 7 days')
+                        
+                        # Store channel data
+                        team_data['channels'][channel_name] = {
+                            'channel_id': channel_id,
+                            'total_messages': len(messages),
+                            'recent_messages': len(recent_messages),
+                            'messages': recent_messages[-20:] if recent_messages else [],  # Last 20 for AI analysis
+                            'user_mapping': user_mapping,
+                            'bot_mapping': bot_mapping
+                        }
+                        
+                        team_data['total_messages'] += len(recent_messages)
                         
                 except Exception as e:
-                    print(f'  ⚠️  Slack channel {channel_id}: {e}')
+                    print(f'  ⚠️  Error processing channel {channel_id}: {e}')
                     continue
                     
     except Exception as e:
         print(f'  ❌ Slack collection failed: {e}')
     
-    # Collect Jira data directly (bypassing MCP tools)
+    # Collect Jira data organized by team vs SP organization
     try:
-        print(f'  🎫 Attempting to import Jira client...')
+        print(f'  🎫 Collecting Jira data...')
         from connectors.jira.client import JiraClient
         from connectors.jira.config import JiraConfig
-        
-        print(f'  🎫 Successfully imported Jira client')
         
         jira_config = JiraConfig.load('config/jira.yaml')
         jira_client = JiraClient(jira_config)
         
-        print(f'  🎫 Collecting Jira data for {team}...')
-        
-        # Build JQL query for team
+        # Toolchain team tickets
         teams_config = jira_config.get('teams', {})
         team_config = teams_config.get(team, {})
-        if not team_config:
+        
+        if team_config:
+            assigned_team = team_config.get('assigned_team', '')
+            
+            # Toolchain team tickets
+            toolchain_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND status IN ("In Progress", "To Do", "In Review")'
+            print(f'  🎫 Toolchain JQL: {toolchain_jql}')
+            
+            toolchain_issues = jira_client.search_issues(toolchain_jql)
+            print(f'  🎫 Found {len(toolchain_issues)} toolchain tickets')
+            
+            team_data['jira_tickets']['toolchain'] = toolchain_issues[:15]  # Limit to 15
+            team_data['total_tickets'] += len(toolchain_issues)
+            
+            # SP organization tickets (different project/filter)
+            sp_jql = f'project = "SP-RHIVOS" AND status IN ("In Progress", "To Do", "In Review")'
+            print(f'  🎫 SP Organization JQL: {sp_jql}')
+            
+            sp_issues = jira_client.search_issues(sp_jql)
+            print(f'  🎫 Found {len(sp_issues)} SP organization tickets')
+            
+            team_data['jira_tickets']['sp_organization'] = sp_issues[:15]  # Limit to 15
+            team_data['total_tickets'] += len(sp_issues)
+        else:
             print(f'  ⚠️  No team config found for {team}')
-            return jira_data
             
-        assigned_team = team_config.get('assigned_team', '')
-        jql_query = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND status IN ("In Progress", "To Do", "In Review")'
+    except Exception as e:
+        print(f'  ❌ Jira collection failed: {e}')
+    
+    return team_data
+
+
+def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
+    """Generate AI analysis for each channel and overall team summary"""
+    try:
+        print(f'  🤖 Generating AI analysis for {team_data["team"]}...')
+        from connectors.gemini.client import GeminiClient
+        from connectors.gemini.config import GeminiConfig
         
-        print(f'  🎫 Using JQL: {jql_query}')
+        gemini_config = GeminiConfig()
+        gemini_client = GeminiClient(gemini_config.get_config())
         
-        # Call Jira API directly
-        issues = jira_client.search_issues(jql_query)
-        print(f'  🎫 Found {len(issues)} issues for {team}')
+        channel_summaries = {}
         
-        if issues:
-            jira_data['issues_count'] = len(issues)
-            jira_data['summary'] = f'🎫 {len(issues)} tickets in progress'
+        # Generate per-channel summaries
+        for channel_name, channel_data in team_data.get('channels', {}).items():
+            try:
+                print(f'  🤖 Analyzing channel: {channel_name}')
+                
+                messages = channel_data.get('messages', [])
+                if not messages:
+                    channel_summaries[channel_name] = f"No recent activity in {channel_name}"
+                    continue
+                
+                # Prepare messages for AI analysis
+                message_texts = []
+                for msg in messages:
+                    user_id = msg.get('user', 'Unknown')
+                    text = msg.get('text', 'No text')
+                    timestamp = msg.get('ts', '')
+                    
+                    # Get user display name
+                    user_mapping = channel_data.get('user_mapping', {})
+                    bot_mapping = channel_data.get('bot_mapping', {})
+                    user_display_name = user_mapping.get(user_id, bot_mapping.get(user_id, f"User {user_id}"))
+                    
+                    # Format timestamp
+                    if timestamp:
+                        try:
+                            from datetime import datetime
+                            dt = datetime.fromtimestamp(float(timestamp))
+                            time_str = dt.strftime('%Y-%m-%d %H:%M')
+                        except:
+                            time_str = 'Unknown'
+                    else:
+                        time_str = 'Unknown'
+                    
+                    # Clean text
+                    clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
+                    message_texts.append(f"[{time_str}] {user_display_name}: {clean_text}")
+                
+                # Create AI prompt for channel
+                prompt = f"""
+                Analyze the last 7 days of activity in the Slack channel "{channel_name}" for the {team_data["team"]} team.
+                
+                Recent Messages ({len(messages)} messages):
+                {chr(10).join(message_texts[-10:])}
+                
+                Please provide a concise summary (2-3 sentences) covering:
+                1. Main topics and discussions
+                2. Key decisions or updates
+                3. Any blockers or issues
+                4. Team collaboration patterns
+                
+                Focus on actionable insights and important developments.
+                """
+                
+                # Generate AI summary
+                summary = gemini_client.generate_content(prompt)
+                channel_summaries[channel_name] = summary if summary else f"AI analysis completed for {channel_name}"
+                
+            except Exception as e:
+                print(f'  ⚠️  AI analysis failed for {channel_name}: {e}')
+                channel_summaries[channel_name] = f"AI analysis not available for {channel_name}"
+        
+        # Generate overall team summary
+        try:
+            print(f'  🤖 Generating overall team summary...')
             
-            # Format ticket details (inspired by jira-report-mpc)
-            for issue in issues[:10]:  # Limit to 10 most recent
-                # Handle both dict and string issue formats
-                if isinstance(issue, dict):
-                    key = issue.get('key', 'N/A')
-                    assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
-                    summary = issue.get('summary', 'No summary')
-                    status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
-                    updated = issue.get('updated', 'Unknown')
-                    priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
-                else:
-                    # If issue is a string, use it as-is
-                    key = str(issue)
-                    assignee = 'Unknown'
-                    summary = str(issue)
-                    status = 'Unknown'
-                    updated = 'Unknown'
-                    priority = 'Medium'
+            # Prepare overall prompt
+            total_messages = team_data.get('total_messages', 0)
+            total_tickets = team_data.get('total_tickets', 0)
+            channel_count = len(team_data.get('channels', {}))
+            
+            overall_prompt = f"""
+            Provide an executive summary for the {team_data["team"]} team based on the last 7 days of activity:
+            
+            Team Activity Overview:
+            - {total_messages} messages across {channel_count} channels
+            - {total_tickets} active Jira tickets
+            
+            Channel Summaries:
+            {chr(10).join([f"- {ch}: {summary}" for ch, summary in channel_summaries.items()])}
+            
+            Please provide a high-level summary (2-3 sentences) covering:
+            1. Overall team productivity and focus areas
+            2. Key accomplishments or milestones
+            3. Any concerns or areas needing attention
+            
+            Keep it concise and executive-friendly.
+            """
+            
+            overall_summary = gemini_client.generate_content(overall_prompt)
+            channel_summaries['overall'] = overall_summary if overall_summary else "Overall team analysis completed"
+            
+        except Exception as e:
+            print(f'  ⚠️  Overall AI analysis failed: {e}')
+            channel_summaries['overall'] = "Overall team analysis not available"
+        
+        return channel_summaries
+        
+    except Exception as e:
+        print(f'  ❌ AI analysis failed: {e}')
+        return {'overall': 'AI analysis not available'}
+
+
+def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]) -> str:
+    """Create HTML email content with per-channel summaries and organized Jira tickets"""
+    team = team_data['team']
+    channels = team_data.get('channels', {})
+    jira_tickets = team_data.get('jira_tickets', {})
+    
+    # Create channel summaries section
+    channel_summaries_html = ""
+    for channel_name, channel_data in channels.items():
+        channel_summary = ai_summaries.get(channel_name, "No analysis available")
+        recent_count = channel_data.get('recent_messages', 0)
+        total_count = channel_data.get('total_messages', 0)
+        
+        channel_summaries_html += f"""
+        <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #007acc; background: #f8f9fa;">
+            <h4 style="margin: 0 0 10px 0; color: #007acc;">📱 #{channel_name}</h4>
+            <p style="margin: 5px 0; font-size: 12px; color: #666;">
+                <strong>Activity:</strong> {recent_count} messages in last 7 days ({total_count} total)
+            </p>
+            <p style="margin: 10px 0; line-height: 1.4;">{channel_summary}</p>
+        </div>
+        """
+    
+    # Create Jira tickets sections
+    def format_jira_tickets(tickets, section_title, section_color):
+        if not tickets:
+            return f"""
+            <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
+                <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title}</h4>
+                <p style="margin: 0; color: #666;">No active tickets found</p>
+            </div>
+            """
+        
+        tickets_html = f"""
+        <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
+            <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title} ({len(tickets)} tickets)</h4>
+        """
+        
+        for issue in tickets[:10]:  # Limit to 10 tickets
+            if isinstance(issue, dict):
+                key = issue.get('key', 'N/A')
+                assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
+                summary = issue.get('summary', 'No summary')
+                status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
+                priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
+                updated = issue.get('updated', 'Unknown')
                 
                 # Format updated date
                 if updated != 'Unknown':
                     try:
                         from datetime import datetime
                         dt = datetime.fromisoformat(updated.replace('Z', '+00:00'))
-                        updated_str = dt.strftime('%Y-%m-%d %H:%M')
+                        updated_str = dt.strftime('%Y-%m-%d')
                     except:
                         updated_str = updated
                 else:
                     updated_str = 'Unknown'
                 
-                ticket_info = f"""
-==========
-Issue: {key}
-({jira_config.get('jira_url', '')}/browse/{key})
-Owner: {assignee}
-Summary: {summary}
-Status: {status} | Priority: {priority}
-Updated: {updated_str}
-"""
-                jira_data['details'].append(ticket_info.strip())
-        else:
-            print(f'  ⚠️  No issues found for {team}')
-            
-    except Exception as e:
-        print(f'  ❌ Jira collection failed: {e}')
+                tickets_html += f"""
+                <div style="margin: 8px 0; padding: 8px; background: white; border-radius: 4px;">
+                    <strong>{key}</strong> - {summary}<br>
+                    <small style="color: #666;">👤 {assignee} | 📊 {status} | ⚡ {priority} | 📅 {updated_str}</small>
+                </div>
+                """
+            else:
+                tickets_html += f"""
+                <div style="margin: 8px 0; padding: 8px; background: white; border-radius: 4px;">
+                    <strong>{str(issue)}</strong>
+                </div>
+                """
+        
+        tickets_html += "</div>"
+        return tickets_html
     
-    return {
-        'team': team,
-        'slack_summary': slack_data.get('summary', 'No Slack data available'),
-        'slack_details': slack_data.get('details', []),
-        'jira_summary': jira_data.get('summary', 'No Jira data available'),
-        'jira_details': jira_data.get('details', [])
-    }
-
-
-def generate_ai_analysis(team_data: Dict[str, Any]) -> str:
-    """Generate AI analysis using existing Gemini tools"""
-    try:
-        print(f'  🤖 Attempting to import Gemini client...')
-        from connectors.gemini.client import GeminiClient
-        from connectors.gemini.config import GeminiConfig
-        
-        print(f'  🤖 Successfully imported Gemini client')
-        
-        gemini_config = GeminiConfig()
-        gemini_client = GeminiClient(gemini_config.get_config())
-        
-        print(f'  🤖 Generating AI summary for {team_data["team"]}...')
-        
-        # Prepare data for AI analysis
-        slack_summary = team_data.get('slack_summary', 'No Slack data available')
-        jira_summary = team_data.get('jira_summary', 'No Jira data available')
-        slack_details = team_data.get('slack_details', [])
-        jira_details = team_data.get('jira_details', [])
-        
-        # Create detailed prompt with actual data
-        prompt = f"""
-        Analyze the following team data for {team_data["team"]} team:
-        
-        SLACK ACTIVITY:
-        {slack_summary}
-        
-        Recent Messages:
-        {chr(10).join(slack_details[:5]) if slack_details else 'No recent messages'}
-        
-        JIRA TICKETS:
-        {jira_summary}
-        
-        Ticket Details:
-        {chr(10).join(jira_details[:5]) if jira_details else 'No tickets found'}
-        
-        Please provide:
-        1. A brief summary of team activity
-        2. Any blockers or issues identified
-        3. Suggestions for improvement
-        4. Key accomplishments
-        
-        Keep it concise and actionable (2-3 sentences max).
-        """
-        
-        # Call Gemini API directly
-        result = gemini_client.generate_content(prompt)
-        print(f'  🤖 AI analysis completed')
-        
-        return result if result else 'AI analysis completed'
-            
-    except Exception as e:
-        print(f'  ⚠️  AI analysis failed: {e}')
-        return 'AI analysis not available'
-
-
-def create_email_content(team_data: Dict[str, Any], ai_summary: str) -> str:
-    """Create HTML email content"""
-    team = team_data['team']
-    slack = team_data['slack']
-    jira = team_data['jira']
+    # Toolchain tickets section
+    toolchain_tickets_html = format_jira_tickets(
+        jira_tickets.get('toolchain', []), 
+        "🎫 Toolchain Team Tickets", 
+        "#007acc"
+    )
     
-    return f"""
-<h2>📊 {team.upper()} Team Daily Report</h2>
-
-<p><strong>Date:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-<p><strong>Team:</strong> {team.upper()}</p>
-
-<h3>📱 Slack Activity</h3>
-<p>{slack['summary']}</p>
-{''.join(f'<p>{detail}</p>' for detail in slack['details']) if slack['details'] else ''}
-
-<h3>🎫 Jira Tickets - In Progress</h3>
-<p><strong>{jira['summary']}</strong></p>
-
-{''.join(f'<pre>{detail}</pre>' for detail in jira['details']) if jira['details'] else '<p>No tickets found</p>'}
-
-<h3>🤖 AI Analysis</h3>
-<p>{ai_summary}</p>
-
-<hr>
-<p><em>Generated by Work Planner MCP Server</em></p>
-"""
+    # SP organization tickets section
+    sp_tickets_html = format_jira_tickets(
+        jira_tickets.get('sp_organization', []), 
+        "🏢 SP Organization Tickets", 
+        "#28a745"
+    )
+    
+    # Overall AI summary
+    overall_summary = ai_summaries.get('overall', 'Overall analysis not available')
+    
+    # Create the complete HTML content
+    html_content = f"""
+    <h2>📊 {team.upper()} Team Daily Report</h2>
+    
+    <div style="margin: 15px 0; padding: 15px; background: #e8f4fd; border-left: 4px solid #007acc;">
+        <h3 style="margin: 0 0 10px 0;">🤖 Executive Summary</h3>
+        <p style="margin: 0; line-height: 1.4;">{overall_summary}</p>
+    </div>
+    
+    <h3>📱 Slack Channel Activity (Last 7 Days)</h3>
+    {channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'}
+    
+    <h3>🎫 Active Sprint Tickets</h3>
+    {toolchain_tickets_html}
+    {sp_tickets_html}
+    
+    <hr style="margin: 30px 0;">
+    <p style="font-size: 12px; color: #666; text-align: center;">
+        Generated by Work Planner MCP Server | {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}
+    </p>
+    """
+    
+    return html_content
 
 
 def send_email(team: str, email_body: str) -> bool:
@@ -509,19 +579,15 @@ def send_email(team: str, email_body: str) -> bool:
         return False
 
 
-def send_team_email(team: str, team_data: Dict[str, Any]) -> bool:
-    """Send email for team using existing MCP email client"""
+def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str, str]) -> bool:
+    """Send email for team using enhanced format with per-channel summaries"""
     try:
-        print(f'  📧 Attempting to import Email tools...')
+        print(f'  📧 Sending enhanced email for {team.upper()} team...')
         from connectors.email.client import EmailClient
         from connectors.email.config import EmailConfig
         
-        print(f'  📧 Successfully imported Email tools')
-        
         email_config = EmailConfig()
         config = email_config.get_config()
-        print(f'  📧 Email config loaded: {bool(config)}')
-        print(f'  📧 Config keys: {list(config.keys()) if config else "None"}')
         
         # Validate config before creating client
         if not email_config.validate_config():
@@ -530,30 +596,19 @@ def send_team_email(team: str, team_data: Dict[str, Any]) -> bool:
             
         email_client = EmailClient(config)
         
-        # Prepare summary data for daily_summary template (inspired by jira-report-mpc)
-        slack_details_html = ''.join(f'<p style="margin: 5px 0; font-family: monospace; font-size: 12px;">{detail}</p>' for detail in team_data.get('slack_details', []))
-        jira_details_html = ''.join(f'<pre style="background: #f5f5f5; padding: 10px; margin: 5px 0; border-left: 3px solid #007acc;">{detail}</pre>' for detail in team_data.get('jira_details', []))
+        # Create enhanced email content
+        email_content = create_email_content(team_data, ai_summaries)
         
+        # Prepare summary data for daily_summary template
         summary_data = {
-            'content': f"""
-<h3>📱 Slack Activity</h3>
-<p><strong>{team_data.get('slack_summary', 'No Slack data available')}</strong></p>
-{slack_details_html if slack_details_html else '<p>No recent messages</p>'}
-
-<h3>🎫 Jira Tickets - In Progress</h3>
-<p><strong>{team_data.get('jira_summary', 'No Jira data available')}</strong></p>
-{jira_details_html if jira_details_html else '<p>No tickets found</p>'}
-
-<h3>🤖 AI Analysis</h3>
-<p style="background: #e8f4fd; padding: 15px; border-left: 4px solid #007acc; margin: 10px 0;">{team_data.get('ai_summary', 'AI analysis not available')}</p>
-"""
+            'content': email_content
         }
         
-        # Send email using send_daily_summary method (which uses daily_summary template)
+        # Send email using send_daily_summary method
         result = email_client.send_daily_summary(team, summary_data)
         
         if result.get('success'):
-            print(f'  ✅ Email sent successfully for {team.upper()} team!')
+            print(f'  ✅ Enhanced email sent successfully for {team.upper()} team!')
             return True
         else:
             print(f'  ❌ Email failed: {result.get("error")}')
@@ -565,26 +620,25 @@ def send_team_email(team: str, team_data: Dict[str, Any]) -> bool:
 
 
 def main():
-    """Main function for GitHub Actions"""
-    print('🚀 Starting Daily Team Report Generation...')
+    """Main function for GitHub Actions with enhanced reporting"""
+    print('🚀 Starting Enhanced Daily Team Report Generation...')
     
     teams = ['toolchain', 'foa', 'assessment', 'boa']
     
     for team in teams:
         print(f'\n📊 Processing team: {team.upper()}')
         
-        # Collect team data using existing MCP tools
+        # Collect team data with per-channel structure
         team_data = collect_team_data(team)
         
-        # Generate AI analysis using existing MCP tools
-        ai_summary = generate_ai_analysis(team_data)
-        team_data['ai_summary'] = ai_summary
+        # Generate AI analysis for each channel and overall
+        ai_summaries = generate_ai_analysis(team_data)
         
-        # Send email using existing MCP email client
-        send_team_email(team, team_data)
+        # Send enhanced email with per-channel summaries
+        send_team_email(team, team_data, ai_summaries)
     
-    print('\n🎉 Daily Team Report generation completed!')
-    print('📧 Check your email for team reports!')
+    print('\n🎉 Enhanced Daily Team Report generation completed!')
+    print('📧 Check your email for detailed team reports with per-channel summaries!')
 
 
 if __name__ == '__main__':
