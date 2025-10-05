@@ -449,25 +449,27 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
             if isinstance(issue, dict):
                 sprint_name = None
                 
-                # Check for "Active Sprint" field first (exact field name from Jira)
-                if 'Active Sprint' in issue:
-                    sprint_data = issue.get('Active Sprint', [])
+                # Check for customfield_12310940 first (the actual sprint field from Jira)
+                if 'customfield_12310940' in issue:
+                    sprint_data = issue.get('customfield_12310940', [])
                     if sprint_data and len(sprint_data) > 0:
-                        if isinstance(sprint_data[0], dict):
-                            sprint_name = sprint_data[0].get('name', sprint_data[0].get('value', 'Unknown Sprint'))
-                        else:
-                            sprint_name = str(sprint_data[0])
-                    else:
-                        # Check if it's a direct string value
-                        sprint_name = str(issue.get('Active Sprint', ''))
-                else:
-                    # Fallback to other sprint field names
+                        # Extract sprint name from the sprint object string
+                        sprint_string = str(sprint_data[0])
+                        # Look for name= pattern in the sprint object
+                        import re
+                        name_match = re.search(r'name=([^,]+)', sprint_string)
+                        if name_match:
+                            sprint_name = name_match.group(1)
+                
+                # Fallback to other sprint field names
+                if not sprint_name:
                     sprint_fields_to_check = [
-                        'customfield_10020',  # Common Sprint field
-                        'customfield_10021',  # Alternative Sprint field
-                        'sprint',            # Direct sprint field
-                        'active_sprint',     # Snake case version
-                        'activeSprint'       # Camel case version
+                        'Active Sprint',     # Exact field name from Jira UI
+                        'customfield_10020', # Common Sprint field
+                        'customfield_10021', # Alternative Sprint field
+                        'sprint',           # Direct sprint field
+                        'active_sprint',    # Snake case version
+                        'activeSprint'      # Camel case version
                     ]
                     
                     for field_name in sprint_fields_to_check:
@@ -496,13 +498,20 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
         sprint_fields_found = [field for field in team_tickets[0].keys() if 'sprint' in field.lower() or 'active' in field.lower()]
         print(f'  🔍 Debug: Sprint-related fields found: {sprint_fields_found}')
         
-        # Debug: Check Active Sprint field specifically
-        if 'Active Sprint' in team_tickets[0]:
-            active_sprint_value = team_tickets[0]['Active Sprint']
-            print(f'  🔍 Debug: Active Sprint field value: {active_sprint_value}')
-            print(f'  🔍 Debug: Active Sprint field type: {type(active_sprint_value)}')
-        else:
-            print(f'  🔍 Debug: Active Sprint field NOT found in ticket')
+        # Debug: Check all possible sprint field names
+        possible_sprint_fields = ['customfield_12310940', 'Active Sprint', 'customfield_10020', 'customfield_10021', 'sprint', 'Sprint']
+        for field_name in possible_sprint_fields:
+            if field_name in team_tickets[0]:
+                field_value = team_tickets[0][field_name]
+                print(f'  🔍 Debug: Found {field_name}: {field_value} (type: {type(field_value)})')
+            else:
+                print(f'  🔍 Debug: {field_name} NOT found')
+        
+        # Debug: Show ALL fields that might contain sprint info
+        print(f'  🔍 Debug: All fields containing sprint/active:')
+        for field_name, field_value in team_tickets[0].items():
+            if 'sprint' in field_name.lower() or 'active' in field_name.lower():
+                print(f'    {field_name}: {field_value}')
     
     active_sprint = get_most_common_sprint(team_tickets)
     print(f'  🔍 Debug: Detected active sprint: {active_sprint}')
@@ -599,31 +608,31 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
                 priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
                 updated = issue.get('updated', 'Unknown')
                 
-                # Get sprint information - prioritize "Active Sprint" field
+                # Get sprint information - prioritize customfield_12310940 (actual sprint field)
                 sprint_info = "No Sprint"
                 
-                # Check for "Active Sprint" field first (exact field name from Jira)
-                if 'Active Sprint' in issue:
-                    sprint_data = issue.get('Active Sprint', [])
+                # Check for customfield_12310940 first (the actual sprint field from Jira)
+                if 'customfield_12310940' in issue:
+                    sprint_data = issue.get('customfield_12310940', [])
                     if sprint_data and len(sprint_data) > 0:
-                        if isinstance(sprint_data[0], dict):
-                            sprint_name = sprint_data[0].get('name', sprint_data[0].get('value', 'Unknown Sprint'))
-                        else:
-                            sprint_name = str(sprint_data[0])
-                    else:
-                        # Check if it's a direct string value
-                        sprint_name = str(issue.get('Active Sprint', ''))
-                    
-                    if sprint_name and sprint_name != 'Unknown Sprint':
-                        sprint_info = f"🏃 {sprint_name}"
-                else:
-                    # Fallback to other sprint field names
+                        # Extract sprint name from the sprint object string
+                        sprint_string = str(sprint_data[0])
+                        # Look for name= pattern in the sprint object
+                        import re
+                        name_match = re.search(r'name=([^,]+)', sprint_string)
+                        if name_match:
+                            sprint_name = name_match.group(1)
+                            sprint_info = f"🏃 {sprint_name}"
+                
+                # Fallback to other sprint field names
+                if sprint_info == "No Sprint":
                     sprint_fields_to_check = [
-                        'customfield_10020',  # Common Sprint field
-                        'customfield_10021',  # Alternative Sprint field
-                        'sprint',            # Direct sprint field
-                        'active_sprint',     # Snake case version
-                        'activeSprint'       # Camel case version
+                        'Active Sprint',     # Exact field name from Jira UI
+                        'customfield_10020', # Common Sprint field
+                        'customfield_10021', # Alternative Sprint field
+                        'sprint',           # Direct sprint field
+                        'active_sprint',    # Snake case version
+                        'activeSprint'      # Camel case version
                     ]
                     
                     for field_name in sprint_fields_to_check:
