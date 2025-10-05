@@ -72,19 +72,35 @@ async def _get_user_display_name(slack_client, user_id: str, user_mapping: dict,
     else:
         return f"User {user_id}"  # Final fallback
 
-def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict) -> str:
+def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict, slack_client=None, user_info_cache=None) -> str:
     """Map user mentions in message text from <@USER_ID> to display names"""
     import re
     
     def replace_mention(match):
         user_id = match.group(1)
-        # Try to get display name (same logic as main mapping)
+        
+        # Try manual mapping first (fastest)
         if user_id in user_mapping:
             return f"@{user_mapping[user_id]}"
         elif user_id in bot_mapping:
             return f"@{bot_mapping[user_id]}"
-        else:
-            return f"@User {user_id}"  # Fallback
+        
+        # Try Slack API if available (for unmapped users)
+        if slack_client and user_info_cache is not None:
+            if user_id not in user_info_cache:
+                try:
+                    import asyncio
+                    display_name = asyncio.run(_get_user_display_name(slack_client, user_id, user_mapping, bot_mapping))
+                    user_info_cache[user_id] = display_name
+                except:
+                    user_info_cache[user_id] = f"User {user_id}"
+            
+            cached_name = user_info_cache[user_id]
+            if cached_name != f"User {user_id}":
+                return f"@{cached_name}"
+        
+        # Final fallback
+        return f"@User {user_id}"
     
     # Replace <@USER_ID> patterns with display names
     clean_text = re.sub(r'<@([A-Z0-9]+)>', replace_mention, text)
@@ -183,7 +199,7 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                                     time_str = 'Unknown'
                                 
                                 # Clean up text and map user mentions
-                                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
+                                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping, slack_client, user_info_cache)
                                 slack_data['details'].append(f'[{time_str}] {user_display_name}: {clean_text[:150]}...')
                             break
                         else:
