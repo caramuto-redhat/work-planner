@@ -27,11 +27,11 @@ data_collection:
   # How far back to fetch messages (in days)
   history_days: 30
   
-  # Text dump file location
-  dump_directory: "connectors/slack/slack_dump/slack_dumps"
+  # Text dump file location (relative to project root)
+  dump_directory: "slack_dumps"
   
-  # Parsed dump file location
-  parsed_directory: "connectors/slack/slack_dump/slack_dumps_parsed"
+  # Parsed dump file location (relative to project root)
+  parsed_directory: "slack_dumps_parsed"
 
 # Bot Display Names Mapping
 # Maps Slack bot IDs to display names for search functionality

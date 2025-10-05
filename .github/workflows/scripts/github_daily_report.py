@@ -48,72 +48,44 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         print(f'  📱 Successfully imported Slack tools')
         
         slack_config = SlackConfig.load('config/slack.yaml')
-        slack_client = SlackClient(slack_config)
+        slack_client = SlackClient(slack_config.get_config())
         
         # Find team channels
-        slack_channels = slack_config.get('slack_channels', {})
+        slack_channels = slack_config.get_config().get('slack_channels', {})
         team_channels = [ch_id for ch_id, team_name in slack_channels.items() if team_name == team]
         
         print(f'  📱 Found {len(team_channels)} channels for {team}')
         
         if team_channels:
-            # Use existing MCP tools
-            dump_tool = dump_slack_data_tool(slack_client, slack_config)
-            read_tool = read_slack_data_tool(slack_client, slack_config)
+            # Call Slack API directly to avoid MCP tool async issues
+            import asyncio
             
             for channel_id in team_channels:
                 try:
                     print(f'  📱 Processing channel: {channel_id}')
                     
-                    # Dump data using MCP tool
-                    dump_result = dump_tool(channel_id)
-                    print(f'  📱 Dump result type: {type(dump_result)}')
-                    
-                    # Parse JSON result
-                    if dump_result is None:
-                        print(f'  ⚠️  Dump returned None for channel {channel_id}')
-                        continue
-                    elif isinstance(dump_result, str):
-                        try:
-                            dump_data = json.loads(dump_result)
-                        except json.JSONDecodeError:
-                            print(f'  ⚠️  Dump returned non-JSON: {dump_result[:100]}...')
-                            continue
-                    else:
-                        dump_data = dump_result
-                    
-                    if not dump_data.get('success'):
-                        print(f'  ⚠️  Dump failed: {dump_data.get("error")}')
-                        continue
-                    
-                    # Read data using MCP tool
-                    read_result = read_tool(channel_id)
-                    print(f'  📱 Read result type: {type(read_result)}')
-                    
-                    # Parse JSON result
-                    if isinstance(read_result, str):
-                        try:
-                            read_data = json.loads(read_result)
-                        except json.JSONDecodeError:
-                            print(f'  ⚠️  Read returned non-JSON: {read_result[:100]}...')
-                            continue
-                    else:
-                        read_data = read_result
-                    
-                    if read_data.get('success'):
-                        data = read_data.get('data', {})
-                        messages = data.get('messages', [])
+                    # Call Slack API directly using async
+                    try:
+                        messages = asyncio.run(slack_client.get_channel_history(channel_id))
+                        print(f'  📱 Retrieved {len(messages)} messages from {channel_id}')
                         
-                        slack_data['messages_count'] = len(messages)
-                        slack_data['summary'] = f'Slack data collected from {len(team_channels)} channels ({len(messages)} messages)'
-                        
-                        # Get recent messages for summary
-                        recent_messages = messages[-5:] if messages else []
-                        for msg in recent_messages:
-                            user = msg.get('user', 'Unknown')
-                            text = msg.get('text', 'No text')
-                            slack_data['details'].append(f'  - {user}: {text[:100]}...')
-                        break
+                        if messages:
+                            slack_data['messages_count'] = len(messages)
+                            slack_data['summary'] = f'Slack data collected from {len(team_channels)} channels ({len(messages)} messages)'
+                            
+                            # Get recent messages for summary
+                            recent_messages = messages[-5:] if messages else []
+                            for msg in recent_messages:
+                                user = msg.get('user', 'Unknown')
+                                text = msg.get('text', 'No text')
+                                slack_data['details'].append(f'  - {user}: {text[:100]}...')
+                            break
+                        else:
+                            print(f'  ⚠️  No messages found in channel {channel_id}')
+                            
+                    except Exception as async_error:
+                        print(f'  ⚠️  Async error for channel {channel_id}: {async_error}')
+                        continue
                         
                 except Exception as e:
                     print(f'  ⚠️  Slack channel {channel_id}: {e}')
@@ -122,57 +94,41 @@ def collect_team_data(team: str) -> Dict[str, Any]:
     except Exception as e:
         print(f'  ❌ Slack collection failed: {e}')
     
-    # Collect Jira data using existing MCP tools
+    # Collect Jira data directly (bypassing MCP tools)
     try:
-        print(f'  🎫 Attempting to import Jira tools...')
-        from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
+        print(f'  🎫 Attempting to import Jira client...')
         from connectors.jira.client import JiraClient
         from connectors.jira.config import JiraConfig
         
-        print(f'  🎫 Successfully imported Jira tools')
+        print(f'  🎫 Successfully imported Jira client')
         
         jira_config = JiraConfig.load('config/jira.yaml')
         jira_client = JiraClient(jira_config)
         
         print(f'  🎫 Collecting Jira data for {team}...')
         
-        # Use existing MCP tool
-        dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
-        dump_result = dump_tool(team, 'All In Progress')
-        print(f'  🎫 Dump result type: {type(dump_result)}')
-        
-        # Parse JSON result
-        if dump_result is None:
-            print(f'  ⚠️  Jira dump returned None')
-            dump_data = {'success': False, 'error': 'Dump returned None'}
-        elif isinstance(dump_result, str):
-            try:
-                dump_data = json.loads(dump_result)
-            except json.JSONDecodeError:
-                print(f'  ⚠️  Jira dump returned non-JSON: {dump_result[:100]}...')
-                dump_data = {'success': False, 'error': 'Invalid JSON response'}
-        else:
-            dump_data = dump_result
-        
-        if dump_data.get('success'):
-            # Read the JSON dump created by the MCP tool
-            dump_dir = 'jira_dumps'
-            json_file = f'{team}_all_in_progress_jira_dump.json'
-            json_path = f'{dump_dir}/{json_file}'
+        # Build JQL query for team
+        team_config = jira_config.get_team_config(team)
+        if not team_config:
+            print(f'  ⚠️  No team config found for {team}')
+            return jira_data
             
-            if os.path.exists(json_path):
-                with open(json_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                
-                issues = data.get('issues', [])
-                jira_data['issues_count'] = len(issues)
-                jira_data['summary'] = f'{len(issues)} tickets in progress'
-                
-                print(f'  🎫 Found {len(issues)} issues for {team}')
-                
-                # Format ticket details (inspired by jira-report-mpc)
-                for issue in issues[:10]:  # Limit to 10 most recent
-                    ticket_info = f"""
+        assigned_team = team_config.get('assigned_team', '')
+        jql_query = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND status IN ("In Progress", "To Do", "In Review")'
+        
+        print(f'  🎫 Using JQL: {jql_query}')
+        
+        # Call Jira API directly
+        issues = jira_client.search_issues(jql_query)
+        print(f'  🎫 Found {len(issues)} issues for {team}')
+        
+        if issues:
+            jira_data['issues_count'] = len(issues)
+            jira_data['summary'] = f'{len(issues)} tickets in progress'
+            
+            # Format ticket details (inspired by jira-report-mpc)
+            for issue in issues[:10]:  # Limit to 10 most recent
+                ticket_info = f"""
 ==========
 Issue: {issue.get('key', 'N/A')}
 ({jira_config.get('jira_url', '')}/browse/{issue.get('key', '')})
@@ -181,11 +137,9 @@ Summary: {issue.get('summary', 'No summary')}
 Status: {issue.get('status', {}).get('name', 'Unknown')}
 Updated: {issue.get('updated', 'Unknown')}
 """
-                    jira_data['details'].append(ticket_info.strip())
-            else:
-                print(f'  ⚠️  Jira dump file not found: {json_path}')
+                jira_data['details'].append(ticket_info.strip())
         else:
-            print(f'  ⚠️  Jira dump failed: {dump_data.get("error")}')
+            print(f'  ⚠️  No issues found for {team}')
             
     except Exception as e:
         print(f'  ❌ Jira collection failed: {e}')
@@ -200,40 +154,36 @@ Updated: {issue.get('updated', 'Unknown')}
 def generate_ai_analysis(team_data: Dict[str, Any]) -> str:
     """Generate AI analysis using existing Gemini tools"""
     try:
-        print(f'  🤖 Attempting to import Gemini tools...')
-        from connectors.gemini.tools.ai_summary_tool import ai_summary_tool
+        print(f'  🤖 Attempting to import Gemini client...')
         from connectors.gemini.client import GeminiClient
         from connectors.gemini.config import GeminiConfig
         
-        print(f'  🤖 Successfully imported Gemini tools')
+        print(f'  🤖 Successfully imported Gemini client')
         
         gemini_config = GeminiConfig()
         gemini_client = GeminiClient(gemini_config.get_config())
-        ai_tool_func = ai_summary_tool(gemini_client, gemini_config.get_config())
         
         print(f'  🤖 Generating AI summary for {team_data["team"]}...')
         
-        # Use existing MCP tool
-        result = ai_tool_func(team=team_data['team'], send_email=False)
-        print(f'  🤖 AI result type: {type(result)}')
+        # Prepare data for AI analysis
+        slack_summary = team_data.get('slack_summary', 'No Slack data available')
+        jira_summary = team_data.get('jira_summary', 'No Jira data available')
         
-        # Parse JSON result
-        if result is None:
-            print(f'  ⚠️  AI analysis returned None')
-            return 'AI analysis returned None'
-        elif isinstance(result, str):
-            try:
-                result_data = json.loads(result)
-            except json.JSONDecodeError:
-                print(f'  ⚠️  AI analysis returned non-JSON: {result[:100]}...')
-                return 'AI analysis returned invalid response'
-        else:
-            result_data = result
+        prompt = f"""
+        Analyze the following team data for {team_data["team"]} team:
         
-        if result_data.get('success'):
-            return result_data.get('summary', 'AI analysis completed')
-        else:
-            return f'AI analysis failed: {result_data.get("error", "Unknown error")}'
+        Slack Activity: {slack_summary}
+        Jira Tickets: {jira_summary}
+        
+        Provide a brief analysis of team activity, any blockers, and suggestions for improvement.
+        Keep it concise and actionable.
+        """
+        
+        # Call Gemini API directly
+        result = gemini_client.generate_content(prompt)
+        print(f'  🤖 AI analysis completed')
+        
+        return result if result else 'AI analysis completed'
             
     except Exception as e:
         print(f'  ⚠️  AI analysis failed: {e}')
