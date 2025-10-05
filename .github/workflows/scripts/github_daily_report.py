@@ -266,25 +266,34 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         if team_config:
             assigned_team = team_config.get('assigned_team', '')
             
-            # Toolchain team tickets
-            toolchain_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND status IN ("In Progress", "To Do", "In Review")'
-            print(f'  🎫 Toolchain JQL: {toolchain_jql}')
+            # Get SP organization members for filtering
+            organizations_config = jira_config.get('organizations', {})
+            sp_members = organizations_config.get('SP', [])
+            sp_members_str = '", "'.join(sp_members) if sp_members else ""
+            
+            # Team tickets with sprint information
+            toolchain_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND status IN ("In Progress", "To Do", "In Review") ORDER BY updated DESC'
+            print(f'  🎫 Team JQL: {toolchain_jql}')
             
             toolchain_issues = jira_client.search_issues(toolchain_jql)
-            print(f'  🎫 Found {len(toolchain_issues)} toolchain tickets')
+            print(f'  🎫 Found {len(toolchain_issues)} team tickets')
             
             team_data['jira_tickets']['toolchain'] = toolchain_issues[:15]  # Limit to 15
             team_data['total_tickets'] += len(toolchain_issues)
             
-            # SP organization tickets (different project/filter)
-            sp_jql = f'project = "SP-RHIVOS" AND status IN ("In Progress", "To Do", "In Review")'
-            print(f'  🎫 SP Organization JQL: {sp_jql}')
-            
-            sp_issues = jira_client.search_issues(sp_jql)
-            print(f'  🎫 Found {len(sp_issues)} SP organization tickets')
-            
-            team_data['jira_tickets']['sp_organization'] = sp_issues[:15]  # Limit to 15
-            team_data['total_tickets'] += len(sp_issues)
+            # SP organization tickets - filter by SP members across all projects
+            if sp_members_str:
+                sp_jql = f'(project = "Automotive Feature Teams" OR project = "SP-RHIVOS") AND assignee in ("{sp_members_str}") AND status IN ("In Progress", "To Do", "In Review") ORDER BY updated DESC'
+                print(f'  🎫 SP Organization JQL: {sp_jql}')
+                
+                sp_issues = jira_client.search_issues(sp_jql)
+                print(f'  🎫 Found {len(sp_issues)} SP organization tickets')
+                
+                team_data['jira_tickets']['sp_organization'] = sp_issues[:15]  # Limit to 15
+                team_data['total_tickets'] += len(sp_issues)
+            else:
+                print(f'  ⚠️  No SP organization members found in config')
+                team_data['jira_tickets']['sp_organization'] = []
         else:
             print(f'  ⚠️  No team config found for {team}')
             
@@ -501,6 +510,22 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
                 priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
                 updated = issue.get('updated', 'Unknown')
                 
+                # Get sprint information
+                sprint_info = "No Sprint"
+                if 'customfield_10020' in issue:  # Common Sprint field
+                    sprint_data = issue.get('customfield_10020', [])
+                    if sprint_data and len(sprint_data) > 0:
+                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
+                        sprint_info = f"🏃 {sprint_name}"
+                elif 'sprint' in issue:  # Alternative Sprint field
+                    sprint_data = issue.get('sprint', [])
+                    if sprint_data and len(sprint_data) > 0:
+                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
+                        sprint_info = f"🏃 {sprint_name}"
+                
+                # Get project information
+                project_key = issue.get('project', {}).get('key', 'Unknown') if isinstance(issue.get('project'), dict) else 'Unknown'
+                
                 # Format updated date
                 if updated != 'Unknown':
                     try:
@@ -513,9 +538,18 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
                     updated_str = 'Unknown'
                 
                 tickets_html += f"""
-                <div style="margin: 8px 0; padding: 8px; background: white; border-radius: 4px;">
-                    <strong>{key}</strong> - {summary}<br>
-                    <small style="color: #666;">👤 {assignee} | 📊 {status} | ⚡ {priority} | 📅 {updated_str}</small>
+                <div style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px; border-left: 3px solid {section_color};">
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: {section_color}; font-size: 14px;">{key}</strong>
+                        <span style="background: #f0f0f0; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-left: 8px;">{project_key}</span>
+                    </div>
+                    <div style="margin-bottom: 6px; font-weight: 500;">{summary}</div>
+                    <div style="font-size: 12px; color: #666;">
+                        👤 {assignee} | 📊 {status} | ⚡ {priority} | 📅 {updated_str}
+                    </div>
+                    <div style="font-size: 11px; color: #888; margin-top: 4px;">
+                        {sprint_info}
+                    </div>
                 </div>
                 """
             else:
@@ -528,17 +562,18 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
         tickets_html += "</div>"
         return tickets_html
     
-    # Toolchain tickets section
+    # Team tickets section
+    team_name = team_data['team'].upper()
     toolchain_tickets_html = format_jira_tickets(
         jira_tickets.get('toolchain', []), 
-        "🎫 Toolchain Team Tickets", 
+        f"🎫 {team_name} Team Tickets (In Progress)", 
         "#007acc"
     )
     
     # SP organization tickets section
     sp_tickets_html = format_jira_tickets(
         jira_tickets.get('sp_organization', []), 
-        "🏢 SP Organization Tickets", 
+        "🏢 SP Organization Tickets (In Progress)", 
         "#28a745"
     )
     
