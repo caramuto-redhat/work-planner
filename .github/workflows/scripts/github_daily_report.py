@@ -231,21 +231,41 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                     print(f'  📱 Retrieved {len(messages)} messages from {channel_name}')
                     
                     if messages:
-                        # Filter messages from last 7 days
+                        # Filter messages from last 7 days from the most recent message
                         from datetime import datetime, timedelta
-                        seven_days_ago = datetime.now() - timedelta(days=7)
                         
-                        recent_messages = []
+                        # Find the timestamp of the most recent message
+                        latest_timestamp = 0
                         for msg in messages:
                             try:
                                 timestamp = float(msg.get('ts', '0'))
-                                msg_date = datetime.fromtimestamp(timestamp)
-                                if msg_date >= seven_days_ago:
-                                    recent_messages.append(msg)
+                                if timestamp > latest_timestamp:
+                                    latest_timestamp = timestamp
                             except:
                                 continue
                         
-                        print(f'  📱 Found {len(recent_messages)} messages from last 7 days in {channel_name}')
+                        if latest_timestamp > 0:
+                            # Calculate 7 days back from the most recent message
+                            latest_message_date = datetime.fromtimestamp(latest_timestamp)
+                            seven_days_ago = latest_message_date - timedelta(days=7)
+                            
+                            print(f'  📱 Latest message in {channel_name}: {latest_message_date.strftime("%Y-%m-%d %H:%M")}')
+                            print(f'  📱 Looking for messages from: {seven_days_ago.strftime("%Y-%m-%d %H:%M")} onwards')
+                            
+                            recent_messages = []
+                            for msg in messages:
+                                try:
+                                    timestamp = float(msg.get('ts', '0'))
+                                    msg_date = datetime.fromtimestamp(timestamp)
+                                    if msg_date >= seven_days_ago:
+                                        recent_messages.append(msg)
+                                except:
+                                    continue
+                            
+                            print(f'  📱 Found {len(recent_messages)} messages from last 7 days in {channel_name}')
+                        else:
+                            print(f'  📱 No valid timestamps found in {channel_name}')
+                            recent_messages = []
                         
                         # Store channel data
                         team_data['channels'][channel_name] = {
