@@ -59,17 +59,25 @@ async def _get_user_display_name(slack_client, user_id: str, user_mapping: dict,
                               user_info.get("real_name"))
                 
                 if display_name:
+                    print(f'  ✅ API success for {user_id}: {display_name}')
                     return display_name
+                else:
+                    print(f'  ⚠️  API returned no display name for {user_id}')
+            else:
+                print(f'  ⚠️  API error for {user_id}: {data.get("error", "Unknown error")}')
                     
     except Exception as e:
-        print(f'  ⚠️  Could not get user info for {user_id}: {e}')
+        print(f'  ❌ API exception for {user_id}: {e}')
     
     # Fallback to manual mapping
     if user_id in user_mapping:
+        print(f'  📋 Using manual mapping for {user_id}: {user_mapping[user_id]}')
         return user_mapping[user_id]
     elif user_id in bot_mapping:
+        print(f'  🤖 Using bot mapping for {user_id}: {bot_mapping[user_id]}')
         return bot_mapping[user_id]
     else:
+        print(f'  ❌ No mapping found for {user_id}, using fallback')
         return f"User {user_id}"  # Final fallback
 
 def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict, slack_client=None, user_info_cache=None) -> str:
@@ -90,9 +98,11 @@ def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict,
             if user_id not in user_info_cache:
                 try:
                     import asyncio
+                    print(f'  🔍 API lookup for mention {user_id}...')
                     display_name = asyncio.run(_get_user_display_name(slack_client, user_id, user_mapping, bot_mapping))
                     user_info_cache[user_id] = display_name
-                except:
+                except Exception as e:
+                    print(f'  ❌ API lookup failed for mention {user_id}: {e}')
                     user_info_cache[user_id] = f"User {user_id}"
             
             cached_name = user_info_cache[user_id]
@@ -182,6 +192,7 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                                 
                                 # Get user display name (try API first, then fallback to mapping)
                                 if user_id not in user_info_cache:
+                                    print(f'  🔍 API lookup for sender {user_id}...')
                                     user_display_name = asyncio.run(_get_user_display_name(slack_client, user_id, user_mapping, bot_mapping))
                                     user_info_cache[user_id] = user_display_name
                                 else:
