@@ -414,20 +414,66 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
     channels = team_data.get('channels', {})
     jira_tickets = team_data.get('jira_tickets', {})
     
-    # Create channel summaries section
+    # Create channel summaries section with detailed activity
     channel_summaries_html = ""
     for channel_name, channel_data in channels.items():
         channel_summary = ai_summaries.get(channel_name, "No analysis available")
         recent_count = channel_data.get('recent_messages', 0)
         total_count = channel_data.get('total_messages', 0)
+        messages = channel_data.get('messages', [])
+        
+        # Create recent messages preview
+        recent_messages_html = ""
+        if messages:
+            recent_messages_html = "<div style='margin: 10px 0; max-height: 200px; overflow-y: auto;'>"
+            for msg in messages[-5:]:  # Show last 5 messages
+                user_id = msg.get('user', 'Unknown')
+                text = msg.get('text', 'No text')
+                timestamp = msg.get('ts', '')
+                
+                # Get user display name
+                user_mapping = channel_data.get('user_mapping', {})
+                bot_mapping = channel_data.get('bot_mapping', {})
+                user_display_name = user_mapping.get(user_id, bot_mapping.get(user_id, f"User {user_id}"))
+                
+                # Format timestamp
+                if timestamp:
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromtimestamp(float(timestamp))
+                        time_str = dt.strftime('%m-%d %H:%M')
+                    except:
+                        time_str = 'Unknown'
+                else:
+                    time_str = 'Unknown'
+                
+                # Clean text and truncate
+                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
+                clean_text = clean_text[:100] + "..." if len(clean_text) > 100 else clean_text
+                
+                recent_messages_html += f"""
+                <div style='margin: 3px 0; padding: 5px; background: white; border-radius: 3px; font-size: 12px;'>
+                    <strong>{time_str}</strong> <strong>{user_display_name}:</strong> {clean_text}
+                </div>
+                """
+            recent_messages_html += "</div>"
         
         channel_summaries_html += f"""
-        <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #007acc; background: #f8f9fa;">
-            <h4 style="margin: 0 0 10px 0; color: #007acc;">📱 #{channel_name}</h4>
-            <p style="margin: 5px 0; font-size: 12px; color: #666;">
-                <strong>Activity:</strong> {recent_count} messages in last 7 days ({total_count} total)
-            </p>
-            <p style="margin: 10px 0; line-height: 1.4;">{channel_summary}</p>
+        <div style="margin: 20px 0; padding: 20px; border-left: 4px solid #007acc; background: #f8f9fa; border-radius: 5px;">
+            <h4 style="margin: 0 0 15px 0; color: #007acc; font-size: 16px;">📱 #{channel_name}</h4>
+            
+            <div style="margin: 10px 0;">
+                <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 12px; font-size: 11px; color: #1976d2;">
+                    📊 {recent_count} messages (last 7 days) • {total_count} total
+                </span>
+            </div>
+            
+            <div style="margin: 15px 0;">
+                <h5 style="margin: 0 0 8px 0; color: #333; font-size: 14px;">🤖 AI Summary:</h5>
+                <p style="margin: 0; line-height: 1.4; font-style: italic; color: #555;">{channel_summary}</p>
+            </div>
+            
+            {recent_messages_html if recent_messages_html else '<p style="color: #666; font-size: 12px;">No recent messages</p>'}
         </div>
         """
     
@@ -508,7 +554,10 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
         <p style="margin: 0; line-height: 1.4;">{overall_summary}</p>
     </div>
     
-    <h3>📱 Slack Channel Activity (Last 7 Days)</h3>
+    <h3>📱 Individual Slack Channel Activity (Last 7 Days)</h3>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+        Each channel shows AI analysis and recent message previews
+    </p>
     {channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'}
     
     <h3>🎫 Active Sprint Tickets</h3>
