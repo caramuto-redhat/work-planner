@@ -13,6 +13,16 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from typing import Dict, List, Any
 
+# Suppress gRPC/absl warnings from Gemini client
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+os.environ['GRPC_POLL_STRATEGY'] = 'poll'
+os.environ['GRPC_ENABLE_FORK_SUPPORT'] = '0'
+
+# Suppress absl logging warnings
+import logging
+logging.getLogger('absl').setLevel(logging.ERROR)
+
 # Add project root to Python path so we can import connectors
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.insert(0, project_root)
