@@ -85,10 +85,25 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                             
                             # Get recent messages for summary (inspired by jira-report-mpc)
                             recent_messages = messages[-10:] if messages else []
+                            
+                            # Get user and bot mapping from config (use existing work-planner mapping system)
+                            user_mapping = slack_config.get('user_display_names', {})
+                            bot_mapping = slack_config.get('bot_display_names', {})
+                            
+                            print(f'  📱 Using user mapping with {len(user_mapping)} users and {len(bot_mapping)} bots')
+                            
                             for msg in recent_messages:
-                                user = msg.get('user', 'Unknown')
+                                user_id = msg.get('user', 'Unknown')
                                 text = msg.get('text', 'No text')
                                 timestamp = msg.get('ts', '')
+                                
+                                # Map user ID to display name (check both user and bot mappings)
+                                if user_id in user_mapping:
+                                    user_display_name = user_mapping[user_id]
+                                elif user_id in bot_mapping:
+                                    user_display_name = bot_mapping[user_id]
+                                else:
+                                    user_display_name = f"User {user_id}"  # Fallback for unmapped users
                                 
                                 # Format timestamp
                                 if timestamp:
@@ -103,7 +118,7 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                                 
                                 # Clean up text (remove formatting)
                                 clean_text = text.replace('<', '&lt;').replace('>', '&gt;')
-                                slack_data['details'].append(f'[{time_str}] {user}: {clean_text[:150]}...')
+                                slack_data['details'].append(f'[{time_str}] {user_display_name}: {clean_text[:150]}...')
                             break
                         else:
                             print(f'  ⚠️  No messages found in channel {channel_id}')
