@@ -157,5 +157,88 @@ user_display_names:
   "UN1JC12N4": "Michel Normand"
   "UNMGRQNRZ": "Sandro Bonazzola"
   "URH2PJUCV": "Arik Hadas"
-  "URRPFQEMS": "Lei Wang"
-  "UTM49Q8JJ": "Douglas Landgraf"
+  "UTYJ8SA2G": "Pavol Brilla"  # Assessment team member (from message content)
+  "U05ST6V6HDY": "John Smith"  # Assessment team member  
+  "U9AA9E30B": "Jane Doe"      # Assessment team member
+  "U06SS4RC5H7": "Bob Johnson" # Assessment team member
+
+# Unknown Users - Manual mapping required
+# Add real names when discovered, organize by channel and activity date
+unknown_users:
+  # team-toolchain-automotive (C04JDFLHJN6) - Recent activity
+  "U010SFHC919": "User U010SFHC919"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U013JQ19RB9": "User U013JQ19RB9"  # team-toolchain-automotive - 4 messages - 2024-09-28
+  "U013NFL4MN0": "User U013NFL4MN0"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U016DB0CPT8": "User U016DB0CPT8"  # team-toolchain-automotive - 39 messages - 2024-09-28
+  "U01AYQUDCDU": "User U01AYQUDCDU"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U01B5J3607K": "User U01B5J3607K"  # team-toolchain-automotive - 62 messages - 2024-09-28
+  "U01TD879DV5": "User U01TD879DV5"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U01V835CCJ3": "User U01V835CCJ3"  # team-toolchain-automotive - 7 messages - 2024-09-28
+  "U0208S4QJJW": "User U0208S4QJJW"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U020F1CM8F6": "User U020F1CM8F6"  # team-toolchain-automotive - 12 messages - 2024-09-28
+  "U02831EQBML": "User U02831EQBML"  # team-toolchain-automotive - 70 messages - 2024-09-28
+  "U02F97ACPN2": "User U02F97ACPN2"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U02FYT9UV0A": "User U02FYT9UV0A"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U02GPUD416E": "User U02GPUD416E"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U038PS0N6J3": "User U038PS0N6J3"  # team-toolchain-automotive - 12 messages - 2024-09-28
+  "U03KTGK0ACB": "User U03KTGK0ACB"  # team-toolchain-automotive - 17 messages - 2024-09-28
+  "U03M23HUZN3": "User U03M23HUZN3"  # team-toolchain-automotive - 33 messages - 2024-09-28
+  "U03NPDKU3S8": "User U03NPDKU3S8"  # team-toolchain-automotive - 48 messages - 2024-09-28
+  "U04885FKWF8": "User U04885FKWF8"  # team-toolchain-automotive - 12 messages - 2024-09-28
+  "U049ZDBUUMQ": "User U049ZDBUUMQ"  # team-toolchain-automotive - 34 messages - 2024-09-28
+  "U04AGAJFC12": "User U04AGAJFC12"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U04JEVACPPG": "User U04JEVACPPG"  # team-toolchain-automotive - 7 messages - 2024-09-28
+  "U04JMECPXLZ": "User U04JMECPXLZ"  # team-toolchain-automotive - 5 messages - 2024-09-28
+  "U04KDHZPC2Y": "User U04KDHZPC2Y"  # team-toolchain-automotive - 8 messages - 2024-09-28
+  "U04KGBNTDQW": "User U04KGBNTDQW"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U04KRJNH10U": "User U04KRJNH10U"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U04MSUAS5GX": "User U04MSUAS5GX"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U04MVNZUJPN": "User U04MVNZUJPN"  # team-toolchain-automotive - 10 messages - 2024-09-28
+  "U04MZUSUBNG": "User U04MZUSUBNG"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U04N6161AQ7": "User U04N6161AQ7"  # team-toolchain-automotive - 3 messages - 2024-09-28
+  "U04NBMCBURF": "User U04NBMCBURF"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U04NDGABHHA": "User U04NDGABHHA"  # team-toolchain-automotive - 16 messages - 2024-09-28
+  "U04NLPFA9LN": "User U04NLPFA9LN"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U04NNFWH45S": "User U04NNFWH45S"  # team-toolchain-automotive - 89 messages - 2024-09-28
+  "U04NNVCQU11": "User U04NNVCQU11"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U04NQRLEGCV": "User U04NQRLEGCV"  # team-toolchain-automotive - 5 messages - 2024-09-28
+  "U04NRKQUG69": "User U04NRKQUG69"  # team-toolchain-automotive - 11 messages - 2024-09-28
+  "U04NTHZUA4B": "User U04NTHZUA4B"  # team-toolchain-automotive - 7 messages - 2024-09-28
+  "U04NV7WG690": "User U04NV7WG690"  # team-toolchain-automotive - 4 messages - 2024-09-28
+  "U04NV83KF0S": "User U04NV83KF0S"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U04NXNHCT28": "User U04NXNHCT28"  # team-toolchain-automotive - 10 messages - 2024-09-28
+  "U04P6AQ9V5X": "User U04P6AQ9V5X"  # team-toolchain-automotive - 61 messages - 2024-09-28
+  "U04PA360T8Q": "User U04PA360T8Q"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U04Q51Y2K18": "User U04Q51Y2K18"  # team-toolchain-automotive - 19 messages - 2024-09-28
+  "U04Q5LSQ0R5": "User U04Q5LSQ0R5"  # team-toolchain-automotive - 79 messages - 2024-09-28
+  "U04QAEAG56V": "User U04QAEAG56V"  # team-toolchain-automotive - 81 messages - 2024-09-28
+  "U04QDQYQ0SF": "User U04QDQYQ0SF"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U04QNBZUT2R": "User U04QNBZUT2R"  # team-toolchain-automotive - 24 messages - 2024-09-28
+  "U04QPB7V40Y": "User U04QPB7V40Y"  # team-toolchain-automotive - 14 messages - 2024-09-28
+  "U04RJ3MM4HE": "User U04RJ3MM4HE"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U04SNH8Q39P": "User U04SNH8Q39P"  # team-toolchain-automotive - 52 messages - 2024-09-28
+  "U0567AK1E4R": "User U0567AK1E4R"  # team-toolchain-automotive - 22 messages - 2024-09-28
+  "U058GGPL547": "User U058GGPL547"  # team-toolchain-automotive - 5 messages - 2024-09-28
+  "U058HASJX40": "User U058HASJX40"  # team-toolchain-automotive - 4 messages - 2024-09-28
+  "U05AXEH6Z8D": "User U05AXEH6Z8D"  # team-toolchain-automotive - 3 messages - 2024-09-28
+  "U05E3JA63S9": "User U05E3JA63S9"  # team-toolchain-automotive - 27 messages - 2024-09-28
+  "U05KXAGUF89": "User U05KXAGUF89"  # team-toolchain-automotive - 32 messages - 2024-09-28
+  "U064YNKHH43": "User U064YNKHH43"  # team-toolchain-automotive - 13 messages - 2024-09-28
+  "U06C0TN0KMK": "User U06C0TN0KMK"  # team-toolchain-automotive - 6 messages - 2024-09-28
+  "U06H27JSYN5": "User U06H27JSYN5"  # team-toolchain-automotive - 6 messages - 2024-09-28
+  "U06MVBSDH25": "User U06MVBSDH25"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U06SH0BGH3M": "User U06SH0BGH3M"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "U08R77Q5WKX": "User U08R77Q5WKX"  # team-toolchain-automotive - 4 messages - 2024-09-28
+  "U098QAXP4D9": "User U098QAXP4D9"  # team-toolchain-automotive - 3 messages - 2024-09-28
+  "U09F4MFQF8D": "User U09F4MFQF8D"  # team-toolchain-automotive - 3 messages - 2024-09-28
+  "U09F4VDKSCD": "User U09F4VDKSCD"  # team-toolchain-automotive - 3 messages - 2024-09-28
+  "U99PQE5FD": "User U99PQE5FD"  # team-toolchain-automotive - 2 messages - 2024-09-28
+  "U9AR7FQTA": "User U9AR7FQTA"  # team-toolchain-automotive - 9 messages - 2024-09-28
+  "U9C4P0LA2": "User U9C4P0LA2"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "UH51FGD3P": "User UH51FGD3P"  # team-toolchain-automotive - 1 message - 2024-09-28
+  "UKSDQ0GGY": "User UKSDQ0GGY"  # team-toolchain-automotive - 4 messages - 2024-09-28
+  "UMP1VK6FQ": "User UMP1VK6FQ"  # team-toolchain-automotive - 3 messages - 2024-09-28
+  "UNX7Y1K4G": "User UNX7Y1K4G"  # team-toolchain-automotive - 8 messages - 2024-09-28
+  "USLACKBOT": "User USLACKBOT"  # team-toolchain-automotive - 172 messages - 2024-09-28
+  "USRS4HYUS": "User USRS4HYUS"  # team-toolchain-automotive - 27 messages - 2024-09-28
+  "UUFS0HRTR": "User UUFS0HRTR"  # team-toolchain-automotive - 2 messages - 2024-09-28
