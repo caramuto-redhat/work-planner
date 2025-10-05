@@ -456,7 +456,161 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
         return {'overall': 'AI analysis not available'}
 
 
-def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]) -> str:
+def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_client, gemini_client) -> str:
+    """Generate AI-powered TODO items for Paul Caramuto based on Slack and Jira mentions"""
+    try:
+        print(f'  📝 Generating Paul Caramuto TODO items...')
+        
+        # Collect Slack messages mentioning Paul (30 days back from latest message)
+        paul_slack_content = []
+        channels = team_data.get('channels', {})
+        
+        for channel_name, channel_data in channels.items():
+            channel_id = channel_data.get('channel_id')
+            messages = channel_data.get('recent_messages', [])
+            
+            if not channel_id or not messages:
+                continue
+                
+            try:
+                print(f'    📱 Checking {channel_name} for Paul mentions (30 days back)...')
+                
+                # Get messages from last 30 days from the most recent message
+                from datetime import datetime, timedelta
+                
+                # Find the timestamp of the most recent message
+                latest_timestamp = 0
+                for msg in messages:
+                    try:
+                        timestamp = float(msg.get('ts', '0'))
+                        if timestamp > latest_timestamp:
+                            latest_timestamp = timestamp
+                    except:
+                        continue
+                
+                if latest_timestamp > 0:
+                    # Calculate 30 days back from the most recent message
+                    latest_message_date = datetime.fromtimestamp(latest_timestamp)
+                    thirty_days_ago = latest_message_date - timedelta(days=30)
+                    
+                    # Get all messages from the channel (not just recent ones)
+                    all_messages = asyncio.run(slack_client.get_channel_history(channel_id))
+                    
+                    paul_messages = []
+                    for msg in all_messages:
+                        try:
+                            timestamp = float(msg.get('ts', '0'))
+                            msg_date = datetime.fromtimestamp(timestamp)
+                            if msg_date >= thirty_days_ago:
+                                # Check if message mentions Paul
+                                text = msg.get('text', '')
+                                if any(mention in text.lower() for mention in ['paul', 'pacaramu', '@paul', '@pacaramu']):
+                                    paul_messages.append({
+                                        'text': text,
+                                        'user': msg.get('user', 'Unknown'),
+                                        'timestamp': msg_date.isoformat(),
+                                        'channel': channel_name
+                                    })
+                        except:
+                            continue
+                    
+                    if paul_messages:
+                        print(f'    📱 Found {len(paul_messages)} Paul mentions in {channel_name}')
+                        paul_slack_content.extend(paul_messages)
+                
+            except Exception as e:
+                print(f'    ⚠️  Error checking {channel_name} for Paul mentions: {e}')
+                continue
+        
+        # Collect Jira tickets mentioning Paul
+        paul_jira_content = []
+        all_tickets = []
+        
+        # Get all team tickets
+        team_tickets = team_data.get('jira_tickets', {}).get(team, [])
+        all_tickets.extend(team_tickets)
+        
+        # Get SP organization tickets
+        sp_tickets = team_data.get('jira_tickets', {}).get('SP', [])
+        all_tickets.extend(sp_tickets)
+        
+        for ticket in all_tickets:
+            if isinstance(ticket, dict):
+                # Check various fields for Paul mentions
+                fields_to_check = [
+                    'summary', 'description', 'comment', 'assignee', 'reporter'
+                ]
+                
+                paul_mentioned = False
+                for field in fields_to_check:
+                    field_value = ticket.get(field, '')
+                    if isinstance(field_value, dict):
+                        field_value = str(field_value)
+                    elif field_value is None:
+                        field_value = ''
+                    else:
+                        field_value = str(field_value)
+                    
+                    if any(mention in field_value.lower() for mention in ['paul', 'pacaramu']):
+                        paul_mentioned = True
+                        break
+                
+                if paul_mentioned:
+                    paul_jira_content.append({
+                        'key': ticket.get('key', 'N/A'),
+                        'summary': ticket.get('summary', 'No summary'),
+                        'status': ticket.get('status', {}).get('name', 'Unknown') if isinstance(ticket.get('status'), dict) else str(ticket.get('status', 'Unknown')),
+                        'assignee': ticket.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(ticket.get('assignee'), dict) else str(ticket.get('assignee', 'Unassigned')),
+                        'url': ticket.get('url', '#')
+                    })
+        
+        print(f'  📝 Found {len(paul_slack_content)} Slack mentions and {len(paul_jira_content)} Jira mentions')
+        
+        # Generate AI TODO items if we have content
+        if paul_slack_content or paul_jira_content:
+            # Prepare content for AI analysis
+            slack_summary = ""
+            if paul_slack_content:
+                slack_summary = f"""
+                Slack Messages Mentioning Paul (Last 30 Days):
+                {chr(10).join([f"- [{msg['channel']}] {msg['user']}: {msg['text'][:200]}..." for msg in paul_slack_content[:10]])}
+                """
+            
+            jira_summary = ""
+            if paul_jira_content:
+                jira_summary = f"""
+                Jira Tickets Mentioning Paul:
+                {chr(10).join([f"- {ticket['key']}: {ticket['summary']} (Status: {ticket['status']}, Assignee: {ticket['assignee']})" for ticket in paul_jira_content[:10]])}
+                """
+            
+            # Generate TODO items using AI
+            todo_prompt = f"""
+            Based on the following Slack conversations and Jira tickets that mention Paul Caramuto, generate a concise TODO list of items that require Paul's attention.
+            
+            {slack_summary}
+            {jira_summary}
+            
+            Please provide 3-5 specific, actionable TODO items in this format:
+            1. [Priority] Action item description
+            2. [Priority] Action item description
+            3. [Priority] Action item description
+            
+            Use priorities: HIGH, MEDIUM, LOW
+            Focus on items that require Paul's direct action or response.
+            Keep each item concise but specific.
+            """
+            
+            todo_items = gemini_client.generate_content(todo_prompt)
+            return todo_items if todo_items else "No specific TODO items identified at this time."
+        
+        return "No mentions of Paul Caramuto found in the last 30 days."
+        
+    except Exception as e:
+        print(f'  ❌ Paul TODO generation failed: {e}')
+        return f"TODO generation failed: {str(e)}"
+
+
+def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str], paul_todo_items: str = "") -> str:
     """Create HTML email content with per-channel summaries and organized Jira tickets"""
     team = team_data['team']
     channels = team_data.get('channels', {})
@@ -791,6 +945,11 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
         <p style="margin: 0; line-height: 1.4;">{overall_summary}</p>
     </div>
     
+    <div style="margin: 15px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107;">
+        <h3 style="margin: 0 0 10px 0;">📝 Paul Caramuto: TODO</h3>
+        <div style="margin: 0; line-height: 1.4; white-space: pre-line;">{paul_todo_items}</div>
+    </div>
+    
     <h3>📱 Individual Slack Channel Activity (Last 7 Days)</h3>
     <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
         Each channel shows AI analysis and recent message previews
@@ -868,7 +1027,7 @@ def send_email(team: str, email_body: str) -> bool:
         return False
 
 
-def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str, str]) -> bool:
+def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str, str], slack_client, jira_client, gemini_client) -> bool:
     """Send email for team using enhanced format with per-channel summaries"""
     try:
         print(f'  📧 Sending enhanced email for {team.upper()} team...')
@@ -885,8 +1044,11 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
             
         email_client = EmailClient(config)
         
+        # Generate Paul TODO items
+        paul_todo_items = generate_paul_todo_items(team_data, slack_client, jira_client, gemini_client)
+        
         # Create enhanced email content
-        email_content = create_email_content(team_data, ai_summaries)
+        email_content = create_email_content(team_data, ai_summaries, paul_todo_items)
         
         # Prepare summary data for daily_summary template
         summary_data = {
@@ -912,6 +1074,23 @@ def main():
     """Main function for GitHub Actions with enhanced reporting"""
     print('🚀 Starting Enhanced Daily Team Report Generation...')
     
+    # Initialize clients
+    from connectors.slack.client import SlackClient
+    from connectors.slack.config import SlackConfig
+    from connectors.jira.client import JiraClient
+    from connectors.jira.config import JiraConfig
+    from connectors.gemini.client import GeminiClient
+    from connectors.gemini.config import GeminiConfig
+    
+    slack_config = SlackConfig.load("config/slack.yaml")
+    slack_client = SlackClient(slack_config)
+    
+    jira_config = JiraConfig.load("config/jira.yaml")
+    jira_client = JiraClient(jira_config)
+    
+    gemini_config = GeminiConfig.load("config/gemini.yaml")
+    gemini_client = GeminiClient(gemini_config)
+    
     teams = ['toolchain', 'foa', 'assessment', 'boa']
     
     for team in teams:
@@ -923,11 +1102,11 @@ def main():
         # Generate AI analysis for each channel and overall
         ai_summaries = generate_ai_analysis(team_data)
         
-        # Send enhanced email with per-channel summaries
-        send_team_email(team, team_data, ai_summaries)
+        # Send enhanced email with per-channel summaries and Paul TODO
+        send_team_email(team, team_data, ai_summaries, slack_client, jira_client, gemini_client)
     
     print('\n🎉 Enhanced Daily Team Report generation completed!')
-    print('📧 Check your email for detailed team reports with per-channel summaries!')
+    print('📧 Check your email for detailed team reports with per-channel summaries and Paul TODO items!')
 
 
 if __name__ == '__main__':
