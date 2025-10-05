@@ -191,11 +191,27 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         slack_config = SlackConfig.load('config/slack.yaml')
         slack_client = SlackClient(slack_config)
         
-        # Find team channels
+        # Find team channels - map channel IDs to descriptive names
         slack_channels = slack_config.get('slack_channels', {})
-        team_channels = {ch_id: ch_name for ch_id, ch_name in slack_channels.items() if ch_name == team}
+        team_channel_ids = [ch_id for ch_id, team_name in slack_channels.items() if team_name == team]
         
-        print(f'  📱 Found {len(team_channels)} channels for {team}')
+        # Map channel IDs to descriptive names based on comments in slack.yaml
+        channel_name_mapping = {
+            "C04JDFLHJN6": "team-toolchain-automotive",
+            "C05BYR06B0V": "toolchain-infra", 
+            "C04U16VAWL9": "toolchain-release-readiness",
+            "C095CUUBNM9": "toolchain-sla",
+            "C0910QFKTSN": "toolchain-AI",
+            "C064MPL86N6": "toolchain-errata",
+            "C0659G4HAF9": "team-auto-follow-on-activities",
+            "C065HHG49QB": "team-auto-assessment", 
+            "C04QNKX7RU4": "boa-team",
+            "C06B9BCD456": "SP-RHIVOS"
+        }
+        
+        team_channels = {ch_id: channel_name_mapping.get(ch_id, f"channel-{ch_id}") for ch_id in team_channel_ids}
+        
+        print(f'  📱 Found {len(team_channels)} channels for {team}: {list(team_channels.values())}')
         
         # Get user mappings
         user_mapping = slack_config.get('user_display_names', {})
@@ -229,7 +245,7 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                             except:
                                 continue
                         
-                        print(f'  📱 Found {len(recent_messages)} messages from last 7 days')
+                        print(f'  📱 Found {len(recent_messages)} messages from last 7 days in {channel_name}')
                         
                         # Store channel data
                         team_data['channels'][channel_name] = {
@@ -242,9 +258,12 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                         }
                         
                         team_data['total_messages'] += len(recent_messages)
+                        print(f'  ✅ Successfully processed {channel_name} - stored in team_data')
+                    else:
+                        print(f'  ⚠️  No messages found in {channel_name}')
                         
                 except Exception as e:
-                    print(f'  ⚠️  Error processing channel {channel_id}: {e}')
+                    print(f'  ⚠️  Error processing channel {channel_id} ({channel_name}): {e}')
                     continue
                     
     except Exception as e:
@@ -423,6 +442,35 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
     channels = team_data.get('channels', {})
     jira_tickets = team_data.get('jira_tickets', {})
     
+    # Extract sprint information from tickets
+    def get_most_common_sprint(tickets):
+        sprint_counts = {}
+        for issue in tickets:
+            if isinstance(issue, dict):
+                sprint_name = None
+                if 'customfield_10020' in issue:
+                    sprint_data = issue.get('customfield_10020', [])
+                    if sprint_data and len(sprint_data) > 0:
+                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
+                elif 'sprint' in issue:
+                    sprint_data = issue.get('sprint', [])
+                    if sprint_data and len(sprint_data) > 0:
+                        sprint_name = sprint_data[0].get('name', 'Unknown Sprint') if isinstance(sprint_data[0], dict) else str(sprint_data[0])
+                
+                if sprint_name and sprint_name != 'Unknown Sprint':
+                    sprint_counts[sprint_name] = sprint_counts.get(sprint_name, 0) + 1
+        
+        if sprint_counts:
+            return max(sprint_counts, key=sprint_counts.get)
+        return None
+    
+    # Get sprint name from team tickets
+    team_tickets = jira_tickets.get('toolchain', [])
+    active_sprint = get_most_common_sprint(team_tickets)
+    
+    # Create sprint-aware section title
+    sprint_title = f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
+    
     # Create channel summaries section with detailed activity
     channel_summaries_html = ""
     for channel_name, channel_data in channels.items():
@@ -595,7 +643,10 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
     </p>
     {channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'}
     
-    <h3>🎫 Active Sprint Tickets</h3>
+    <h3>{sprint_title}</h3>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+        Tickets organized by team and SP organization members
+    </p>
     {toolchain_tickets_html}
     {sp_tickets_html}
     
