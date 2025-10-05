@@ -28,10 +28,10 @@ data_collection:
   history_days: 30
   
   # Text dump file location (relative to project root)
-  dump_directory: "slack_dumps"
+  dump_directory: "connectors/slack/slack_dump/slack_dumps"
   
   # Parsed dump file location (relative to project root)
-  parsed_directory: "slack_dumps_parsed"
+  parsed_directory: "connectors/slack/slack_dump/slack_dumps_parsed"
 
 # Bot Display Names Mapping
 # Maps Slack bot IDs to display names for search functionality
