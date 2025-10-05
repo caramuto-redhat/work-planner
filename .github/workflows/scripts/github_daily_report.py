@@ -30,8 +30,52 @@ sys.path.insert(0, project_root)
 print(f'🔍 Project root: {project_root}')
 print(f'🔍 Python path: {sys.path[:3]}...')
 
+def _extract_user_info_from_message(msg: dict) -> tuple[str, str]:
+    """Extract user ID and display name from message data"""
+    user_id = msg.get('user', 'Unknown')
+    
+    # Try to get display name from message data
+    display_name = None
+    
+    # Check if message has user profile info embedded
+    if 'user_profile' in msg:
+        profile = msg['user_profile']
+        display_name = (profile.get('display_name') or 
+                       profile.get('real_name') or 
+                       profile.get('name'))
+    
+    # Check if message has user info in other fields
+    if not display_name and 'user' in msg:
+        # Sometimes Slack includes user info in the message
+        user_info = msg.get('user_info', {})
+        if user_info:
+            display_name = (user_info.get('display_name') or 
+                           user_info.get('real_name') or 
+                           user_info.get('name'))
+    
+    return user_id, display_name
+
+def _get_user_display_name_from_message(msg: dict, user_mapping: dict, bot_mapping: dict) -> str:
+    """Get user display name from message data or fallback to mapping"""
+    user_id, display_name = _extract_user_info_from_message(msg)
+    
+    # If we found display name in message data, use it
+    if display_name:
+        print(f'  📱 Found display name in message for {user_id}: {display_name}')
+        return display_name
+    
+    # Fallback to manual mapping
+    if user_id in user_mapping:
+        print(f'  📋 Using manual mapping for {user_id}: {user_mapping[user_id]}')
+        return user_mapping[user_id]
+    elif user_id in bot_mapping:
+        print(f'  🤖 Using bot mapping for {user_id}: {bot_mapping[user_id]}')
+        return bot_mapping[user_id]
+    else:
+        print(f'  ❌ No mapping found for {user_id}, using fallback')
+        return f"Unknown User"
+
 async def _get_user_display_name(slack_client, user_id: str, user_mapping: dict, bot_mapping: dict) -> str:
-    """Get user display name from Slack API or fallback to mapping"""
     try:
         # Try to get user info from Slack API
         import httpx
@@ -45,13 +89,22 @@ async def _get_user_display_name(slack_client, user_id: str, user_mapping: dict,
         url = f"{slack_client.base_url}/users.info"
         payload = {"user": user_id}
         
+        print(f'  🔍 API request: {url} with user={user_id}')
+        print(f'  🔍 Token prefix: {slack_client.xoxc_token[:10]}...')
+        
         async with httpx.AsyncClient() as client:
             response = await client.post(url, headers=headers, cookies=cookies, json=payload, timeout=10.0)
+            print(f'  🔍 Response status: {response.status_code}')
+            print(f'  🔍 Response headers: {dict(response.headers)}')
+            
             response.raise_for_status()
             data = response.json()
+            print(f'  🔍 Response data: {data}')
             
             if data.get("ok"):
                 user_info = data.get("user", {})
+                print(f'  🔍 User info: {user_info}')
+                
                 # Try different name fields in order of preference
                 display_name = (user_info.get("profile", {}).get("display_name") or 
                               user_info.get("profile", {}).get("real_name") or 
@@ -78,9 +131,9 @@ async def _get_user_display_name(slack_client, user_id: str, user_mapping: dict,
         return bot_mapping[user_id]
     else:
         print(f'  ❌ No mapping found for {user_id}, using fallback')
-        return f"User {user_id}"  # Final fallback
+        return f"Unknown User"  # More user-friendly fallback
 
-def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict, slack_client=None, user_info_cache=None) -> str:
+def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict) -> str:
     """Map user mentions in message text from <@USER_ID> to display names"""
     import re
     
@@ -93,24 +146,8 @@ def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict,
         elif user_id in bot_mapping:
             return f"@{bot_mapping[user_id]}"
         
-        # Try Slack API if available (for unmapped users)
-        if slack_client and user_info_cache is not None:
-            if user_id not in user_info_cache:
-                try:
-                    import asyncio
-                    print(f'  🔍 API lookup for mention {user_id}...')
-                    display_name = asyncio.run(_get_user_display_name(slack_client, user_id, user_mapping, bot_mapping))
-                    user_info_cache[user_id] = display_name
-                except Exception as e:
-                    print(f'  ❌ API lookup failed for mention {user_id}: {e}')
-                    user_info_cache[user_id] = f"User {user_id}"
-            
-            cached_name = user_info_cache[user_id]
-            if cached_name != f"User {user_id}":
-                return f"@{cached_name}"
-        
-        # Final fallback
-        return f"@User {user_id}"
+        # For mentions, we can't extract from message data, so use fallback
+        return f"@Unknown User"
     
     # Replace <@USER_ID> patterns with display names
     clean_text = re.sub(r'<@([A-Z0-9]+)>', replace_mention, text)
@@ -190,13 +227,8 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                                 text = msg.get('text', 'No text')
                                 timestamp = msg.get('ts', '')
                                 
-                                # Get user display name (try API first, then fallback to mapping)
-                                if user_id not in user_info_cache:
-                                    print(f'  🔍 API lookup for sender {user_id}...')
-                                    user_display_name = asyncio.run(_get_user_display_name(slack_client, user_id, user_mapping, bot_mapping))
-                                    user_info_cache[user_id] = user_display_name
-                                else:
-                                    user_display_name = user_info_cache[user_id]
+                                # Get user display name from message data (no API call needed)
+                                user_display_name = _get_user_display_name_from_message(msg, user_mapping, bot_mapping)
                                 
                                 # Format timestamp
                                 if timestamp:
@@ -210,7 +242,7 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                                     time_str = 'Unknown'
                                 
                                 # Clean up text and map user mentions
-                                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping, slack_client, user_info_cache)
+                                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
                                 slack_data['details'].append(f'[{time_str}] {user_display_name}: {clean_text[:150]}...')
                             break
                         else:
