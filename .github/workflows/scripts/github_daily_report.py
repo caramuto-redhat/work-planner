@@ -5,12 +5,20 @@ Clean separation from MCP tools - reuses existing functionality
 """
 
 import os
+import sys
 import json
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from typing import Dict, List, Any
+
+# Add project root to Python path so we can import connectors
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
+sys.path.insert(0, project_root)
+
+print(f'🔍 Project root: {project_root}')
+print(f'🔍 Python path: {sys.path[:3]}...')
 
 def collect_team_data(team: str) -> Dict[str, Any]:
     """Collect Slack and Jira data for a team using existing MCP tools"""
@@ -32,9 +40,12 @@ def collect_team_data(team: str) -> Dict[str, Any]:
     
     # Collect Slack data using existing MCP tools
     try:
+        print(f'  📱 Attempting to import Slack tools...')
         from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool, read_slack_data_tool
         from connectors.slack.client import SlackClient
         from connectors.slack.config import SlackConfig
+        
+        print(f'  📱 Successfully imported Slack tools')
         
         slack_config = SlackConfig.load('config/slack.yaml')
         slack_client = SlackClient(slack_config)
@@ -86,9 +97,12 @@ def collect_team_data(team: str) -> Dict[str, Any]:
     
     # Collect Jira data using existing MCP tools
     try:
+        print(f'  🎫 Attempting to import Jira tools...')
         from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
         from connectors.jira.client import JiraClient
         from connectors.jira.config import JiraConfig
+        
+        print(f'  🎫 Successfully imported Jira tools')
         
         jira_config = JiraConfig.load('config/jira.yaml')
         jira_client = JiraClient(jira_config)
@@ -145,9 +159,12 @@ Updated: {issue.get('updated', 'Unknown')}
 def generate_ai_analysis(team_data: Dict[str, Any]) -> str:
     """Generate AI analysis using existing Gemini tools"""
     try:
+        print(f'  🤖 Attempting to import Gemini tools...')
         from connectors.gemini.tools.ai_summary_tool import ai_summary_tool
         from connectors.gemini.client import GeminiClient
         from connectors.gemini.config import GeminiConfig
+        
+        print(f'  🤖 Successfully imported Gemini tools')
         
         gemini_config = GeminiConfig()
         gemini_client = GeminiClient(gemini_config.get_config())
@@ -200,8 +217,11 @@ def create_email_content(team_data: Dict[str, Any], ai_summary: str) -> str:
 def send_email(team: str, email_body: str) -> bool:
     """Send email using existing email configuration"""
     try:
+        print(f'  📧 Attempting to import Email tools...')
         from connectors.email.client import EmailClient
         from connectors.email.config import EmailConfig
+        
+        print(f'  📧 Successfully imported Email tools')
         
         email_config = EmailConfig.load('config/email.yaml')
         email_client = EmailClient(email_config.get_config())
