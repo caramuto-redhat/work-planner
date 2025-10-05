@@ -67,14 +67,38 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                     
                     # Dump data using MCP tool
                     dump_result = dump_tool(channel_id)
-                    if not dump_result.get('success'):
-                        print(f'  ⚠️  Dump failed: {dump_result.get("error")}')
+                    print(f'  📱 Dump result type: {type(dump_result)}')
+                    
+                    # Parse JSON result
+                    if isinstance(dump_result, str):
+                        try:
+                            dump_data = json.loads(dump_result)
+                        except json.JSONDecodeError:
+                            print(f'  ⚠️  Dump returned non-JSON: {dump_result[:100]}...')
+                            continue
+                    else:
+                        dump_data = dump_result
+                    
+                    if not dump_data.get('success'):
+                        print(f'  ⚠️  Dump failed: {dump_data.get("error")}')
                         continue
                     
                     # Read data using MCP tool
                     read_result = read_tool(channel_id)
-                    if read_result.get('success'):
-                        data = read_result.get('data', {})
+                    print(f'  📱 Read result type: {type(read_result)}')
+                    
+                    # Parse JSON result
+                    if isinstance(read_result, str):
+                        try:
+                            read_data = json.loads(read_result)
+                        except json.JSONDecodeError:
+                            print(f'  ⚠️  Read returned non-JSON: {read_result[:100]}...')
+                            continue
+                    else:
+                        read_data = read_result
+                    
+                    if read_data.get('success'):
+                        data = read_data.get('data', {})
                         messages = data.get('messages', [])
                         
                         slack_data['messages_count'] = len(messages)
@@ -112,8 +136,19 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         # Use existing MCP tool
         dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
         dump_result = dump_tool(team, 'All In Progress')
+        print(f'  🎫 Dump result type: {type(dump_result)}')
         
-        if dump_result.get('success'):
+        # Parse JSON result
+        if isinstance(dump_result, str):
+            try:
+                dump_data = json.loads(dump_result)
+            except json.JSONDecodeError:
+                print(f'  ⚠️  Jira dump returned non-JSON: {dump_result[:100]}...')
+                dump_data = {'success': False, 'error': 'Invalid JSON response'}
+        else:
+            dump_data = dump_result
+        
+        if dump_data.get('success'):
             # Read the JSON dump created by the MCP tool
             dump_dir = 'jira_dumps'
             json_file = f'{team}_all_in_progress_jira_dump.json'
@@ -144,7 +179,7 @@ Updated: {issue.get('updated', 'Unknown')}
             else:
                 print(f'  ⚠️  Jira dump file not found: {json_path}')
         else:
-            print(f'  ⚠️  Jira dump failed: {dump_result.get("error")}')
+            print(f'  ⚠️  Jira dump failed: {dump_data.get("error")}')
             
     except Exception as e:
         print(f'  ❌ Jira collection failed: {e}')
@@ -174,11 +209,22 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> str:
         
         # Use existing MCP tool
         result = ai_tool_func(team=team_data['team'], send_email=False)
+        print(f'  🤖 AI result type: {type(result)}')
         
-        if result.get('success'):
-            return result.get('summary', 'AI analysis completed')
+        # Parse JSON result
+        if isinstance(result, str):
+            try:
+                result_data = json.loads(result)
+            except json.JSONDecodeError:
+                print(f'  ⚠️  AI analysis returned non-JSON: {result[:100]}...')
+                return 'AI analysis returned invalid response'
         else:
-            return f'AI analysis failed: {result.get("error", "Unknown error")}'
+            result_data = result
+        
+        if result_data.get('success'):
+            return result_data.get('summary', 'AI analysis completed')
+        else:
+            return f'AI analysis failed: {result_data.get("error", "Unknown error")}'
             
     except Exception as e:
         print(f'  ⚠️  AI analysis failed: {e}')
@@ -223,7 +269,7 @@ def send_email(team: str, email_body: str) -> bool:
         
         print(f'  📧 Successfully imported Email tools')
         
-        email_config = EmailConfig.load('config/email.yaml')
+        email_config = EmailConfig()
         email_client = EmailClient(email_config.get_config())
         
         # Prepare content data for template
