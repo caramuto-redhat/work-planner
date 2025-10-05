@@ -63,7 +63,7 @@ make cursor-config
 
 **⚠️ Warning**: The `make cursor-config` command will **overwrite** your existing `~/.cursor/mcp.json` file. This means:
 - Any existing MCP server configurations will be **replaced**
-- You'll get the default configuration from `example.mcp.json`
+- You'll get the default configuration from `connectors/container/example.mcp.json`
 - If you have custom MCP server configurations, they will be lost
 
 **💡 Note**: If you already have a working MCP configuration (like `workPlannerMcp`), you may not need to run this command unless you want to reset to the default configuration.
@@ -113,14 +113,20 @@ work-planner/
 │   ├── slack.yaml             # Slack channels & user mappings
 │   ├── gemini.yaml            # Gemini AI configuration
 │   └── schedule.yaml          # Schedule configuration
+├── connectors/                  # MCP Tools and Connectors
+│   ├── container/              # Container and deployment files
+│   │   ├── Containerfile       # Container definition
+│   │   ├── example.mcp.json    # Cursor MCP configuration
+│   │   ├── example.env         # Environment variables template
+│   │   ├── run-mcp-server.sh   # Local server runner
+│   │   └── cleanup-containers.sh # Container cleanup script
+│   ├── jira/                   # Jira connector and tools
+│   ├── slack/                  # Slack connector and tools
+│   └── gemini/                 # AI connector and tools
 ├── utils/                      # Shared utilities
 │   ├── responses.py            # Response helpers
 │   └── validators.py           # Input validation
-├── Containerfile              # Container definition
-├── example.mcp.json           # Cursor MCP configuration
-├── example.env                # Environment variables template
 ├── Makefile                   # Build and setup commands
-├── cleanup-containers.sh      # Container cleanup script
 ├── ARCHITECTURE_DIAGRAM.md    # Visual architecture diagrams
 └── README.md                  # This file
 ```
@@ -330,7 +336,7 @@ The MCP server includes comprehensive Slack integration to read team channel dis
 ### Configuration
 1. **Set up Slack tokens** in your `.env` file:
    ```bash
-   cp example.env .env
+   cp connectors/container/example.env .env
    # Edit .env with your actual Slack tokens
    ```
 

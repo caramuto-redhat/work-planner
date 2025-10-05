@@ -10,7 +10,7 @@ ENV_FILE = ~/.rh-work-planner.env
 # Build the container
 build:
 	@echo "🔨 Building Work Planner MCP Server container..."
-	@podman build -t work-planner:latest .
+	@podman build -f connectors/container/Containerfile -t work-planner:latest .
 	@echo "✅ Container built with static name: work-planner:latest"
 
 # Run the container
@@ -42,7 +42,7 @@ clean:
 # Setup cursor configuration
 cursor-config:
 	@echo "📝 Setting up Cursor MCP configuration..."
-	@cp example.mcp.json ~/.cursor/mcp.json
+	@cp connectors/container/example.mcp.json ~/.cursor/mcp.json
 	@echo "✅ Cursor MCP configuration copied to ~/.cursor/mcp.json"
 	@echo "🔄 Restart Cursor to load the MCP server"
 
@@ -51,7 +51,7 @@ setup:
 	@echo "🔧 Setting up environment..."
 	@if [ ! -f $(ENV_FILE) ]; then \
 		echo "📝 Creating environment file at $(ENV_FILE)"; \
-		cp example.env $(ENV_FILE); \
+		cp connectors/container/example.env $(ENV_FILE); \
 		echo "⚠️  Please edit $(ENV_FILE) with your Jira credentials"; \
 	else \
 		echo "✅ Environment file already exists at $(ENV_FILE)"; \
