@@ -37,4 +37,4 @@ jobs:
         EMAIL_PASSWORD: ${{ secrets.EMAIL_TOKEN }}
         EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       run: |
-        python scripts/github_daily_report.py
+        python .github/workflows/scripts/github_daily_report.py

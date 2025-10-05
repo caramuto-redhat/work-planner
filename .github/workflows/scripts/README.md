@@ -1,6 +1,6 @@
-# Scripts Directory
+# GitHub Actions Scripts
 
-This directory contains standalone scripts for GitHub Actions and other automated processes.
+This directory contains scripts specifically for GitHub Actions workflows.
 
 ## Architecture Separation
 
@@ -11,7 +11,7 @@ This directory contains standalone scripts for GitHub Actions and other automate
 - Examples: `search_issues`, `analyze_slack_data`, `generate_jira_team_report`
 
 ### 🤖 **GitHub Actions Scripts (for Automation)**
-- Located in `scripts/`
+- Located in `.github/workflows/scripts/`
 - Used by GitHub Actions workflows
 - Automated, scheduled execution
 - Examples: `github_daily_report.py`
@@ -46,7 +46,7 @@ This directory contains standalone scripts for GitHub Actions and other automate
 ### GitHub Actions
 ```yaml
 - name: Generate Daily Team Report
-  run: python scripts/github_daily_report.py
+  run: python .github/workflows/scripts/github_daily_report.py
 ```
 
 ### Local Testing
@@ -57,7 +57,7 @@ export JIRA_URL="your_jira_url"
 # ... other env vars
 
 # Run the script
-python scripts/github_daily_report.py
+python .github/workflows/scripts/github_daily_report.py
 ```
 
 ## Adding New Scripts
