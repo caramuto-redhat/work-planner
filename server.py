@@ -111,23 +111,6 @@ try:
 except Exception as e:
     print(f"❌ Failed to register Gemini connector: {e}")
 
-# Initialize Schedule connector
-try:
-    from connectors.schedule.tools import (
-        get_schedule_status_tool
-    )
-    
-    # Create Schedule client and config
-    from connectors.schedule.config import ScheduleConfig
-    
-    schedule_config = ScheduleConfig()
-    
-    # Register Schedule tools (monitoring only)
-    mcp.tool()(get_schedule_status_tool(None, schedule_config))
-    
-    print("✅ Registered Schedule connector with 1 tool (monitoring only)")
-except Exception as e:
-    print(f"❌ Failed to register Schedule connector: {e}")
 
 # Initialize Email connector
 try:
@@ -171,12 +154,11 @@ def list_available_tools() -> str:
             "dump_slack_data", "read_slack_data", "search_slack_data",
             "list_slack_channels", "list_slack_dumps",
             "analyze_jira_data", "generate_email_summary", "custom_ai_analysis", "ai_summary",
-            "get_schedule_status",
             "send_email", "send_daily_summary", "send_alert",
             "send_data_collection_report", "test_email_connection", "get_email_config",
             "list_available_tools"
         ],
-        "total_tools": 24
+        "total_tools": 23
     })
 
 if __name__ == "__main__":

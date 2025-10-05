@@ -211,15 +211,9 @@ def _dump_single_channel(client, config, channel_id: str, latest_date: str = Non
     try:
         validated_channel_id = validate_channel_id(channel_id)
         
-        # If include_attachments is not specified, check the schedule config
+        # Default to False for attachments if not specified
         if include_attachments is None:
-            try:
-                from connectors.schedule.config import ScheduleConfig
-                schedule_config = ScheduleConfig()
-                include_attachments = schedule_config.get_include_attachments()
-            except Exception as e:
-                print(f"⚠️ Could not read schedule config for attachments: {e}")
-                include_attachments = False
+            include_attachments = False
         
         # Get channel history using async function
         def run_async():

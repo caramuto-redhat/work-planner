@@ -1,6 +1,6 @@
 # Work Planner MCP Server
 
-A comprehensive Model Context Protocol (MCP) server for querying Jira issues, Slack discussions, AI-powered analysis, and scheduled data collection. This server provides 21 MCP tools for comprehensive team insights through Cursor's AI assistant.
+A comprehensive Model Context Protocol (MCP) server for querying Jira issues, Slack discussions, AI-powered analysis, and automated data collection. This server provides 23 MCP tools for comprehensive team insights through Cursor's AI assistant.
 
 **🎯 This project is designed to work ONLY through MCP tools - no direct scripts or manual queries.**
 
@@ -29,15 +29,8 @@ A comprehensive Model Context Protocol (MCP) server for querying Jira issues, Sl
 14. **`generate_email_summary`** - Generate email summary combining Slack and Jira data
 15. **`custom_ai_analysis`** - Perform custom AI analysis with custom prompts
 
-#### Schedule Management Tools (5 tools)
-16. **`get_schedule_status`** - Get current status of scheduled data collection
-17. **`run_scheduled_collection`** - Run scheduled data collection for services
-18. **`update_schedule_config`** - Update schedule configuration
-19. **`add_team_to_schedule`** - Add team to schedule configuration
-20. **`remove_team_from_schedule`** - Remove team from schedule configuration
-
 #### Built-in Tools (1 tool)
-21. **`list_available_tools`** - List all available MCP tools
+16. **`list_available_tools`** - List all available MCP tools
 
 ## 🚀 Quick Start
 

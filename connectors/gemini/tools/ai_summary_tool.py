@@ -21,14 +21,7 @@ def ai_summary_tool(client, config):
             send_email: Whether to send the summary via email automatically
         """
         try:
-            # Load schedule configuration
-            from connectors.schedule.config import ScheduleConfig
-            schedule_config = ScheduleConfig()
-            
-            ai_summary_config = schedule_config.get_ai_summary_config()
-            if not ai_summary_config.get('enabled', False):
-                return create_error_response("AI Summary is not enabled in schedule configuration")
-            
+            # AI Summary is always enabled for GitHub Actions workflow
             # Results container
             results = {
                 "team": team or "all_teams",
@@ -37,34 +30,31 @@ def ai_summary_tool(client, config):
                 "errors": []
             }
             
-            # Perform Slack analysis if enabled
-            if ai_summary_config.get('slack_analysis', False):
-                try:
-                    slack_results = _analyze_slack_data(client, config, team)
-                    results["analysis_results"]["slack"] = slack_results
-                except Exception as e:
-                    error_msg = f"Slack analysis failed: {str(e)}"
-                    results["errors"].append(error_msg)
+            # Perform Slack analysis
+            try:
+                slack_results = _analyze_slack_data(client, config, team)
+                results["analysis_results"]["slack"] = slack_results
+            except Exception as e:
+                error_msg = f"Slack analysis failed: {str(e)}"
+                results["errors"].append(error_msg)
             
-            # Perform Jira analysis if enabled
-            if ai_summary_config.get('jira_analysis', False):
-                try:
-                    jira_results = _analyze_jira_data(client, config, team)
-                    results["analysis_results"]["jira"] = jira_results
-                except Exception as e:
-                    error_msg = f"Jira analysis failed: {str(e)}"
-                    results["errors"].append(error_msg)
+            # Perform Jira analysis
+            try:
+                jira_results = _analyze_jira_data(client, config, team)
+                results["analysis_results"]["jira"] = jira_results
+            except Exception as e:
+                error_msg = f"Jira analysis failed: {str(e)}"
+                results["errors"].append(error_msg)
             
-            # Generate email summary if enabled and we have data
+            # Generate email summary if we have data
             email_results = {}
-            if ai_summary_config.get('email_summary', False):
-                try:
-                    if 'slack' in results["analysis_results"] or 'jira' in results["analysis_results"]:
-                        email_results = _generate_email_summary(client, config, results["analysis_results"])
-                        results["analysis_results"]["email"] = email_results
-                except Exception as e:
-                    error_msg = f"Email summary generation failed: {str(e)}"
-                    results["errors"].append(error_msg)
+            try:
+                if 'slack' in results["analysis_results"] or 'jira' in results["analysis_results"]:
+                    email_results = _generate_email_summary(client, config, results["analysis_results"])
+                    results["analysis_results"]["email"] = email_results
+            except Exception as e:
+                error_msg = f"Email summary generation failed: {str(e)}"
+                results["errors"].append(error_msg)
             
             # Send email if requested
             email_sent = False
