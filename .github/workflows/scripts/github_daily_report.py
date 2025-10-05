@@ -70,7 +70,10 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                     print(f'  📱 Dump result type: {type(dump_result)}')
                     
                     # Parse JSON result
-                    if isinstance(dump_result, str):
+                    if dump_result is None:
+                        print(f'  ⚠️  Dump returned None for channel {channel_id}')
+                        continue
+                    elif isinstance(dump_result, str):
                         try:
                             dump_data = json.loads(dump_result)
                         except json.JSONDecodeError:
@@ -139,7 +142,10 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         print(f'  🎫 Dump result type: {type(dump_result)}')
         
         # Parse JSON result
-        if isinstance(dump_result, str):
+        if dump_result is None:
+            print(f'  ⚠️  Jira dump returned None')
+            dump_data = {'success': False, 'error': 'Dump returned None'}
+        elif isinstance(dump_result, str):
             try:
                 dump_data = json.loads(dump_result)
             except json.JSONDecodeError:
@@ -212,7 +218,10 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> str:
         print(f'  🤖 AI result type: {type(result)}')
         
         # Parse JSON result
-        if isinstance(result, str):
+        if result is None:
+            print(f'  ⚠️  AI analysis returned None')
+            return 'AI analysis returned None'
+        elif isinstance(result, str):
             try:
                 result_data = json.loads(result)
             except json.JSONDecodeError:
@@ -270,24 +279,34 @@ def send_email(team: str, email_body: str) -> bool:
         print(f'  📧 Successfully imported Email tools')
         
         email_config = EmailConfig()
-        email_client = EmailClient(email_config.get_config())
+        config = email_config.get_config()
+        print(f'  📧 Email config loaded: {bool(config)}')
+        print(f'  📧 Config keys: {list(config.keys()) if config else "None"}')
         
-        # Prepare content data for template
-        content_data = {
-            'team': team,
-            'date': datetime.now().strftime('%Y-%m-%d'),
-            'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'slack_summary': 'See email body',
-            'jira_summary': 'See email body', 
-            'ai_summary': 'See email body'
+        # Validate config before creating client
+        if not email_config.validate_config():
+            print(f'  ❌ Email config validation failed')
+            return False
+            
+        email_client = EmailClient(config)
+        
+        # Prepare summary data for daily_summary template
+        summary_data = {
+            'content': f"""
+<h3>📱 Slack Activity</h3>
+<p>{team_data.get('slack_summary', 'No Slack data available')}</p>
+
+<h3>🎫 Jira Tickets - In Progress</h3>
+<p><strong>{team_data.get('jira_summary', 'No Jira data available')}</strong></p>
+{chr(10).join(team_data.get('jira_details', []))}
+
+<h3>🤖 AI Analysis</h3>
+<p>{team_data.get('ai_summary', 'AI analysis not available')}</p>
+"""
         }
         
-        # Send email using existing MCP email client
-        result = email_client.send_email(
-            template_name='team_daily_report',
-            recipients=[email_config.get_config().get('recipients', {}).get('email', 'pacaramu@redhat.com')],
-            content_data=content_data
-        )
+        # Send email using send_daily_summary method (which uses daily_summary template)
+        result = email_client.send_daily_summary(team, summary_data)
         
         if result.get('success'):
             print(f'  ✅ Email sent successfully for {team.upper()} team!')
