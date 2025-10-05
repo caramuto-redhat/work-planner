@@ -72,6 +72,28 @@ async def _get_user_display_name(slack_client, user_id: str, user_mapping: dict,
     else:
         return f"User {user_id}"  # Final fallback
 
+def _map_user_mentions_in_text(text: str, user_mapping: dict, bot_mapping: dict) -> str:
+    """Map user mentions in message text from <@USER_ID> to display names"""
+    import re
+    
+    def replace_mention(match):
+        user_id = match.group(1)
+        # Try to get display name (same logic as main mapping)
+        if user_id in user_mapping:
+            return f"@{user_mapping[user_id]}"
+        elif user_id in bot_mapping:
+            return f"@{bot_mapping[user_id]}"
+        else:
+            return f"@User {user_id}"  # Fallback
+    
+    # Replace <@USER_ID> patterns with display names
+    clean_text = re.sub(r'<@([A-Z0-9]+)>', replace_mention, text)
+    
+    # Also clean up other Slack formatting
+    clean_text = clean_text.replace('<', '&lt;').replace('>', '&gt;')
+    
+    return clean_text
+
 def collect_team_data(team: str) -> Dict[str, Any]:
     """Collect Slack and Jira data for a team using existing MCP tools"""
     print(f'📊 Collecting data for team: {team.upper()}')
@@ -160,8 +182,8 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                                 else:
                                     time_str = 'Unknown'
                                 
-                                # Clean up text (remove formatting)
-                                clean_text = text.replace('<', '&lt;').replace('>', '&gt;')
+                                # Clean up text and map user mentions
+                                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
                                 slack_data['details'].append(f'[{time_str}] {user_display_name}: {clean_text[:150]}...')
                             break
                         else:
