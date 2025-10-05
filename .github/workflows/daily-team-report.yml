@@ -53,11 +53,10 @@ jobs:
         for team in teams:
             print(f'\\n📊 Processing team: {team.upper()}')
             
-            # Collect Slack data
+            # Collect Slack data directly
             slack_summary = 'No Slack data available'
             slack_details = []
             try:
-                from connectors.slack.tools.unified_slack_tools import dump_slack_data_tool, read_slack_data_tool
                 from connectors.slack.client import SlackClient
                 from connectors.slack.config import SlackConfig
                 
@@ -71,28 +70,21 @@ jobs:
                 print(f'  📱 Found {len(team_channels)} channels for {team}')
                 
                 if team_channels:
-                    # Collect data for team channels
-                    dump_tool = dump_slack_data_tool(slack_client, slack_config)
-                    read_tool = read_slack_data_tool(slack_client, slack_config)
-                    
+                    # Get messages directly from Slack API
                     for channel_id in team_channels:
                         try:
-                            print(f'  📱 Processing channel: {channel_id}')
-                            dump_result = dump_tool(channel_id)
-                            print(f'  📱 Dump result: {dump_result}')
+                            print(f'  📱 Fetching messages from channel: {channel_id}')
+                            messages = slack_client.get_channel_messages(channel_id, limit=50)
                             
-                            read_result = read_tool(channel_id)
-                            print(f'  📱 Read result: {read_result}')
-                            
-                            if read_result.get('success'):
-                                data = read_result.get('data', {})
-                                messages = data.get('messages', [])
+                            if messages:
                                 slack_summary = f'Slack data collected from {len(team_channels)} channels ({len(messages)} messages)'
                                 
                                 # Get recent messages for summary
                                 recent_messages = messages[-5:] if messages else []
                                 for msg in recent_messages:
-                                    slack_details.append(f'  - {msg.get(\"user\", \"Unknown\")}: {msg.get(\"text\", \"No text\")[:100]}...')
+                                    user = msg.get('user', 'Unknown')
+                                    text = msg.get('text', 'No text')
+                                    slack_details.append(f'  - {user}: {text[:100]}...')
                                 break
                         except Exception as e:
                             print(f'  ⚠️  Slack channel {channel_id}: {e}')
@@ -101,52 +93,70 @@ jobs:
             except Exception as e:
                 print(f'  ❌ Slack collection failed: {e}')
             
-            # Collect Jira data
+            # Collect Jira data directly
             jira_summary = 'No Jira data available'
             jira_details = []
             try:
-                from connectors.jira.tools.jira_data_collection import dump_jira_team_data_tool
                 from connectors.jira.client import JiraClient
                 from connectors.jira.config import JiraConfig
                 
                 jira_config = JiraConfig.load('config/jira.yaml')
                 jira_client = JiraClient(jira_config)
-                dump_tool = dump_jira_team_data_tool(jira_client, jira_config)
                 
                 print(f'  🎫 Collecting Jira data for {team}...')
-                dump_result = dump_tool(team, 'All In Progress')
-                print(f'  🎫 Dump result: {dump_result}')
                 
-                # Read the JSON dump
-                dump_dir = 'jira_dumps'
-                json_file = f'{team}_all_in_progress_jira_dump.json'
-                json_path = f'{dump_dir}/{json_file}'
+                # Build JQL query for team
+                team_users = jira_config.get('teams', {}).get(team, {}).get('users', [])
+                if team_users:
+                    jql_query = f'project = \"{jira_config.get(\"project_key\", \"AFT\")}\" AND assignee in ({", ".join(team_users)}) AND statusCategory in (\"In Progress\", \"New\", \"Closed\") ORDER BY updatedDate DESC'
+                else:
+                    # Fallback: search by project and status
+                    jql_query = f'project = \"{jira_config.get(\"project_key\", \"AFT\")}\" AND statusCategory in (\"In Progress\", \"New\", \"Closed\") ORDER BY updatedDate DESC'
                 
-                print(f'  🎫 Looking for dump file: {json_path}')
+                print(f'  🎫 JQL Query: {jql_query}')
                 
-                if os.path.exists(json_path):
-                    with open(json_path, 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                    
-                    issues = data.get('issues', [])
+                # Get issues directly from Jira API
+                issues = jira_client.search_issues(jql_query)
+                
+                if issues:
                     jira_summary = f'{len(issues)} tickets in progress'
-                    
                     print(f'  🎫 Found {len(issues)} issues for {team}')
                     
                     # Format ticket details (inspired by jira-report-mpc)
                     for issue in issues[:10]:  # Limit to 10 most recent
-                        ticket_info = f\"\"\"
+                        try:
+                            # Handle both dict and object formats
+                            if isinstance(issue, dict):
+                                key = issue.get('key', 'N/A')
+                                fields = issue.get('fields', {})
+                                summary = fields.get('summary', 'No summary')
+                                status_obj = fields.get('status', {})
+                                status = status_obj.get('name', 'Unknown') if isinstance(status_obj, dict) else getattr(status_obj, 'name', 'Unknown')
+                                assignee_obj = fields.get('assignee', {})
+                                assignee = assignee_obj.get('displayName', 'Unassigned') if isinstance(assignee_obj, dict) else getattr(assignee_obj, 'displayName', 'Unassigned')
+                                updated = fields.get('updated', 'Unknown')
+                            else:
+                                key = getattr(issue, 'key', 'N/A')
+                                summary = getattr(issue.fields, 'summary', 'No summary')
+                                status = getattr(issue.fields.status, 'name', 'Unknown')
+                                assignee = getattr(issue.fields.assignee, 'displayName', 'Unassigned') if issue.fields.assignee else 'Unassigned'
+                                updated = getattr(issue.fields, 'updated', 'Unknown')
+                            
+                            ticket_info = f\"\"\"
         ==========
-        Issue: {issue.get('key', 'N/A')}
-        ({jira_config.get('jira_url', '')}/browse/{issue.get('key', '')})
-        Owner: {issue.get('assignee', {}).get('displayName', 'Unassigned')}
-        Summary: {issue.get('summary', 'No summary')}
-        Status: {issue.get('status', {}).get('name', 'Unknown')}
-        Updated: {issue.get('updated', 'Unknown')}
+        Issue: {key}
+        ({jira_config.get('jira_url', '')}/browse/{key})
+        Owner: {assignee}
+        Summary: {summary}
+        Status: {status}
+        Updated: {updated}
         \"\"\"
-                        jira_details.append(ticket_info.strip())
+                            jira_details.append(ticket_info.strip())
+                        except Exception as e:
+                            print(f'  ⚠️  Error formatting issue: {e}')
+                            continue
                 else:
-                    print(f'  ⚠️  Jira dump file not found: {json_path}')
+                    print(f'  ⚠️  No Jira issues found for {team}')
                 
             except Exception as e:
                 print(f'  ❌ Jira collection failed: {e}')
@@ -154,19 +164,47 @@ jobs:
             # Generate AI summary if available
             ai_summary = 'AI analysis not available'
             try:
-                from connectors.gemini.tools.ai_summary_tool import ai_summary_tool
                 from connectors.gemini.client import GeminiClient
                 from connectors.gemini.config import GeminiConfig
                 
                 gemini_config = GeminiConfig()
                 gemini_client = GeminiClient(gemini_config.get_config())
-                ai_tool_func = ai_summary_tool(gemini_client, gemini_config.get_config())
                 
                 print(f'  🤖 Generating AI summary for {team}...')
-                result = ai_tool_func(team=team, send_email=False)
-                print(f'  🤖 AI result: {result}')
-                if result.get('success'):
-                    ai_summary = result.get('summary', 'AI analysis completed')
+                
+                # Create summary of collected data
+                summary_text = f\"\"\"
+                Team: {team}
+                Slack Activity: {slack_summary}
+                Jira Tickets: {jira_summary}
+                
+                Recent Slack Messages:
+                {chr(10).join(slack_details) if slack_details else 'No recent messages'}
+                
+                Jira Issues:
+                {chr(10).join(jira_details) if jira_details else 'No issues found'}
+                \"\"\"
+                
+                prompt = f\"\"\"
+                Analyze the following team data and provide insights:
+                
+                {summary_text}
+                
+                Please provide:
+                1. Key themes and patterns
+                2. Potential blockers or risks
+                3. Productivity suggestions
+                4. Team workload distribution
+                
+                Keep the response concise and actionable.
+                \"\"\"
+                
+                ai_response = gemini_client.generate_content(prompt)
+                if ai_response:
+                    ai_summary = ai_response
+                    print(f'  🤖 AI analysis completed')
+                else:
+                    print(f'  ⚠️  AI analysis returned empty response')
                 
             except Exception as e:
                 print(f'  ⚠️  AI analysis failed: {e}')
