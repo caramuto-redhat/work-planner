@@ -495,9 +495,18 @@ def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str]
         print(f'  🔍 Debug: Available fields in first ticket: {list(team_tickets[0].keys())}')
         sprint_fields_found = [field for field in team_tickets[0].keys() if 'sprint' in field.lower() or 'active' in field.lower()]
         print(f'  🔍 Debug: Sprint-related fields found: {sprint_fields_found}')
+        
+        # Debug: Check Active Sprint field specifically
+        if 'Active Sprint' in team_tickets[0]:
+            active_sprint_value = team_tickets[0]['Active Sprint']
+            print(f'  🔍 Debug: Active Sprint field value: {active_sprint_value}')
+            print(f'  🔍 Debug: Active Sprint field type: {type(active_sprint_value)}')
+        else:
+            print(f'  🔍 Debug: Active Sprint field NOT found in ticket')
     
     active_sprint = get_most_common_sprint(team_tickets)
     print(f'  🔍 Debug: Detected active sprint: {active_sprint}')
+    print(f'  🔍 Debug: Sprint title will be: {"🎫 Active Sprint \"" + active_sprint + "\" Tickets" if active_sprint else "🎫 Active Sprint Tickets"}')
     
     # Create sprint-aware section title
     sprint_title = f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'

@@ -26,10 +26,12 @@ class JiraClient:
     
     def search_issues(self, jql: str, max_results: int = 20) -> List[Dict[str, Any]]:
         """Search issues using JQL"""
-        issues = self.client.search_issues(jql, maxResults=max_results)
+        # Search with all fields to get complete issue data
+        issues = self.client.search_issues(jql, maxResults=max_results, expand='changelog')
         
         result = []
         for issue in issues:
+            # Get all fields from the issue
             issue_data = {
                 'key': issue.key,
                 'summary': issue.fields.summary,
@@ -40,6 +42,12 @@ class JiraClient:
                 'issue_type': issue.fields.issuetype.name,
                 'url': f"{self.client.server_url}/browse/{issue.key}"
             }
+            
+            # Add all custom fields and other fields
+            for field_name, field_value in issue.raw['fields'].items():
+                if field_name not in ['summary', 'status', 'assignee', 'updated', 'priority', 'issuetype']:
+                    issue_data[field_name] = field_value
+            
             result.append(issue_data)
         
         return result
