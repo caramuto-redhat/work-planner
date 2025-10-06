@@ -526,8 +526,11 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
         paul_jira_content = []
         all_tickets = []
         
+        # Get team name from team_data
+        team_name = team_data.get('team', 'unknown')
+        
         # Get all team tickets
-        team_tickets = team_data.get('jira_tickets', {}).get(team, [])
+        team_tickets = team_data.get('jira_tickets', {}).get(team_name, [])
         all_tickets.extend(team_tickets)
         
         # Get SP organization tickets
