@@ -613,366 +613,8 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
         return f"TODO generation failed: {str(e)}"
 
 
-def create_email_content(team_data: Dict[str, Any], ai_summaries: Dict[str, str], paul_todo_items: str = "") -> str:
-    """Create HTML email content with per-channel summaries and organized Jira tickets"""
-    team = team_data['team']
-    channels = team_data.get('channels', {})
-    jira_tickets = team_data.get('jira_tickets', {})
-    
-    # Extract sprint information from tickets - check multiple possible field names
-    def get_most_common_sprint(tickets):
-        sprint_counts = {}
-        for issue in tickets:
-            if isinstance(issue, dict):
-                sprint_name = None
-                
-                # Check for customfield_12310940 first (the actual sprint field from Jira)
-                if 'customfield_12310940' in issue:
-                    sprint_data = issue.get('customfield_12310940', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        # Look for the ACTIVE sprint, not just the first one
-                        import re
-                        for sprint_string in sprint_data:
-                            sprint_str = str(sprint_string)
-                            # Check if this sprint is ACTIVE
-                            state_match = re.search(r'state=([^,]+)', sprint_str)
-                            if state_match and state_match.group(1) == 'ACTIVE':
-                                # Extract sprint name from the active sprint
-                                name_match = re.search(r'name=([^,]+)', sprint_str)
-                                if name_match:
-                                    sprint_name = name_match.group(1)
-                                    break
-                        
-                        # If no active sprint found, fall back to first sprint
-                        if not sprint_name:
-                            sprint_string = str(sprint_data[0])
-                            name_match = re.search(r'name=([^,]+)', sprint_string)
-                            if name_match:
-                                sprint_name = name_match.group(1)
-                
-                # Fallback to other sprint field names
-                if not sprint_name:
-                    sprint_fields_to_check = [
-                        'Active Sprint',     # Exact field name from Jira UI
-                        'customfield_10020', # Common Sprint field
-                        'customfield_10021', # Alternative Sprint field
-                        'sprint',           # Direct sprint field
-                        'active_sprint',    # Snake case version
-                        'activeSprint'      # Camel case version
-                    ]
-                    
-                    for field_name in sprint_fields_to_check:
-                        if field_name in issue:
-                            sprint_data = issue.get(field_name, [])
-                            if sprint_data and len(sprint_data) > 0:
-                                if isinstance(sprint_data[0], dict):
-                                    sprint_name = sprint_data[0].get('name', sprint_data[0].get('value', 'Unknown Sprint'))
-                                else:
-                                    sprint_name = str(sprint_data[0])
-                                break
-                
-                if sprint_name and sprint_name != 'Unknown Sprint':
-                    sprint_counts[sprint_name] = sprint_counts.get(sprint_name, 0) + 1
-        
-        if sprint_counts:
-            return max(sprint_counts, key=sprint_counts.get)
-        return None
-    
-    # Get sprint name from team tickets
-    team_tickets = jira_tickets.get('toolchain', [])
-    
-    # Debug: Print available fields from first ticket
-    if team_tickets and isinstance(team_tickets[0], dict):
-        print(f'  🔍 Debug: Available fields in first ticket: {list(team_tickets[0].keys())}')
-        sprint_fields_found = [field for field in team_tickets[0].keys() if 'sprint' in field.lower() or 'active' in field.lower()]
-        print(f'  🔍 Debug: Sprint-related fields found: {sprint_fields_found}')
-        
-        # Debug: Check all possible sprint field names
-        possible_sprint_fields = ['customfield_12310940', 'Active Sprint', 'customfield_10020', 'customfield_10021', 'sprint', 'Sprint']
-        for field_name in possible_sprint_fields:
-            if field_name in team_tickets[0]:
-                field_value = team_tickets[0][field_name]
-                print(f'  🔍 Debug: Found {field_name}: {field_value} (type: {type(field_value)})')
-            else:
-                print(f'  🔍 Debug: {field_name} NOT found')
-        
-        # Debug: Show ALL fields that might contain sprint info
-        print(f'  🔍 Debug: All fields containing sprint/active:')
-        for field_name, field_value in team_tickets[0].items():
-            if 'sprint' in field_name.lower() or 'active' in field_name.lower():
-                print(f'    {field_name}: {field_value}')
-    
-    active_sprint = get_most_common_sprint(team_tickets)
-    print(f'  🔍 Debug: Detected active sprint: {active_sprint}')
-    sprint_title_debug = f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
-    print(f'  🔍 Debug: Sprint title will be: {sprint_title_debug}')
-    
-    # Create sprint-aware section title
-    sprint_title = f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
-    
-    # Create channel summaries section with detailed activity
-    channel_summaries_html = ""
-    for channel_name, channel_data in channels.items():
-        channel_summary = ai_summaries.get(channel_name, "No analysis available")
-        recent_count = channel_data.get('recent_messages', 0)
-        total_count = channel_data.get('total_messages', 0)
-        messages = channel_data.get('messages', [])
-        
-        # Create recent messages preview
-        recent_messages_html = ""
-        if messages:
-            recent_messages_html = "<div style='margin: 10px 0; max-height: 200px; overflow-y: auto;'>"
-            for msg in messages[-5:]:  # Show last 5 messages
-                user_id = msg.get('user', 'Unknown')
-                text = msg.get('text', 'No text')
-                timestamp = msg.get('ts', '')
-                
-                # Get user display name
-                user_mapping = channel_data.get('user_mapping', {})
-                bot_mapping = channel_data.get('bot_mapping', {})
-                user_display_name = user_mapping.get(user_id, bot_mapping.get(user_id, f"User {user_id}"))
-                
-                # Format timestamp
-                if timestamp:
-                    try:
-                        from datetime import datetime
-                        dt = datetime.fromtimestamp(float(timestamp))
-                        time_str = dt.strftime('%m-%d %H:%M')
-                    except:
-                        time_str = 'Unknown'
-                else:
-                    time_str = 'Unknown'
-                
-                # Clean text and truncate
-                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
-                clean_text = clean_text[:100] + "..." if len(clean_text) > 100 else clean_text
-                
-                recent_messages_html += f"""
-                <div style='margin: 3px 0; padding: 5px; background: white; border-radius: 3px; font-size: 12px;'>
-                    <strong>{time_str}</strong> <strong>{user_display_name}:</strong> {clean_text}
-                </div>
-                """
-            recent_messages_html += "</div>"
-        
-        channel_summaries_html += f"""
-        <div style="margin: 20px 0; padding: 20px; border-left: 4px solid #007acc; background: #f8f9fa; border-radius: 5px;">
-            <h4 style="margin: 0 0 15px 0; color: #007acc; font-size: 16px;">📱 #{channel_name}</h4>
-            
-            <div style="margin: 10px 0;">
-                <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 12px; font-size: 11px; color: #1976d2;">
-                    📊 {recent_count} messages (last 7 days) • {total_count} total
-                </span>
-            </div>
-            
-            <div style="margin: 15px 0;">
-                <h5 style="margin: 0 0 8px 0; color: #333; font-size: 14px;">🤖 AI Summary:</h5>
-                <p style="margin: 0; line-height: 1.4; font-style: italic; color: #555;">{channel_summary}</p>
-            </div>
-            
-            {recent_messages_html if recent_messages_html else '<p style="color: #666; font-size: 12px;">No recent messages</p>'}
-        </div>
-        """
-    
-    # Create Jira tickets sections
-    def format_jira_tickets(tickets, section_title, section_color):
-        if not tickets:
-            return f"""
-            <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
-                <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title}</h4>
-                <p style="margin: 0; color: #666;">No active tickets found</p>
-            </div>
-            """
-        
-        # Sort tickets by priority: In Progress + Active Sprint first, then In Progress + No/Other Sprint
-        def get_ticket_sort_key(issue):
-            if not isinstance(issue, dict):
-                return (2, '')  # Lowest priority for invalid tickets
-            
-            # Get status
-            status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
-            
-            # Only process In Progress tickets (all tickets should be In Progress)
-            if status != 'In Progress':
-                return (2, issue.get('key', ''))  # Lowest priority for non-In Progress
-            
-            # Check for active sprint
-            has_active_sprint = False
-            if 'customfield_12310940' in issue:
-                sprint_data = issue.get('customfield_12310940', [])
-                if sprint_data and len(sprint_data) > 0:
-                    import re
-                    for sprint_string in sprint_data:
-                        sprint_str = str(sprint_string)
-                        state_match = re.search(r'state=([^,]+)', sprint_str)
-                        if state_match and state_match.group(1) == 'ACTIVE':
-                            has_active_sprint = True
-                            break
-            
-            # Determine priority for In Progress tickets
-            if has_active_sprint:
-                return (0, issue.get('key', ''))  # Highest priority: In Progress + Active Sprint
-            else:
-                return (1, issue.get('key', ''))  # Lower priority: In Progress + No/Other Sprint
-        
-        # Sort tickets
-        sorted_tickets = sorted(tickets, key=get_ticket_sort_key)
-        
-        tickets_html = f"""
-        <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
-            <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title} ({len(sorted_tickets)} tickets)</h4>
-        """
-        
-        for issue in sorted_tickets[:10]:  # Limit to 10 tickets
-            if isinstance(issue, dict):
-                key = issue.get('key', 'N/A')
-                assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
-                summary = issue.get('summary', 'No summary')
-                status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
-                priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
-                updated = issue.get('updated', 'Unknown')
-                
-                # Get sprint information - prioritize customfield_12310940 (actual sprint field)
-                sprint_info = "No Sprint"
-                
-                # Check for customfield_12310940 first (the actual sprint field from Jira)
-                if 'customfield_12310940' in issue:
-                    sprint_data = issue.get('customfield_12310940', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        # Look for the ACTIVE sprint, not just the first one
-                        import re
-                        for sprint_string in sprint_data:
-                            sprint_str = str(sprint_string)
-                            # Check if this sprint is ACTIVE
-                            state_match = re.search(r'state=([^,]+)', sprint_str)
-                            if state_match and state_match.group(1) == 'ACTIVE':
-                                # Extract sprint name from the active sprint
-                                name_match = re.search(r'name=([^,]+)', sprint_str)
-                                if name_match:
-                                    sprint_name = name_match.group(1)
-                                    sprint_info = f"🏃 {sprint_name}"
-                                    break
-                        
-                        # If no active sprint found, fall back to first sprint
-                        if sprint_info == "No Sprint":
-                            sprint_string = str(sprint_data[0])
-                            name_match = re.search(r'name=([^,]+)', sprint_string)
-                            if name_match:
-                                sprint_name = name_match.group(1)
-                                sprint_info = f"🏃 {sprint_name}"
-                
-                # Fallback to other sprint field names
-                if sprint_info == "No Sprint":
-                    sprint_fields_to_check = [
-                        'Active Sprint',     # Exact field name from Jira UI
-                        'customfield_10020', # Common Sprint field
-                        'customfield_10021', # Alternative Sprint field
-                        'sprint',           # Direct sprint field
-                        'active_sprint',    # Snake case version
-                        'activeSprint'      # Camel case version
-                    ]
-                    
-                    for field_name in sprint_fields_to_check:
-                        if field_name in issue:
-                            sprint_data = issue.get(field_name, [])
-                            if sprint_data and len(sprint_data) > 0:
-                                if isinstance(sprint_data[0], dict):
-                                    sprint_name = sprint_data[0].get('name', sprint_data[0].get('value', 'Unknown Sprint'))
-                                else:
-                                    sprint_name = str(sprint_data[0])
-                                sprint_info = f"🏃 {sprint_name}"
-                                break
-                
-                # Get project information
-                project_key = issue.get('project', {}).get('key', 'Unknown') if isinstance(issue.get('project'), dict) else 'Unknown'
-                
-                # Format updated date
-                if updated != 'Unknown':
-                    try:
-                        from datetime import datetime
-                        dt = datetime.fromisoformat(updated.replace('Z', '+00:00'))
-                        updated_str = dt.strftime('%Y-%m-%d')
-                    except:
-                        updated_str = updated
-                else:
-                    updated_str = 'Unknown'
-                
-                tickets_html += f"""
-                <div style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px; border-left: 3px solid {section_color};">
-                    <div style="margin-bottom: 8px;">
-                        <strong style="color: {section_color}; font-size: 14px;">{key}</strong>
-                        <span style="background: #f0f0f0; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-left: 8px;">{project_key}</span>
-                    </div>
-                    <div style="margin-bottom: 6px; font-weight: 500;">{summary}</div>
-                    <div style="font-size: 12px; color: #666;">
-                        👤 {assignee} | 📊 {status} | ⚡ {priority} | 📅 {updated_str}
-                    </div>
-                    <div style="font-size: 11px; color: #888; margin-top: 4px;">
-                        {sprint_info}
-                    </div>
-                </div>
-                """
-            else:
-                tickets_html += f"""
-                <div style="margin: 8px 0; padding: 8px; background: white; border-radius: 4px;">
-                    <strong>{str(issue)}</strong>
-                </div>
-                """
-        
-        tickets_html += "</div>"
-        return tickets_html
-    
-    # Team tickets section
-    team_name = team_data['team'].upper()
-    toolchain_tickets_html = format_jira_tickets(
-        jira_tickets.get('toolchain', []), 
-        f"🎫 {team_name} Team Tickets (In Progress)", 
-        "#007acc"
-    )
-    
-    # SP organization tickets section
-    sp_tickets_html = format_jira_tickets(
-        jira_tickets.get('sp_organization', []), 
-        "🏢 SP Organization Tickets (In Progress)", 
-        "#28a745"
-    )
-    
-    # Overall AI summary
-    overall_summary = ai_summaries.get('overall', 'Overall analysis not available')
-    
-    # Create the complete HTML content
-    html_content = f"""
-    <h2>📊 {team.upper()} Team Daily Report</h2>
-    
-    <div style="margin: 15px 0; padding: 15px; background: #e8f4fd; border-left: 4px solid #007acc;">
-        <h3 style="margin: 0 0 10px 0;">🤖 Executive Summary</h3>
-        <p style="margin: 0; line-height: 1.4;">{overall_summary}</p>
-    </div>
-    
-    <div style="margin: 15px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107;">
-        <h3 style="margin: 0 0 10px 0;">📝 Paul Caramuto: TODO</h3>
-        <div style="margin: 0; line-height: 1.4; white-space: pre-line;">{paul_todo_items}</div>
-    </div>
-    
-    <h3>📱 Individual Slack Channel Activity (Last 7 Days)</h3>
-    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
-        Each channel shows AI analysis and recent message previews
-    </p>
-    {channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'}
-    
-    <h3>{sprint_title}</h3>
-    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
-        Tickets organized by team and SP organization members
-    </p>
-    {toolchain_tickets_html}
-    {sp_tickets_html}
-    
-    <hr style="margin: 30px 0;">
-    <p style="font-size: 12px; color: #666; text-align: center;">
-        Generated by Work Planner MCP Server | {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}
-    </p>
-    """
-    
-    return html_content
+# Note: create_email_content function has been removed as email formatting 
+# is now handled by templates in mail_template.yaml
 
 
 def send_email(team: str, email_body: str) -> bool:
@@ -1030,12 +672,242 @@ def send_email(team: str, email_body: str) -> bool:
         return False
 
 
+def _get_sprint_title(team_data: Dict[str, Any]) -> str:
+    """Extract sprint title from team data"""
+    jira_tickets = team_data.get('jira_tickets', {})
+    team_tickets = jira_tickets.get('toolchain', [])
+    
+    def get_most_common_sprint(tickets):
+        sprint_counts = {}
+        for issue in tickets:
+            if isinstance(issue, dict):
+                sprint_name = None
+                
+                # Check for customfield_12310940 first (the actual sprint field from Jira)
+                if 'customfield_12310940' in issue:
+                    sprint_data = issue.get('customfield_12310940', [])
+                    if sprint_data and len(sprint_data) > 0:
+                        # Look for the ACTIVE sprint, not just the first one
+                        import re
+                        for sprint_string in sprint_data:
+                            sprint_str = str(sprint_string)
+                            # Check if this sprint is ACTIVE
+                            state_match = re.search(r'state=([^,]+)', sprint_str)
+                            if state_match and state_match.group(1) == 'ACTIVE':
+                                # Extract sprint name from the active sprint
+                                name_match = re.search(r'name=([^,]+)', sprint_str)
+                                if name_match:
+                                    sprint_name = name_match.group(1)
+                                    break
+                        
+                        # If no active sprint found, fall back to first sprint
+                        if not sprint_name:
+                            sprint_string = str(sprint_data[0])
+                            name_match = re.search(r'name=([^,]+)', sprint_string)
+                            if name_match:
+                                sprint_name = name_match.group(1)
+                
+                if sprint_name and sprint_name != 'Unknown Sprint':
+                    sprint_counts[sprint_name] = sprint_counts.get(sprint_name, 0) + 1
+        
+        if sprint_counts:
+            return max(sprint_counts, key=sprint_counts.get)
+        return None
+    
+    active_sprint = get_most_common_sprint(team_tickets)
+    return f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
+
+
+def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
+    """Format Slack channel details for template"""
+    channels = team_data.get('channels', {})
+    channel_summaries_html = ""
+    
+    for channel_name, channel_data in channels.items():
+        recent_count = channel_data.get('recent_messages', 0)
+        total_count = channel_data.get('total_messages', 0)
+        messages = channel_data.get('messages', [])
+        
+        # Create recent messages preview
+        recent_messages_html = ""
+        if messages:
+            recent_messages_html = "<div style='margin: 10px 0; max-height: 200px; overflow-y: auto;'>"
+            for msg in messages[-5:]:  # Show last 5 messages
+                user_id = msg.get('user', 'Unknown')
+                text = msg.get('text', 'No text')
+                timestamp = msg.get('ts', '')
+                
+                # Get user display name
+                user_mapping = channel_data.get('user_mapping', {})
+                bot_mapping = channel_data.get('bot_mapping', {})
+                user_display_name = user_mapping.get(user_id, bot_mapping.get(user_id, f"User {user_id}"))
+                
+                # Format timestamp
+                if timestamp:
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromtimestamp(float(timestamp))
+                        time_str = dt.strftime('%m-%d %H:%M')
+                    except:
+                        time_str = 'Unknown'
+                else:
+                    time_str = 'Unknown'
+                
+                # Clean text and truncate
+                clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
+                clean_text = clean_text[:100] + "..." if len(clean_text) > 100 else clean_text
+                
+                recent_messages_html += f"""
+                <div style='margin: 3px 0; padding: 5px; background: white; border-radius: 3px; font-size: 12px;'>
+                    <strong>{time_str}</strong> <strong>{user_display_name}:</strong> {clean_text}
+                </div>
+                """
+            recent_messages_html += "</div>"
+        
+        channel_summaries_html += f"""
+        <div style="margin: 20px 0; padding: 20px; border-left: 4px solid #007acc; background: #f8f9fa; border-radius: 5px;">
+            <h4 style="margin: 0 0 15px 0; color: #007acc; font-size: 16px;">📱 #{channel_name}</h4>
+            
+            <div style="margin: 10px 0;">
+                <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 12px; font-size: 11px; color: #1976d2;">
+                    📊 {recent_count} messages (last 7 days) • {total_count} total
+                </span>
+            </div>
+            
+            {recent_messages_html if recent_messages_html else '<p style="color: #666; font-size: 12px;">No recent messages</p>'}
+        </div>
+        """
+    
+    return channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'
+
+
+def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
+    """Format Jira ticket details for template"""
+    jira_tickets = team_data.get('jira_tickets', {})
+    
+    def format_jira_tickets(tickets, section_title, section_color):
+        if not tickets:
+            return f"""
+            <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
+                <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title}</h4>
+                <p style="margin: 0; color: #666;">No active tickets found</p>
+            </div>
+            """
+        
+        # Sort tickets by priority: In Progress + Active Sprint first, then In Progress + No/Other Sprint
+        def get_ticket_sort_key(issue):
+            if not isinstance(issue, dict):
+                return (2, '')  # Lowest priority for invalid tickets
+            
+            # Get status
+            status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
+            
+            # Only process In Progress tickets (all tickets should be In Progress)
+            if status != 'In Progress':
+                return (2, issue.get('key', ''))  # Lowest priority for non-In Progress
+            
+            # Check for active sprint
+            has_active_sprint = False
+            if 'customfield_12310940' in issue:
+                sprint_data = issue.get('customfield_12310940', [])
+                if sprint_data and len(sprint_data) > 0:
+                    import re
+                    for sprint_string in sprint_data:
+                        sprint_str = str(sprint_string)
+                        state_match = re.search(r'state=([^,]+)', sprint_str)
+                        if state_match and state_match.group(1) == 'ACTIVE':
+                            has_active_sprint = True
+                            break
+            
+            # Determine priority for In Progress tickets
+            if has_active_sprint:
+                return (0, issue.get('key', ''))  # Highest priority: In Progress + Active Sprint
+            else:
+                return (1, issue.get('key', ''))  # Lower priority: In Progress + No/Other Sprint
+        
+        # Sort tickets
+        sorted_tickets = sorted(tickets, key=get_ticket_sort_key)
+        
+        tickets_html = f"""
+        <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
+            <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title} ({len(sorted_tickets)} tickets)</h4>
+        """
+        
+        for issue in sorted_tickets[:10]:  # Limit to 10 tickets
+            if isinstance(issue, dict):
+                key = issue.get('key', 'N/A')
+                assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
+                summary = issue.get('summary', 'No summary')
+                status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
+                priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
+                updated = issue.get('updated', 'Unknown')
+                
+                # Get sprint information
+                sprint_info = "No Sprint"
+                if 'customfield_12310940' in issue:
+                    sprint_data = issue.get('customfield_12310940', [])
+                    if sprint_data and len(sprint_data) > 0:
+                        import re
+                        for sprint_string in sprint_data:
+                            sprint_str = str(sprint_string)
+                            state_match = re.search(r'state=([^,]+)', sprint_str)
+                            if state_match and state_match.group(1) == 'ACTIVE':
+                                name_match = re.search(r'name=([^,]+)', sprint_str)
+                                if name_match:
+                                    sprint_name = name_match.group(1)
+                                    sprint_info = f"🏃 {sprint_name}"
+                                    break
+                
+                # Get project information
+                project_key = issue.get('project', {}).get('key', 'Unknown') if isinstance(issue.get('project'), dict) else 'Unknown'
+                
+                # Format updated date
+                if updated != 'Unknown':
+                    try:
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(updated.replace('Z', '+00:00'))
+                        updated_str = dt.strftime('%Y-%m-%d')
+                    except:
+                        updated_str = updated
+                else:
+                    updated_str = 'Unknown'
+                
+                tickets_html += f"""
+                <div style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px; border-left: 3px solid {section_color};">
+                    <div style="margin-bottom: 8px;">
+                        <strong style="color: {section_color}; font-size: 14px;">{key}</strong>
+                        <span style="background: #f0f0f0; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-left: 8px;">{project_key}</span>
+                    </div>
+                    <div style="margin-bottom: 6px; font-weight: 500;">{summary}</div>
+                    <div style="font-size: 12px; color: #666;">
+                        👤 {assignee} | 📊 {status} | ⚡ {priority} | 📅 {updated_str}
+                    </div>
+                    <div style="font-size: 11px; color: #888; margin-top: 4px;">
+                        {sprint_info}
+                    </div>
+                </div>
+                """
+        
+        tickets_html += "</div>"
+        return tickets_html
+    
+    # Format toolchain and SP tickets
+    toolchain_tickets = jira_tickets.get('toolchain', [])
+    sp_tickets = jira_tickets.get('sp', [])
+    
+    toolchain_tickets_html = format_jira_tickets(toolchain_tickets, "🔧 Toolchain Team Tickets", "#007acc")
+    sp_tickets_html = format_jira_tickets(sp_tickets, "👥 SP Organization Tickets", "#28a745")
+    
+    return toolchain_tickets_html + sp_tickets_html
+
+
 def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str, str], slack_client, jira_client, gemini_client) -> bool:
-    """Send email for team using enhanced format with per-channel summaries"""
+    """Send email for team using template-based formatting"""
     try:
-        print(f'  📧 Sending enhanced email for {team.upper()} team...')
+        print(f'  📧 Sending template-based email for {team.upper()} team...')
         from connectors.email.client import EmailClient
         from connectors.email.config import EmailConfig
+        from datetime import datetime
         
         email_config = EmailConfig()
         config = email_config.get_config()
@@ -1050,19 +922,27 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
         # Generate Paul TODO items
         paul_todo_items = generate_paul_todo_items(team_data, slack_client, jira_client, gemini_client)
         
-        # Create enhanced email content
-        email_content = create_email_content(team_data, ai_summaries, paul_todo_items)
-        
-        # Prepare summary data for daily_summary template
-        summary_data = {
-            'content': email_content
+        # Prepare template data for team_daily_report_with_todo template
+        template_data = {
+            'team': team.upper(),
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
+            'executive_summary': ai_summaries.get('overall', 'AI analysis not available'),
+            'paul_todo_items': paul_todo_items,
+            'slack_channel_details': _format_slack_channel_details(team_data),
+            'sprint_title': _get_sprint_title(team_data),
+            'jira_ticket_details': _format_jira_ticket_details(team_data)
         }
         
-        # Send email using send_daily_summary method
-        result = email_client.send_daily_summary(team, summary_data)
+        # Send email using the new template
+        result = email_client.send_email(
+            template_name='team_daily_report_with_todo',
+            recipients=config['recipients']['default'],
+            content_data=template_data
+        )
         
         if result.get('success'):
-            print(f'  ✅ Enhanced email sent successfully for {team.upper()} team!')
+            print(f'  ✅ Template-based email sent successfully for {team.upper()} team!')
             return True
         else:
             print(f'  ❌ Email failed: {result.get("error")}')
