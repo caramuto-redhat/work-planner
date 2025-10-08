@@ -980,7 +980,25 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
                 status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
                 assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
                 
-                tickets_html += f"<p><strong>{key}:</strong> {summary}<br><em>Status: {status} | Assignee: {assignee}</em></p>"
+                # Get sprint information
+                sprint_info = "No Sprint"
+                if 'customfield_12310940' in issue:
+                    sprint_data = issue.get('customfield_12310940', [])
+                    if sprint_data and len(sprint_data) > 0:
+                        import re
+                        for sprint_string in sprint_data:
+                            sprint_str = str(sprint_string)
+                            state_match = re.search(r'state=([^,]+)', sprint_str)
+                            name_match = re.search(r'name=([^,]+)', sprint_str)
+                            if name_match:
+                                sprint_name = name_match.group(1)
+                                if state_match and state_match.group(1) == 'ACTIVE':
+                                    sprint_info = f"🏃 {sprint_name} (Active)"
+                                else:
+                                    sprint_info = f"🏃 {sprint_name}"
+                                break
+                
+                tickets_html += f"<p><strong>{key}:</strong> {summary}<br><em>Status: {status} | Assignee: {assignee} | Sprint: {sprint_info}</em></p>"
         
         return tickets_html
     
