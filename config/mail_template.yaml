@@ -9,16 +9,13 @@ time_ranges:
     channel_activity_days: 7      # How many days of Slack activity to show in email
     history_collection_days: 30    # How far back to collect Slack history
     paul_todo_search_days: 30     # How far back to search for Paul mentions
+    max_messages_for_analysis: 10 # Maximum Slack messages to include in AI analysis
   
   # Jira data collection ranges  
   jira:
     ticket_limit_per_team: 15     # Maximum tickets to show per team
     ticket_limit_per_org: 10      # Maximum tickets to show per organization
-  
-  # AI analysis ranges
-  ai_analysis:
-    message_preview_count: 5      # Number of recent messages to show in preview
-    max_messages_for_analysis: 10 # Maximum messages to include in AI analysis
+    max_tickets_for_analysis: 20  # Maximum In Progress tickets to include in AI analysis
 
 # Recipients Configuration
 recipients:
@@ -48,6 +45,12 @@ templates:
         Each channel shows AI analysis and recent message previews
       </p>
       {slack_channel_details}
+      
+      <h3>🤖 AI Channel Analysis Summary</h3>
+      <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+        AI-generated insights from Slack channel discussions
+      </p>
+      {ai_channel_summaries}
       
       <h3>{sprint_title}</h3>
       <p style="color: #666; font-size: 14px; margin-bottom: 20px;">

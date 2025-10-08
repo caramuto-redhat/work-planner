@@ -180,15 +180,13 @@ def _load_time_ranges_config():
             'slack': {
                 'channel_activity_days': 7,
                 'history_collection_days': 30,
-                'paul_todo_search_days': 30
+                'paul_todo_search_days': 30,
+                'max_messages_for_analysis': 10
             },
             'jira': {
                 'ticket_limit_per_team': 15,
-                'ticket_limit_per_org': 10
-            },
-            'ai_analysis': {
-                'message_preview_count': 5,
-                'max_messages_for_analysis': 10
+                'ticket_limit_per_org': 10,
+                'max_tickets_for_analysis': 20
             }
         }
 
@@ -394,8 +392,8 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
         
         # Get configurable message limits
         time_ranges = team_data.get('time_ranges', {})
-        ai_config = time_ranges.get('ai_analysis', {})
-        max_messages = ai_config.get('max_messages_for_analysis', 10)
+        slack_config = time_ranges.get('slack', {})
+        max_messages = slack_config.get('max_messages_for_analysis', 10)
         
         channel_summaries = {}
         
@@ -438,7 +436,7 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
                 
                 # Create AI prompt for channel
                 prompt = f"""
-                Analyze the last 7 days of activity in the Slack channel "{channel_name}" for the {team_data["team"]} team.
+                Analyze the last {slack_config.get('channel_activity_days', 7)} days of activity in the Slack channel "{channel_name}" for the {team_data["team"]} team.
                 
                 Recent Messages ({len(messages)} messages):
                 {chr(10).join(message_texts[-max_messages:])}
@@ -469,12 +467,26 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
             total_tickets = team_data.get('total_tickets', 0)
             channel_count = len(team_data.get('channels', {}))
             
+            # Get configurable ticket limit for AI analysis
+            jira_config = time_ranges.get('jira', {})
+            max_tickets_for_ai = jira_config.get('max_tickets_for_analysis', 20)
+            
+            # Limit tickets for AI analysis
+            all_tickets = []
+            toolchain_tickets = team_data.get('jira_tickets', {}).get('toolchain', [])
+            sp_tickets = team_data.get('jira_tickets', {}).get('sp_organization', [])
+            all_tickets.extend(toolchain_tickets)
+            all_tickets.extend(sp_tickets)
+            
+            # Take only the most recent tickets for AI analysis
+            tickets_for_ai = all_tickets[:max_tickets_for_ai]
+            
             overall_prompt = f"""
-            Provide an executive summary for the {team_data["team"]} team based on the last 7 days of activity:
+            Provide an executive summary for the {team_data["team"]} team based on the last {slack_config.get('channel_activity_days', 7)} days of activity:
             
             Team Activity Overview:
             - {total_messages} messages across {channel_count} channels
-            - {total_tickets} active Jira tickets
+            - {len(tickets_for_ai)} active Jira tickets (analyzing most recent {max_tickets_for_ai})
             
             Channel Summaries:
             {chr(10).join([f"- {ch}: {summary}" for ch, summary in channel_summaries.items()])}
@@ -625,7 +637,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
             slack_summary = ""
             if paul_slack_content:
                 slack_summary = f"""
-                Slack Messages Mentioning Paul (Last 30 Days):
+                Slack Messages Mentioning Paul (Last {paul_search_days} Days):
                 {chr(10).join([f"- [{msg['channel']}] {msg['user']}: {msg['text'][:200]}..." for msg in paul_slack_content[:10]])}
                 """
             
@@ -656,7 +668,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
             todo_items = gemini_client.generate_content(todo_prompt)
             return todo_items if todo_items else "No specific TODO items identified at this time."
         
-        return "No mentions of Paul Caramuto found in the last 30 days."
+        return f"No mentions of Paul Caramuto found in the last {paul_search_days} days."
         
     except Exception as e:
         print(f'  ❌ Paul TODO generation failed: {e}')
@@ -773,10 +785,10 @@ def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
     channels = team_data.get('channels', {})
     channel_summaries_html = ""
     
-    # Get configurable message preview count
+    # Get configurable time range for display
     time_ranges = team_data.get('time_ranges', {})
-    ai_config = time_ranges.get('ai_analysis', {})
-    preview_count = ai_config.get('message_preview_count', 5)
+    slack_config = time_ranges.get('slack', {})
+    activity_days = slack_config.get('channel_activity_days', 7)
     
     for channel_name, channel_data in channels.items():
         recent_count = channel_data.get('recent_messages', 0)
@@ -787,7 +799,7 @@ def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
         recent_messages_html = ""
         if messages:
             recent_messages_html = "<div style='margin: 10px 0; max-height: 200px; overflow-y: auto;'>"
-            for msg in messages[-preview_count:]:  # Show configurable number of messages
+            for msg in messages:  # Show all messages from channel_activity_days period
                 user_id = msg.get('user', 'Unknown')
                 text = msg.get('text', 'No text')
                 timestamp = msg.get('ts', '')
@@ -825,7 +837,7 @@ def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
             
             <div style="margin: 10px 0;">
                 <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 12px; font-size: 11px; color: #1976d2;">
-                    📊 {recent_count} messages (last 7 days) • {total_count} total
+                    📊 {recent_count} messages (last {activity_days} days) • {total_count} total
                 </span>
             </div>
             
@@ -834,6 +846,27 @@ def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
         """
     
     return channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'
+
+
+def _format_ai_channel_summaries(ai_summaries: Dict[str, str]) -> str:
+    """Format AI channel summaries for template"""
+    summaries_html = ""
+    
+    # Filter out the 'overall' summary as it's used elsewhere
+    channel_summaries = {k: v for k, v in ai_summaries.items() if k != 'overall'}
+    
+    if not channel_summaries:
+        return '<p style="color: #666; font-size: 14px;">No AI channel analysis available</p>'
+    
+    for channel_name, summary in channel_summaries.items():
+        summaries_html += f"""
+        <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #28a745; background: #f8f9fa; border-radius: 5px;">
+            <h4 style="margin: 0 0 10px 0; color: #28a745; font-size: 16px;">📱 #{channel_name}</h4>
+            <p style="margin: 0; line-height: 1.5; color: #333; font-size: 14px;">{summary}</p>
+        </div>
+        """
+    
+    return summaries_html if summaries_html else '<p style="color: #666; font-size: 14px;">No AI channel analysis available</p>'
 
 
 def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
@@ -948,7 +981,7 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
     
     # Format toolchain and SP tickets with configurable limits
     toolchain_tickets = jira_tickets.get('toolchain', [])
-    sp_tickets = jira_tickets.get('sp', [])
+    sp_tickets = jira_tickets.get('sp_organization', [])
     
     # Get configurable ticket limits
     time_ranges = team_data.get('time_ranges', {})
@@ -991,6 +1024,7 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
             'executive_summary': ai_summaries.get('overall', 'AI analysis not available'),
             'paul_todo_items': paul_todo_items,
             'slack_channel_details': _format_slack_channel_details(team_data),
+            'ai_channel_summaries': _format_ai_channel_summaries(ai_summaries),
             'sprint_title': _get_sprint_title(team_data),
             'jira_ticket_details': _format_jira_ticket_details(team_data),
             # Add configurable time ranges for template display
