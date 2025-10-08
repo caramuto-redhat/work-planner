@@ -44,13 +44,14 @@ templates:
       <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
         Each channel shows AI analysis and recent message previews
       </p>
-      {slack_channel_details}
       
       <h3>🤖 AI Channel Analysis Summary</h3>
       <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
         AI-generated insights from Slack channel discussions
       </p>
       {ai_channel_summaries}
+      
+      {slack_channel_details}
       
       <h3>{sprint_title}</h3>
       <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
