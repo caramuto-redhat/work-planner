@@ -801,7 +801,6 @@ def _format_slack_channel_details(team_data: Dict[str, Any], ai_summaries: Dict[
         # Create recent messages preview
         recent_messages_html = ""
         if messages:
-            recent_messages_html = "<div style='margin: 10px 0; max-height: 200px; overflow-y: auto;'>"
             for msg in messages:  # Show all messages from channel_activity_days period
                 user_id = msg.get('user', 'Unknown')
                 text = msg.get('text', 'No text')
@@ -827,30 +826,19 @@ def _format_slack_channel_details(team_data: Dict[str, Any], ai_summaries: Dict[
                 clean_text = _map_user_mentions_in_text(text, user_mapping, bot_mapping)
                 clean_text = clean_text[:100] + "..." if len(clean_text) > 100 else clean_text
                 
-                recent_messages_html += f"""
-                <div style='margin: 3px 0; padding: 5px; background: white; border-radius: 3px; font-size: 12px;'>
-                    <strong>{time_str}</strong> <strong>{user_display_name}:</strong> {clean_text}
-                </div>
-                """
-            recent_messages_html += "</div>"
+                recent_messages_html += f"<p><strong>{time_str}</strong> <strong>{user_display_name}:</strong> {clean_text}</p>"
         
         channel_summaries_html += f"""
-        <div style="margin: 20px 0; padding: 20px; border-left: 4px solid #007acc; background: #f8f9fa; border-radius: 5px;">
-            <h4 style="margin: 0 0 15px 0; color: #007acc; font-size: 16px;">📱 #{channel_name}</h4>
-            
-            <div style="margin: 10px 0;">
-                <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 12px; font-size: 11px; color: #1976d2;">
-                    📊 {recent_count} messages (last {activity_days} days) • {total_count} total
-                </span>
-            </div>
-            
-            <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #28a745; background: white; border-radius: 5px;">
-                <h5 style="margin: 0 0 10px 0; color: #28a745; font-size: 14px;">🤖 AI Analysis</h5>
-                <p style="margin: 0; line-height: 1.5; color: #333; font-size: 13px;">{ai_summary}</p>
-            </div>
-            
-            {recent_messages_html if recent_messages_html else '<p style="color: #666; font-size: 12px;">No recent messages</p>'}
-        </div>
+        <h4>📱 #{channel_name}</h4>
+        <p><strong>📊 {recent_count} messages (last {activity_days} days) • {total_count} total</strong></p>
+        
+        <h5>🤖 AI Analysis</h5>
+        <p>{ai_summary}</p>
+        
+        <h5>Recent Messages</h5>
+        {recent_messages_html if recent_messages_html else '<p><em>No recent messages</em></p>'}
+        
+        <hr>
         """
     
     return channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'
@@ -911,13 +899,13 @@ def _generate_ai_jira_summary(team_data: Dict[str, Any], ai_summaries: Dict[str,
         jira_summary = gemini_client.generate_content(jira_prompt)
         
         if jira_summary:
-            return f'<p style="margin: 0; line-height: 1.5; color: #333; font-size: 14px;">{jira_summary}</p>'
+            return f'<p>{jira_summary}</p>'
         else:
-            return '<p style="color: #666; font-size: 14px;">AI Jira analysis not available</p>'
+            return '<p><em>AI Jira analysis not available</em></p>'
             
     except Exception as e:
         print(f'  ⚠️  AI Jira analysis failed: {e}')
-        return '<p style="color: #666; font-size: 14px;">AI Jira analysis failed</p>'
+        return '<p><em>AI Jira analysis failed</em></p>'
 
 
 def _format_ai_channel_summaries(ai_summaries: Dict[str, str]) -> str:
@@ -945,14 +933,9 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
     """Format Jira ticket details for template"""
     jira_tickets = team_data.get('jira_tickets', {})
     
-    def format_jira_tickets(tickets, section_title, section_color, ticket_limit=10):
+    def format_jira_tickets(tickets, section_title, ticket_limit=10):
         if not tickets:
-            return f"""
-            <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
-                <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title}</h4>
-                <p style="margin: 0; color: #666;">No active tickets found</p>
-            </div>
-            """
+            return f"<h4>{section_title}</h4><p><em>No active tickets found</em></p>"
         
         # Sort tickets by priority: In Progress + Active Sprint first, then In Progress + No/Other Sprint
         def get_ticket_sort_key(issue):
@@ -988,67 +971,17 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
         # Sort tickets
         sorted_tickets = sorted(tickets, key=get_ticket_sort_key)
         
-        tickets_html = f"""
-        <div style="margin: 15px 0; padding: 15px; border-left: 4px solid {section_color}; background: #f8f9fa;">
-            <h4 style="margin: 0 0 10px 0; color: {section_color};">{section_title} ({len(sorted_tickets)} tickets)</h4>
-        """
+        tickets_html = f"<h4>{section_title} ({len(sorted_tickets)} tickets)</h4>"
         
         for issue in sorted_tickets[:ticket_limit]:  # Use configurable ticket limit
             if isinstance(issue, dict):
                 key = issue.get('key', 'N/A')
-                assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
                 summary = issue.get('summary', 'No summary')
                 status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
-                priority = issue.get('priority', {}).get('name', 'Medium') if isinstance(issue.get('priority'), dict) else str(issue.get('priority', 'Medium'))
-                updated = issue.get('updated', 'Unknown')
+                assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
                 
-                # Get sprint information
-                sprint_info = "No Sprint"
-                if 'customfield_12310940' in issue:
-                    sprint_data = issue.get('customfield_12310940', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        import re
-                        for sprint_string in sprint_data:
-                            sprint_str = str(sprint_string)
-                            state_match = re.search(r'state=([^,]+)', sprint_str)
-                            if state_match and state_match.group(1) == 'ACTIVE':
-                                name_match = re.search(r'name=([^,]+)', sprint_str)
-                                if name_match:
-                                    sprint_name = name_match.group(1)
-                                    sprint_info = f"🏃 {sprint_name}"
-                                    break
-                
-                # Get project information
-                project_key = issue.get('project', {}).get('key', 'Unknown') if isinstance(issue.get('project'), dict) else 'Unknown'
-                
-                # Format updated date
-                if updated != 'Unknown':
-                    try:
-                        from datetime import datetime
-                        dt = datetime.fromisoformat(updated.replace('Z', '+00:00'))
-                        updated_str = dt.strftime('%Y-%m-%d')
-                    except:
-                        updated_str = updated
-                else:
-                    updated_str = 'Unknown'
-                
-                tickets_html += f"""
-                <div style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px; border-left: 3px solid {section_color};">
-                    <div style="margin-bottom: 8px;">
-                        <strong style="color: {section_color}; font-size: 14px;">{key}</strong>
-                        <span style="background: #f0f0f0; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-left: 8px;">{project_key}</span>
-                    </div>
-                    <div style="margin-bottom: 6px; font-weight: 500;">{summary}</div>
-                    <div style="font-size: 12px; color: #666;">
-                        👤 {assignee} | 📊 {status} | ⚡ {priority} | 📅 {updated_str}
-                    </div>
-                    <div style="font-size: 11px; color: #888; margin-top: 4px;">
-                        {sprint_info}
-                    </div>
-                </div>
-                """
+                tickets_html += f"<p><strong>{key}:</strong> {summary}<br><em>Status: {status} | Assignee: {assignee}</em></p>"
         
-        tickets_html += "</div>"
         return tickets_html
     
     # Format toolchain and SP tickets with configurable limits
@@ -1061,8 +994,8 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
     team_ticket_limit = jira_config.get('ticket_limit_per_team', 15)
     org_ticket_limit = jira_config.get('ticket_limit_per_org', 10)
     
-    toolchain_tickets_html = format_jira_tickets(toolchain_tickets, "🔧 Toolchain Team Tickets", "#007acc", team_ticket_limit)
-    sp_tickets_html = format_jira_tickets(sp_tickets, "👥 SP Organization Tickets", "#28a745", org_ticket_limit)
+    toolchain_tickets_html = format_jira_tickets(toolchain_tickets, "🔧 Toolchain Team Tickets", team_ticket_limit)
+    sp_tickets_html = format_jira_tickets(sp_tickets, "👥 SP Organization Tickets", org_ticket_limit)
     
     return toolchain_tickets_html + sp_tickets_html
 
