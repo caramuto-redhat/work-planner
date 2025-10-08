@@ -105,8 +105,12 @@ class EmailConfig:
         }
     
     def get_config(self) -> Dict[str, Any]:
-        """Get the current configuration"""
-        return self.config
+        """Get the current configuration with provider defaults merged"""
+        # Merge loaded config with default config to ensure provider is available
+        default_config = self._get_default_config()
+        merged_config = default_config.copy()
+        merged_config.update(self.config)
+        return merged_config
     
     def get_provider_config(self) -> Dict[str, Any]:
         """Get email provider configuration"""

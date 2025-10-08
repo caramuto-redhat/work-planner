@@ -52,7 +52,7 @@ class EmailClient:
             return False
         
         # Validate templates
-        required_templates = ['daily_summary', 'alert', 'data_collection_report']
+        required_templates = ['team_daily_report_with_todo']
         for template in required_templates:
             if template not in self.templates:
                 logger.error(f"Missing required template: {template}")
