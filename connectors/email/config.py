@@ -110,7 +110,13 @@ class EmailConfig:
     
     def get_provider_config(self) -> Dict[str, Any]:
         """Get email provider configuration"""
-        return self.config.get('provider', {})
+        # First try to get from loaded config, then fall back to default
+        provider_config = self.config.get('provider', {})
+        if not provider_config:
+            # Use default provider config
+            default_config = self._get_default_config()
+            provider_config = default_config.get('provider', {})
+        return provider_config
     
     def get_recipients_config(self) -> Dict[str, Any]:
         """Get recipients configuration"""
@@ -155,22 +161,22 @@ class EmailConfig:
     def validate_config(self) -> bool:
         """Validate the email configuration"""
         try:
-            # Check required sections
-            required_sections = ['provider', 'recipients', 'templates']
+            # Check required sections (provider is now handled by default config)
+            required_sections = ['recipients', 'templates']
             for section in required_sections:
                 if section not in self.config:
                     print(f"Error: Missing required section '{section}' in email config")
                     return False
             
-            # Validate provider config
+            # Validate provider config (use default if not in config)
             provider = self.get_provider_config()
             if not provider.get('smtp_server'):
                 print("Error: SMTP server not configured in email config")
                 return False
             
-            # Validate templates
+            # Validate templates (only check for the template we actually use)
             templates = self.get_templates()
-            required_templates = ['daily_summary', 'alert', 'data_collection_report']
+            required_templates = ['team_daily_report_with_todo']
             for template in required_templates:
                 if template not in templates:
                     print(f"Error: Missing required template '{template}' in email config")
