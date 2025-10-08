@@ -780,8 +780,8 @@ def _get_sprint_title(team_data: Dict[str, Any]) -> str:
     return f'🎫 Active Sprint "{active_sprint}" Tickets' if active_sprint else '🎫 Active Sprint Tickets'
 
 
-def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
-    """Format Slack channel details for template"""
+def _format_slack_channel_details(team_data: Dict[str, Any], ai_summaries: Dict[str, str]) -> str:
+    """Format Slack channel details for template with AI summaries"""
     channels = team_data.get('channels', {})
     channel_summaries_html = ""
     
@@ -794,6 +794,9 @@ def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
         recent_count = channel_data.get('recent_messages', 0)
         total_count = channel_data.get('total_messages', 0)
         messages = channel_data.get('messages', [])
+        
+        # Get AI summary for this channel
+        ai_summary = ai_summaries.get(channel_name, 'AI analysis not available for this channel')
         
         # Create recent messages preview
         recent_messages_html = ""
@@ -839,6 +842,11 @@ def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
                 <span style="background: #e3f2fd; padding: 4px 8px; border-radius: 12px; font-size: 11px; color: #1976d2;">
                     📊 {recent_count} messages (last {activity_days} days) • {total_count} total
                 </span>
+            </div>
+            
+            <div style="margin: 15px 0; padding: 15px; border-left: 4px solid #28a745; background: white; border-radius: 5px;">
+                <h5 style="margin: 0 0 10px 0; color: #28a745; font-size: 14px;">🤖 AI Analysis</h5>
+                <p style="margin: 0; line-height: 1.5; color: #333; font-size: 13px;">{ai_summary}</p>
             </div>
             
             {recent_messages_html if recent_messages_html else '<p style="color: #666; font-size: 12px;">No recent messages</p>'}
@@ -1087,8 +1095,7 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
             'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
             'executive_summary': ai_summaries.get('overall', 'AI analysis not available'),
             'paul_todo_items': paul_todo_items,
-            'slack_channel_details': _format_slack_channel_details(team_data),
-            'ai_channel_summaries': _format_ai_channel_summaries(ai_summaries),
+            'slack_channel_details': _format_slack_channel_details(team_data, ai_summaries),
             'ai_jira_summary': _generate_ai_jira_summary(team_data, ai_summaries),
             'sprint_title': _get_sprint_title(team_data),
             'jira_ticket_details': _format_jira_ticket_details(team_data),
