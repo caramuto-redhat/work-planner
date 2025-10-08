@@ -20,18 +20,6 @@ time_ranges:
     message_preview_count: 5      # Number of recent messages to show in preview
     max_messages_for_analysis: 10 # Maximum messages to include in AI analysis
 
-# Email Provider Configuration
-provider:
-  type: "gmail_smtp"
-  smtp_server: "smtp.gmail.com"
-  smtp_port: 587
-  security: "tls"
-
-# Environment Variables Required:
-# EMAIL_USERNAME: Your email address (e.g., pacaramu@redhat.com)
-# EMAIL_PASSWORD: App password or SMTP password
-# EMAIL_FROM: Sender email address (usually same as EMAIL_USERNAME)
-
 # Recipients Configuration
 recipients:
   default: ["pacaramu@redhat.com"]
