@@ -1,6 +1,25 @@
 # Email Configuration for Work Planner MCP Server
 # Inspired by jira-report-mpc project for clean, effective reporting
 
+# Data Collection Time Ranges Configuration
+# Centralized configuration for all data collection time ranges
+time_ranges:
+  # Slack data collection ranges
+  slack:
+    channel_activity_days: 7      # How many days of Slack activity to show in email
+    history_collection_days: 30    # How far back to collect Slack history
+    paul_todo_search_days: 30     # How far back to search for Paul mentions
+  
+  # Jira data collection ranges  
+  jira:
+    ticket_limit_per_team: 15     # Maximum tickets to show per team
+    ticket_limit_per_org: 10      # Maximum tickets to show per organization
+  
+  # AI analysis ranges
+  ai_analysis:
+    message_preview_count: 5      # Number of recent messages to show in preview
+    max_messages_for_analysis: 10 # Maximum messages to include in AI analysis
+
 # Email Provider Configuration
 provider:
   type: "gmail_smtp"
@@ -143,35 +162,71 @@ templates:
     subject: "📊 {team} Team Daily Report - {date}"
     format: "html"
     body_template: |
-      <h2>📊 {team} Team Daily Report</h2>
+      <!-- Team Daily Report Template -->
+      <!-- This template generates comprehensive team reports with AI analysis and TODO items -->
       
-      <p><strong>Date:</strong> {date}</p>
-      <p><strong>Team:</strong> {team}</p>
-      <p><strong>Generated:</strong> {generated_time}</p>
-      
-      <div style="margin: 15px 0; padding: 15px; background: #e8f4fd; border-left: 4px solid #007acc;">
-        <h3 style="margin: 0 0 10px 0;">🤖 Executive Summary</h3>
-        <p style="margin: 0; line-height: 1.4;">{executive_summary}</p>
+      <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+        
+        <!-- Header Section -->
+        <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e0e0e0;">
+          <h1 style="color: #333; margin: 0 0 10px 0; font-size: 28px;">📊 {team} Team Daily Report</h1>
+          <div style="color: #666; font-size: 14px;">
+            <span style="margin-right: 20px;"><strong>Date:</strong> {date}</span>
+            <span style="margin-right: 20px;"><strong>Team:</strong> {team}</span>
+            <span><strong>Generated:</strong> {generated_time}</span>
+          </div>
+        </div>
+        
+        <!-- Executive Summary Section -->
+        <div style="margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 100%); border-left: 5px solid #007acc; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h2 style="margin: 0 0 15px 0; color: #007acc; font-size: 20px; display: flex; align-items: center;">
+            <span style="margin-right: 10px;">🤖</span> Executive Summary
+          </h2>
+          <p style="margin: 0; line-height: 1.6; color: #333; font-size: 16px;">{executive_summary}</p>
+        </div>
+        
+        <!-- Paul TODO Section -->
+        <div style="margin: 25px 0; padding: 20px; background: linear-gradient(135deg, #fff3cd 0%, #fff8e1 100%); border-left: 5px solid #ffc107; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          <h2 style="margin: 0 0 15px 0; color: #856404; font-size: 20px; display: flex; align-items: center;">
+            <span style="margin-right: 10px;">📝</span> Paul Caramuto: Action Items
+          </h2>
+          <div style="margin: 0; line-height: 1.6; color: #333; font-size: 15px; white-space: pre-line; background: white; padding: 15px; border-radius: 5px;">{paul_todo_items}</div>
+        </div>
+        
+        <!-- Slack Activity Section -->
+        <div style="margin: 30px 0;">
+          <h2 style="color: #333; font-size: 22px; margin-bottom: 10px; display: flex; align-items: center;">
+            <span style="margin-right: 10px;">📱</span> Slack Channel Activity
+          </h2>
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #666; font-size: 14px; font-style: italic;">
+              📊 Showing activity from the last {slack_activity_days} days • Each channel includes AI analysis and recent message previews
+            </p>
+          </div>
+          {slack_channel_details}
+        </div>
+        
+        <!-- Jira Tickets Section -->
+        <div style="margin: 30px 0;">
+          <h2 style="color: #333; font-size: 22px; margin-bottom: 10px; display: flex; align-items: center;">
+            <span style="margin-right: 10px;">🎫</span> {sprint_title}
+          </h2>
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #666; font-size: 14px; font-style: italic;">
+              📋 Tickets organized by team and SP organization members • Limited to {jira_ticket_limit} tickets per team
+            </p>
+          </div>
+          {jira_ticket_details}
+        </div>
+        
+        <!-- Footer Section -->
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0; text-align: center;">
+          <p style="font-size: 12px; color: #999; margin: 0;">
+            🤖 Generated by Work Planner MCP Server | {generated_time}
+          </p>
+          <p style="font-size: 11px; color: #ccc; margin: 5px 0 0 0;">
+            Data collected from Slack channels and Jira tickets • AI analysis powered by Gemini
+          </p>
+        </div>
+        
       </div>
-      
-      <div style="margin: 15px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107;">
-        <h3 style="margin: 0 0 10px 0;">📝 Paul Caramuto: TODO</h3>
-        <div style="margin: 0; line-height: 1.4; white-space: pre-line;">{paul_todo_items}</div>
-      </div>
-      
-      <h3>📱 Individual Slack Channel Activity (Last 7 Days)</h3>
-      <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
-        Each channel shows AI analysis and recent message previews
-      </p>
-      {slack_channel_details}
-      
-      <h3>{sprint_title}</h3>
-      <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
-        Tickets organized by team and SP organization members
-      </p>
-      {jira_ticket_details}
-      
-      <hr style="margin: 30px 0;">
-      <p style="font-size: 12px; color: #666; text-align: center;">
-        Generated by Work Planner MCP Server | {generated_time}
-      </p>
