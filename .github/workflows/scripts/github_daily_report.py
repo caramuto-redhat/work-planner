@@ -848,6 +848,70 @@ def _format_slack_channel_details(team_data: Dict[str, Any]) -> str:
     return channel_summaries_html if channel_summaries_html else '<p>No channel activity found</p>'
 
 
+def _generate_ai_jira_summary(team_data: Dict[str, Any], ai_summaries: Dict[str, str]) -> str:
+    """Generate AI summary specifically for Jira tickets"""
+    try:
+        from connectors.gemini.client import GeminiClient
+        from connectors.gemini.config import GeminiConfig
+        
+        gemini_config = GeminiConfig()
+        gemini_client = GeminiClient(gemini_config.get_config())
+        
+        # Get Jira tickets data
+        jira_tickets = team_data.get('jira_tickets', {})
+        toolchain_tickets = jira_tickets.get('toolchain', [])
+        sp_tickets = jira_tickets.get('sp_organization', [])
+        
+        # Get configurable ticket limit for AI analysis
+        time_ranges = team_data.get('time_ranges', {})
+        jira_config = time_ranges.get('jira', {})
+        max_tickets_for_ai = jira_config.get('max_tickets_for_analysis', 20)
+        
+        # Combine and limit tickets for AI analysis
+        all_tickets = toolchain_tickets + sp_tickets
+        tickets_for_ai = all_tickets[:max_tickets_for_ai]
+        
+        if not tickets_for_ai:
+            return '<p style="color: #666; font-size: 14px;">No Jira tickets available for AI analysis</p>'
+        
+        # Prepare ticket summaries for AI
+        ticket_summaries = []
+        for ticket in tickets_for_ai:
+            if isinstance(ticket, dict):
+                key = ticket.get('key', 'N/A')
+                summary = ticket.get('summary', 'No summary')
+                status = ticket.get('status', {}).get('name', 'Unknown') if isinstance(ticket.get('status'), dict) else str(ticket.get('status', 'Unknown'))
+                assignee = ticket.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(ticket.get('assignee'), dict) else str(ticket.get('assignee', 'Unassigned'))
+                
+                ticket_summaries.append(f"- {key}: {summary} (Status: {status}, Assignee: {assignee})")
+        
+        # Generate AI analysis for Jira tickets
+        jira_prompt = f"""
+        Analyze the following Jira tickets for the {team_data["team"]} team and provide insights:
+        
+        Jira Tickets ({len(tickets_for_ai)} tickets analyzed):
+        {chr(10).join(ticket_summaries)}
+        
+        Please provide a concise analysis (2-3 sentences) covering:
+        1. Overall ticket status and progress patterns
+        2. Key blockers or issues that need attention
+        3. Team workload distribution and priorities
+        
+        Focus on actionable insights for project management.
+        """
+        
+        jira_summary = gemini_client.generate_content(jira_prompt)
+        
+        if jira_summary:
+            return f'<p style="margin: 0; line-height: 1.5; color: #333; font-size: 14px;">{jira_summary}</p>'
+        else:
+            return '<p style="color: #666; font-size: 14px;">AI Jira analysis not available</p>'
+            
+    except Exception as e:
+        print(f'  ⚠️  AI Jira analysis failed: {e}')
+        return '<p style="color: #666; font-size: 14px;">AI Jira analysis failed</p>'
+
+
 def _format_ai_channel_summaries(ai_summaries: Dict[str, str]) -> str:
     """Format AI channel summaries for template"""
     summaries_html = ""
@@ -1025,6 +1089,7 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
             'paul_todo_items': paul_todo_items,
             'slack_channel_details': _format_slack_channel_details(team_data),
             'ai_channel_summaries': _format_ai_channel_summaries(ai_summaries),
+            'ai_jira_summary': _generate_ai_jira_summary(team_data, ai_summaries),
             'sprint_title': _get_sprint_title(team_data),
             'jira_ticket_details': _format_jira_ticket_details(team_data),
             # Add configurable time ranges for template display

@@ -53,6 +53,12 @@ templates:
       
       {slack_channel_details}
       
+      <h3>🤖 AI Jira Analysis Summary</h3>
+      <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+        AI-generated insights from Jira ticket analysis
+      </p>
+      {ai_jira_summary}
+      
       <h3>{sprint_title}</h3>
       <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
         Tickets organized by team and SP organization members
