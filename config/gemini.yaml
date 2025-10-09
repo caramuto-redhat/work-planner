@@ -1,203 +1,94 @@
 # Gemini AI Configuration
-# This file defines how the Gemini API connector interacts with Slack and Jira data
+# Centralized configuration for all AI prompts and model settings
 
 # Model Configuration
 model: "models/gemini-2.0-flash"
 
-# Generation Configuration (simplified to match working repository)
+# Generation Configuration
 generation_config:
-  temperature: 0.7
-  top_p: 0.9
-  top_k: 40
-  max_output_tokens: 2048
+  temperature: 0.7        # Controls randomness (0.0 = deterministic, 1.0 = creative)
+  top_p: 0.9              # Nucleus sampling threshold
+  top_k: 40               # Top-k sampling parameter
+  max_output_tokens: 2048 # Maximum length of generated response
 
-# Prompts for different analysis types
+# Email Workflow Prompts
+# These prompts are used by the daily team report workflow
 prompts:
-  # Slack Analysis Prompts
-  slack_analysis:
-    summary: |
-      Analyze the following Slack conversation data and provide a concise summary that includes:
-      1. Key discussion topics and decisions made
-      2. Important announcements or updates
-      3. Action items and follow-up tasks
-      4. Team collaboration highlights
-      5. Any blockers or issues mentioned
-      
-      Format the response in a clear, professional manner suitable for email communication.
-      
-      Slack Data: {data}
+  # Per-channel Slack analysis
+  slack_channel_analysis: |
+    Analyze the last {activity_days} days of activity in the Slack channel "{channel_name}" for the {team} team.
     
-    highlights: |
-      Extract the most important highlights from this Slack conversation data:
-      1. Major accomplishments or milestones
-      2. Critical decisions or changes
-      3. Important announcements
-      4. Key technical discussions
-      5. Team achievements
-      
-      Present as bullet points with brief explanations.
-      
-      Slack Data: {data}
+    Recent Messages ({message_count} messages):
+    {messages}
     
-    action_items: |
-      Identify and list all action items and follow-up tasks from this Slack conversation data:
-      1. Tasks assigned to specific people
-      2. Deadlines mentioned
-      3. Follow-up meetings or discussions
-      4. Items requiring further investigation
-      5. Next steps mentioned
-      
-      Format as a clear task list with assignees and deadlines where available.
-      
-      Slack Data: {data}
+    Please provide a concise summary (2-3 sentences) covering:
+    1. Main topics and discussions
+    2. Key decisions or updates
+    3. Any blockers or issues
+    4. Team collaboration patterns
     
-    blockers: |
-      Identify all blockers, issues, and problems mentioned in this Slack conversation data:
-      1. Technical blockers
-      2. Resource constraints
-      3. External dependencies
-      4. Process issues
-      5. Communication gaps
-      
-      For each blocker, provide context and potential solutions if mentioned.
-      
-      Slack Data: {data}
-
-  # Jira Analysis Prompts
-  jira_analysis:
-    summary: |
-      Analyze the following Jira issues data and provide a comprehensive project status summary:
-      1. Overall project progress and health
-      2. Key accomplishments and completed work
-      3. Current priorities and focus areas
-      4. Resource allocation and team workload
-      5. Timeline and milestone status
-      
-      Format as a professional project status report.
-      
-      Jira Data: {data}
-    
-    blockers: |
-      Identify all blockers and critical issues from this Jira data:
-      1. High priority issues
-      2. Blocked tickets
-      3. Critical bugs
-      4. Resource constraints
-      5. External dependencies
-      
-      For each blocker, include:
-      - Issue key and summary
-      - Current status
-      - Impact assessment
-      - Suggested actions
-      
-      Jira Data: {data}
-    
-    progress: |
-      Summarize the progress and accomplishments from this Jira data:
-      1. Recently completed work
-      2. Work in progress
-      3. Upcoming milestones
-      4. Team velocity and productivity
-      5. Quality metrics
-      
-      Highlight positive achievements and areas of success.
-      
-      Jira Data: {data}
-
-  # Email Summary Prompt
-  email_summary: |
-    Create a professional daily summary email combining Slack activity and Jira issues.
-    
-    The email should be structured as follows:
-    
-    Subject: Daily Team Summary - [Date]
-    
-    Dear Team,
-    
-    Here's your daily summary of team activity and project status:
-    
-    ## 🎯 Key Highlights
-    [Summarize major accomplishments and important updates]
-    
-    ## 📊 Project Status
-    [Overview of Jira issues, progress, and priorities]
-    
-    ## 💬 Team Activity
-    [Key discussions, decisions, and collaboration from Slack]
-    
-    ## 🚨 Blockers & Issues
-    [Critical issues that need attention]
-    
-    ## 📋 Action Items
-    [Tasks and follow-up items for the team]
-    
-    ## 🎯 Recommendations
-    [Suggestions for next steps and priorities]
-    
-    Best regards,
-    Work Planner AI
-    
-    ---
-    
-    Slack Activity Data: {slack_data}
-    Jira Issues Data: {jira_data}
-
-  # Custom Analysis Prompts
-  custom_analysis:
-    trend_analysis: |
-      Analyze the following data for trends and patterns:
-      1. Identify recurring themes or topics
-      2. Spot patterns in team behavior or productivity
-      3. Highlight emerging issues or opportunities
-      4. Provide insights on team dynamics
-      5. Suggest improvements based on data patterns
-      
-      Data: {data}
-    
-    performance_review: |
-      Provide a performance analysis based on the following data:
-      1. Team productivity metrics
-      2. Issue resolution patterns
-      3. Communication effectiveness
-      4. Collaboration quality
-      5. Areas for improvement
-      
-      Data: {data}
-
-# Analysis Types Configuration
-analysis_types:
-  slack:
-    - summary
-    - highlights
-    - action_items
-    - blockers
-    - trend_analysis
+    Focus on actionable insights and important developments.
   
-  jira:
-    - summary
-    - blockers
-    - progress
-    - performance_review
+  # Overall team executive summary
+  team_executive_summary: |
+    Provide an executive summary for the {team} team based on the last {activity_days} days of activity:
+    
+    Team Activity Overview:
+    - {total_messages} messages across {channel_count} channels
+    - {ticket_count} active Jira tickets (analyzing most recent {max_tickets})
+    
+    Channel Summaries:
+    {channel_summaries}
+    
+    Please provide a high-level summary (2-3 sentences) covering:
+    1. Overall team productivity and focus areas
+    2. Key accomplishments or milestones
+    3. Any concerns or areas needing attention
+    
+    Keep it concise and executive-friendly.
   
-  combined:
-    - email_summary
-    - daily_report
-    - weekly_report
-
-# Output Formatting
-output_formatting:
-  email:
-    max_length: 2000
-    include_timestamps: true
-    include_links: true
+  # Paul's TODO items from team data
+  paul_todo_items: |
+    Based on the following Slack conversations and Jira tickets that mention Paul Caramuto, generate a concise TODO list of items that require Paul's attention.
+    
+    {slack_summary}
+    {jira_summary}
+    
+    Please provide 3-5 specific, actionable TODO items in this format:
+    1. [Priority] Action item description
+    2. [Priority] Action item description
+    3. [Priority] Action item description
+    
+    Use priorities: HIGH, MEDIUM, LOW
+    Focus on items that require Paul's direct action or response.
+    Keep each item concise but specific.
   
-  summary:
-    max_length: 1000
-    bullet_points: true
-    include_metrics: true
+  # Jira tickets analysis
+  jira_analysis: |
+    Analyze the following Jira tickets for the {team} team and provide insights:
+    
+    Jira Tickets ({ticket_count} tickets analyzed):
+    {ticket_summaries}
+    
+    Please provide a concise analysis (2-3 sentences) covering:
+    1. Overall ticket status and progress patterns
+    2. Key blockers or issues that need attention
+    3. Team workload distribution and priorities
+    
+    Focus on actionable insights for project management.
   
-  report:
-    max_length: 3000
-    structured_sections: true
-    include_charts: false
+  # Consolidated Paul TODO summary across all teams
+  paul_consolidated_todo: |
+    Review all TODO items for Paul Caramuto across {team_count} teams and provide a prioritized, consolidated action list.
+    
+    Team TODO Summaries:
+    {team_todos}
+    
+    Please provide:
+    1. A consolidated, de-duplicated list of 5-7 highest priority action items
+    2. Group similar items together
+    3. Use format: [PRIORITY] Action item - (Related teams: X, Y)
+    4. Priorities: HIGH, MEDIUM, LOW
+    5. Focus on items requiring immediate attention
+    
+    Keep it concise and actionable.

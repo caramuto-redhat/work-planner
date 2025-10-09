@@ -191,6 +191,19 @@ def _load_time_ranges_config():
         }
 
 
+def _load_gemini_prompts():
+    """Load AI prompts from gemini.yaml config"""
+    try:
+        import yaml
+        with open('config/gemini.yaml', 'r') as f:
+            config = yaml.safe_load(f)
+        return config.get('prompts', {})
+    except Exception as e:
+        print(f'  ⚠️  Warning: Could not load Gemini prompts: {e}')
+        # Fallback to empty dict (inline prompts will be used)
+        return {}
+
+
 def collect_team_data(team: str) -> Dict[str, Any]:
     """Collect Slack and Jira data for a team with per-channel summaries and organized tickets"""
     print(f'📊 Collecting data for team: {team.upper()}')
@@ -435,11 +448,12 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
                     message_texts.append(f"[{time_str}] {user_display_name}: {clean_text}")
                 
                 # Create AI prompt for channel
-                prompt = f"""
-                Analyze the last {slack_config.get('channel_activity_days', 7)} days of activity in the Slack channel "{channel_name}" for the {team_data["team"]} team.
+                prompts = _load_gemini_prompts()
+                prompt_template = prompts.get('slack_channel_analysis', """
+                Analyze the last {activity_days} days of activity in the Slack channel "{channel_name}" for the {team} team.
                 
-                Recent Messages ({len(messages)} messages):
-                {chr(10).join(message_texts[-max_messages:])}
+                Recent Messages ({message_count} messages):
+                {messages}
                 
                 Please provide a concise summary (2-3 sentences) covering:
                 1. Main topics and discussions
@@ -448,7 +462,15 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
                 4. Team collaboration patterns
                 
                 Focus on actionable insights and important developments.
-                """
+                """)
+                
+                prompt = prompt_template.format(
+                    activity_days=slack_config.get('channel_activity_days', 7),
+                    channel_name=channel_name,
+                    team=team_data["team"],
+                    message_count=len(messages),
+                    messages=chr(10).join(message_texts[-max_messages:])
+                )
                 
                 # Generate AI summary
                 summary = gemini_client.generate_content(prompt)
@@ -481,15 +503,16 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
             # Take only the most recent tickets for AI analysis
             tickets_for_ai = all_tickets[:max_tickets_for_ai]
             
-            overall_prompt = f"""
-            Provide an executive summary for the {team_data["team"]} team based on the last {slack_config.get('channel_activity_days', 7)} days of activity:
+            prompts = _load_gemini_prompts()
+            prompt_template = prompts.get('team_executive_summary', """
+            Provide an executive summary for the {team} team based on the last {activity_days} days of activity:
             
             Team Activity Overview:
             - {total_messages} messages across {channel_count} channels
-            - {len(tickets_for_ai)} active Jira tickets (analyzing most recent {max_tickets_for_ai})
+            - {ticket_count} active Jira tickets (analyzing most recent {max_tickets})
             
             Channel Summaries:
-            {chr(10).join([f"- {ch}: {summary}" for ch, summary in channel_summaries.items()])}
+            {channel_summaries}
             
             Please provide a high-level summary (2-3 sentences) covering:
             1. Overall team productivity and focus areas
@@ -497,7 +520,17 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
             3. Any concerns or areas needing attention
             
             Keep it concise and executive-friendly.
-            """
+            """)
+            
+            overall_prompt = prompt_template.format(
+                team=team_data["team"],
+                activity_days=slack_config.get('channel_activity_days', 7),
+                total_messages=total_messages,
+                channel_count=channel_count,
+                ticket_count=len(tickets_for_ai),
+                max_tickets=max_tickets_for_ai,
+                channel_summaries=chr(10).join([f"- {ch}: {summary}" for ch, summary in channel_summaries.items()])
+            )
             
             overall_summary = gemini_client.generate_content(overall_prompt)
             channel_summaries['overall'] = overall_summary if overall_summary else "Overall team analysis completed"
@@ -649,7 +682,8 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                 """
             
             # Generate TODO items using AI
-            todo_prompt = f"""
+            prompts = _load_gemini_prompts()
+            prompt_template = prompts.get('paul_todo_items', """
             Based on the following Slack conversations and Jira tickets that mention Paul Caramuto, generate a concise TODO list of items that require Paul's attention.
             
             {slack_summary}
@@ -663,7 +697,12 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
             Use priorities: HIGH, MEDIUM, LOW
             Focus on items that require Paul's direct action or response.
             Keep each item concise but specific.
-            """
+            """)
+            
+            todo_prompt = prompt_template.format(
+                slack_summary=slack_summary,
+                jira_summary=jira_summary
+            )
             
             todo_items = gemini_client.generate_content(todo_prompt)
             return todo_items if todo_items else "No specific TODO items identified at this time."
@@ -882,11 +921,12 @@ def _generate_ai_jira_summary(team_data: Dict[str, Any], ai_summaries: Dict[str,
                 ticket_summaries.append(f"- {key}: {summary} (Status: {status}, Assignee: {assignee})")
         
         # Generate AI analysis for Jira tickets
-        jira_prompt = f"""
-        Analyze the following Jira tickets for the {team_data["team"]} team and provide insights:
+        prompts = _load_gemini_prompts()
+        prompt_template = prompts.get('jira_analysis', """
+        Analyze the following Jira tickets for the {team} team and provide insights:
         
-        Jira Tickets ({len(tickets_for_ai)} tickets analyzed):
-        {chr(10).join(ticket_summaries)}
+        Jira Tickets ({ticket_count} tickets analyzed):
+        {ticket_summaries}
         
         Please provide a concise analysis (2-3 sentences) covering:
         1. Overall ticket status and progress patterns
@@ -894,7 +934,13 @@ def _generate_ai_jira_summary(team_data: Dict[str, Any], ai_summaries: Dict[str,
         3. Team workload distribution and priorities
         
         Focus on actionable insights for project management.
-        """
+        """)
+        
+        jira_prompt = prompt_template.format(
+            team=team_data["team"],
+            ticket_count=len(tickets_for_ai),
+            ticket_summaries=chr(10).join(ticket_summaries)
+        )
         
         jira_summary = gemini_client.generate_content(jira_prompt)
         
@@ -1018,7 +1064,7 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
     return toolchain_tickets_html + sp_tickets_html
 
 
-def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str, str], slack_client, jira_client, gemini_client) -> bool:
+def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str, str], paul_todo_items: str, slack_client, jira_client, gemini_client) -> bool:
     """Send email for team using template-based formatting"""
     try:
         print(f'  📧 Sending template-based email for {team.upper()} team...')
@@ -1035,9 +1081,6 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
             return False
             
         email_client = EmailClient(config)
-        
-        # Generate Paul TODO items
-        paul_todo_items = generate_paul_todo_items(team_data, slack_client, jira_client, gemini_client)
         
         # Prepare template data for team_daily_report_with_todo template
         template_data = {
@@ -1074,6 +1117,111 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
         return False
 
 
+def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_client, time_ranges: Dict) -> bool:
+    """Send consolidated Paul TODO email aggregating all teams"""
+    try:
+        print(f'\n📋 Sending Paul Caramuto consolidated TODO email...')
+        from connectors.email.client import EmailClient
+        from connectors.email.config import EmailConfig
+        from datetime import datetime
+        
+        email_config = EmailConfig()
+        config = email_config.get_config()
+        
+        # Validate config before creating client
+        if not email_config.validate_config():
+            print(f'  ❌ Email config validation failed')
+            return False
+            
+        email_client = EmailClient(config)
+        
+        # Calculate summary statistics
+        total_todos = len(all_team_todos)
+        total_slack_mentions = sum(data['slack_mentions_count'] for data in all_team_todos.values())
+        total_jira_mentions = sum(data['jira_mentions_count'] for data in all_team_todos.values())
+        
+        # Generate consolidated AI summary of all TODOs
+        print(f'  🤖 Generating consolidated AI summary...')
+        prompts = _load_gemini_prompts()
+        prompt_template = prompts.get('paul_consolidated_todo', """
+        Review all TODO items for Paul Caramuto across {team_count} teams and provide a prioritized, consolidated action list.
+        
+        Team TODO Summaries:
+        {team_todos}
+        
+        Please provide:
+        1. A consolidated, de-duplicated list of 5-7 highest priority action items
+        2. Group similar items together
+        3. Use format: [PRIORITY] Action item - (Related teams: X, Y)
+        4. Priorities: HIGH, MEDIUM, LOW
+        5. Focus on items requiring immediate attention
+        
+        Keep it concise and actionable.
+        """)
+        
+        consolidated_prompt = prompt_template.format(
+            team_count=total_todos,
+            team_todos=chr(10).join([f"Team {team.upper()}: {chr(10)}{data['ai_todos']}" for team, data in all_team_todos.items()])
+        )
+        
+        consolidated_todos_text = gemini_client.generate_content(consolidated_prompt)
+        if not consolidated_todos_text:
+            consolidated_todos_text = "Consolidated TODO analysis not available"
+        
+        # Format consolidated TODOs for HTML
+        consolidated_todos_html = f"<pre style='white-space: pre-wrap; font-family: monospace; line-height: 1.6;'>{consolidated_todos_text}</pre>"
+        
+        # Format TODOs by team
+        todos_by_team_html = ""
+        for team, data in all_team_todos.items():
+            todos_by_team_html += f"""
+            <div style="margin: 20px 0; padding: 20px; border: 1px solid #dee2e6; border-radius: 5px; background: #ffffff;">
+                <h4 style="margin-top: 0; color: #007acc;">🔧 {team.upper()} Team</h4>
+                <p><strong>Slack Mentions:</strong> {data['slack_mentions_count']} | <strong>Jira Mentions:</strong> {data['jira_mentions_count']}</p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 10px;">
+                    <pre style="white-space: pre-wrap; font-family: monospace; margin: 0; line-height: 1.6;">{data['ai_todos']}</pre>
+                </div>
+            </div>
+            """
+        
+        # Get search days from config
+        slack_config = time_ranges.get('slack', {})
+        search_days = slack_config.get('paul_todo_search_days', 30)
+        
+        # Prepare template data
+        template_data = {
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
+            'search_days': search_days,
+            'total_todos': total_todos,
+            'teams_count': len(all_team_todos),
+            'slack_mentions_count': total_slack_mentions,
+            'jira_mentions_count': total_jira_mentions,
+            'consolidated_todos': consolidated_todos_html,
+            'todos_by_team': todos_by_team_html
+        }
+        
+        # Send email using the new template
+        result = email_client.send_email(
+            template_name='paul_todo_summary',
+            recipients=config['recipients']['default'],
+            content_data=template_data
+        )
+        
+        if result.get('success'):
+            print(f'  ✅ Paul consolidated TODO email sent successfully!')
+            return True
+        else:
+            print(f'  ❌ Email failed: {result.get("error")}')
+            return False
+            
+    except Exception as e:
+        print(f'  ❌ Paul TODO email sending failed: {e}')
+        import traceback
+        traceback.print_exc()
+        return False
+
+
 def main():
     """Main function for GitHub Actions with enhanced reporting"""
     print('🚀 Starting Enhanced Daily Team Report Generation...')
@@ -1097,20 +1245,52 @@ def main():
     
     teams = ['toolchain', 'foa', 'assessment', 'boa']
     
+    # Store Paul's TODO data from all teams
+    all_team_todos = {}
+    time_ranges = None
+    
     for team in teams:
         print(f'\n📊 Processing team: {team.upper()}')
         
         # Collect team data with per-channel structure
         team_data = collect_team_data(team)
         
+        # Store time_ranges from first team for later use
+        if time_ranges is None:
+            time_ranges = team_data.get('time_ranges', {})
+        
         # Generate AI analysis for each channel and overall
         ai_summaries = generate_ai_analysis(team_data)
         
-        # Send enhanced email with per-channel summaries and Paul TODO
-        send_team_email(team, team_data, ai_summaries, slack_client, jira_client, gemini_client)
+        # Generate Paul TODO items for this team (only once)
+        paul_todo_items = generate_paul_todo_items(team_data, slack_client, jira_client, gemini_client)
+        
+        # Store Paul's TODO data for consolidated email
+        all_team_todos[team] = {
+            'ai_todos': paul_todo_items,
+            'slack_mentions_count': len([
+                msg for channel_data in team_data.get('channels', {}).values()
+                for msg in channel_data.get('messages', [])
+                if any(mention in msg.get('text', '').lower() for mention in ['paul', 'pacaramu'])
+            ]),
+            'jira_mentions_count': sum(
+                1 for tickets in team_data.get('jira_tickets', {}).values()
+                for ticket in tickets
+                if any(mention in str(ticket).lower() for mention in ['paul', 'pacaramu'])
+            )
+        }
+        
+        # Send enhanced email with per-channel summaries and Paul TODO (pass pre-generated TODOs)
+        send_team_email(team, team_data, ai_summaries, paul_todo_items, slack_client, jira_client, gemini_client)
+    
+    # Send consolidated Paul TODO email
+    print('\n📋 Generating consolidated Paul TODO email...')
+    send_paul_consolidated_todo_email(all_team_todos, gemini_client, time_ranges or {})
     
     print('\n🎉 Enhanced Daily Team Report generation completed!')
-    print('📧 Check your email for detailed team reports with per-channel summaries and Paul TODO items!')
+    print('📧 Check your email for:')
+    print('   - 4 detailed team reports with per-channel summaries and team-specific TODOs')
+    print('   - 1 consolidated Paul TODO email aggregating all teams')
 
 
 if __name__ == '__main__':

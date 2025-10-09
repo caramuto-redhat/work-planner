@@ -84,35 +84,37 @@ def _analyze_slack_data(client, config, team: str = None) -> Dict[str, Any]:
         # Read Slack data
         slack_data = _read_slack_dump_data(team)
         
-        # Perform analysis using Gemini prompts
+        # Perform analysis using default inline prompts (config prompts no longer used)
         analysis_results = {}
         
-        # Use the prompts from gemini.yaml
-        prompts_config = gemini_config.get('prompts', {}).get('slack_analysis', {})
-        
         # Summary analysis
-        if 'summary' in prompts_config:
-            summary_prompt = prompts_config['summary'].format(data=slack_data)
-            summary_result = client.generate_content(summary_prompt)
+        summary_prompt = f"""
+        Analyze the following Slack conversation data and provide a concise summary including:
+        1. Key discussion topics and decisions
+        2. Important announcements or updates
+        3. Action items and follow-up tasks
+        4. Team collaboration highlights
+        5. Any blockers or issues mentioned
+        
+        Slack Data: {slack_data}
+        """
+        summary_result = client.generate_content(summary_prompt)
+        if summary_result:
             analysis_results['summary'] = summary_result
         
         # Highlights analysis
-        if 'highlights' in prompts_config:
-            highlights_prompt = prompts_config['highlights'].format(data=slack_data)
-            highlights_result = client.generate_content(highlights_prompt)
+        highlights_prompt = f"""
+        Extract the most important highlights from this Slack conversation data:
+        1. Major accomplishments or milestones
+        2. Critical decisions or changes
+        3. Important announcements
+        Present as bullet points.
+        
+        Slack Data: {slack_data}
+        """
+        highlights_result = client.generate_content(highlights_prompt)
+        if highlights_result:
             analysis_results['highlights'] = highlights_result
-        
-        # Action items analysis
-        if 'action_items' in prompts_config:
-            action_items_prompt = prompts_config['action_items'].format(data=slack_data)
-            action_items_result = client.generate_content(action_items_prompt)
-            analysis_results['action_items'] = action_items_result
-        
-        # Blockers analysis
-        if 'blockers' in prompts_config:
-            blockers_prompt = prompts_config['blockers'].format(data=slack_data)
-            blockers_result = client.generate_content(blockers_prompt)
-            analysis_results['blockers'] = blockers_result
         
         return {
             "team": team or "all_teams",
@@ -134,28 +136,34 @@ def _analyze_jira_data(client, config, team: str = None) -> Dict[str, Any]:
         # Read Jira data
         jira_data = _read_jira_dump_data(team)
         
-        # Perform analysis using Gemini prompts
+        # Perform analysis using default inline prompts (config prompts no longer used)
         analysis_results = {}
         
-        # Use the prompts from gemini.yaml
-        prompts_config = gemini_config.get('prompts', {}).get('jira_analysis', {})
-        
         # Summary analysis
-        if 'summary' in prompts_config:
-            summary_prompt = prompts_config['summary'].format(data=jira_data)
-            summary_result = client.generate_content(summary_prompt)
+        summary_prompt = f"""
+        Analyze the following Jira issues data and provide a project status summary:
+        1. Overall project progress and health
+        2. Key accomplishments and completed work
+        3. Current priorities and focus areas
+        4. Resource allocation and team workload
+        
+        Jira Data: {jira_data}
+        """
+        summary_result = client.generate_content(summary_prompt)
+        if summary_result:
             analysis_results['summary'] = summary_result
         
-        # Blockers analysis
-        if 'blockers' in prompts_config:
-            blockers_prompt = prompts_config['blockers'].format(data=jira_data)
-            blockers_result = client.generate_content(blockers_prompt)
-            analysis_results['blockers'] = blockers_result
-        
         # Progress analysis
-        if 'progress' in prompts_config:
-            progress_prompt = prompts_config['progress'].format(data=jira_data)
-            progress_result = client.generate_content(progress_prompt)
+        progress_prompt = f"""
+        Summarize the progress and accomplishments from this Jira data:
+        1. Recently completed work
+        2. Work in progress
+        3. Team velocity and productivity
+        
+        Jira Data: {jira_data}
+        """
+        progress_result = client.generate_content(progress_prompt)
+        if progress_result:
             analysis_results['progress'] = progress_result
         
         return {
@@ -172,19 +180,23 @@ def _analyze_jira_data(client, config, team: str = None) -> Dict[str, Any]:
 def _generate_email_summary(client, config, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
     """Generate email summary combining Slack and Jira analysis results"""
     try:
-        # Load Gemini configuration
-        gemini_config = _load_gemini_config()
+        # Use inline default prompt (config prompts no longer used)
+        slack_summary = analysis_results.get('slack', {}).get('results', {}).get('summary', 'No Slack data available')
+        jira_summary = analysis_results.get('jira', {}).get('results', {}).get('summary', 'No Jira data available')
         
-        # Get the email summary prompt
-        email_prompt_template = gemini_config.get('prompts', {}).get('email_summary', '')
-        if not email_prompt_template:
-            raise Exception("Email summary prompt not found in gemini.yaml")
+        # Create email summary prompt
+        email_prompt = f"""
+        Create a professional daily summary email combining Slack activity and Jira issues.
         
-        # Format the prompt with actual analysis data
-        email_prompt = email_prompt_template.format(
-            slack_data=analysis_results.get('slack', {}).get('results', {}).get('summary', 'No Slack data available'),
-            jira_data=analysis_results.get('jira', {}).get('results', {}).get('summary', 'No Jira data available')
-        )
+        Provide a structured summary with:
+        1. Key Highlights - Major accomplishments and updates
+        2. Project Status - Jira issues, progress, and priorities
+        3. Team Activity - Key discussions and collaboration from Slack
+        4. Action Items - Tasks and follow-up items
+        
+        Slack Activity: {slack_summary}
+        Jira Issues: {jira_summary}
+        """
         
         # Generate email summary
         email_content = client.generate_content(email_prompt)

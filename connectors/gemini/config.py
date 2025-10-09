@@ -32,7 +32,7 @@ class GeminiConfig:
             return self._get_default_config()
     
     def _get_default_config(self) -> Dict[str, Any]:
-        """Get default configuration"""
+        """Get default configuration (prompts are now inline in tools)"""
         return {
             'model': 'models/gemini-2.0-flash',
             'generation_config': {
@@ -40,19 +40,6 @@ class GeminiConfig:
                 'top_p': 0.9,
                 'top_k': 40,
                 'max_output_tokens': 2048
-            },
-            'prompts': {
-                'slack_analysis': {
-                    'summary': 'Analyze the following Slack conversation data and provide a concise summary of key points, decisions, and action items.',
-                    'highlights': 'Extract the most important highlights from this Slack conversation data.',
-                    'action_items': 'Identify and list all action items and follow-up tasks from this Slack conversation data.'
-                },
-                'jira_analysis': {
-                    'summary': 'Analyze the following Jira issues data and provide a summary of project status, blockers, and progress.',
-                    'blockers': 'Identify all blockers and critical issues from this Jira data.',
-                    'progress': 'Summarize the progress and accomplishments from this Jira data.'
-                },
-                'email_summary': 'Create a professional daily summary email combining Slack activity and Jira issues. Include key highlights, blockers, and recommendations.'
             }
         }
     
