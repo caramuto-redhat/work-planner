@@ -357,8 +357,21 @@ def collect_team_data(team: str) -> Dict[str, Any]:
             sp_members = organizations_config.get('SP', [])
             sp_members_str = '", "'.join(sp_members) if sp_members else ""
             
+            # Get query filters from config
+            query_filters = jira_config.get('query_filters', {})
+            statuses = query_filters.get('statuses', ['In Progress', 'To Do', 'In Review'])
+            order_by = query_filters.get('order_by', 'updated DESC')
+            additional_jql = query_filters.get('additional_jql', '')
+            
+            # Build status filter
+            status_list = '", "'.join(statuses)
+            status_filter = f'status IN ("{status_list}")'
+            
             # Team tickets with sprint information
-            toolchain_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND status IN ("In Progress", "To Do", "In Review") ORDER BY updated DESC'
+            toolchain_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND {status_filter}'
+            if additional_jql:
+                toolchain_jql += f' {additional_jql}'
+            toolchain_jql += f' ORDER BY {order_by}'
             print(f'  🎫 Team JQL: {toolchain_jql}')
             
             toolchain_issues = jira_client.search_issues(toolchain_jql)
@@ -371,7 +384,10 @@ def collect_team_data(team: str) -> Dict[str, Any]:
             
             # SP organization tickets - filter by SP members AND team's AssignedTeam
             if sp_members_str:
-                sp_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND assignee in ("{sp_members_str}") AND status IN ("In Progress", "To Do", "In Review") ORDER BY updated DESC'
+                sp_jql = f'project = "Automotive Feature Teams" AND "AssignedTeam" = "{assigned_team}" AND assignee in ("{sp_members_str}") AND {status_filter}'
+                if additional_jql:
+                    sp_jql += f' {additional_jql}'
+                sp_jql += f' ORDER BY {order_by}'
                 print(f'  🎫 SP Organization JQL: {sp_jql}')
                 
                 sp_issues = jira_client.search_issues(sp_jql)

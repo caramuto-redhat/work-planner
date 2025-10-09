@@ -89,4 +89,21 @@ user_display_names:
   "Nisha Saini": "rhn-support-nsaini"
   "Ryan Smith": "rsmit106"
   "Jan Onderka": "jonderka@redhat.com"
-  "Joe Simmons-Talbott": "rhn-support-josimmon" 
+  "Joe Simmons-Talbott": "rhn-support-josimmon"
+
+# Query Filters Configuration for Email Workflow
+# Controls which tickets are included in daily team reports
+query_filters:
+  # Status filter for team tickets
+  # List statuses to include in reports
+  statuses:
+    - "In Progress"
+    - "To Do"
+    - "In Review"
+  
+  # Sort order for query results
+  order_by: "updated DESC"
+  
+  # Optional: Additional JQL filter fragments
+  # additional_jql: 'AND priority in (High, Highest)'
+  # additional_jql: 'AND labels in (critical, urgent)'
