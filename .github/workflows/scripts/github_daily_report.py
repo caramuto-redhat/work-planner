@@ -629,15 +629,19 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                             timestamp = float(msg.get('ts', '0'))
                             msg_date = datetime.fromtimestamp(timestamp)
                             if msg_date >= search_cutoff:
-                                # Check if message mentions Paul using configured patterns
+                                # Check if message mentions Paul OR if Paul is the sender
                                 text = msg.get('text', '')
                                 text_lower = text.lower()
+                                sender_user_id = msg.get('user', '')
                                 
-                                # Check for Slack mention format (case-sensitive) or plain text patterns (case-insensitive)
-                                if f'<@{paul_user_id}>' in text or any(pattern.lower() in text_lower for pattern in additional_patterns):
+                                # Include if: (1) Paul is mentioned OR (2) Paul sent the message
+                                is_mentioned = f'<@{paul_user_id}>' in text or any(pattern.lower() in text_lower for pattern in additional_patterns)
+                                is_sender = sender_user_id == paul_user_id
+                                
+                                if is_mentioned or is_sender:
                                     paul_messages.append({
                                         'text': text,
-                                        'user': msg.get('user', 'Unknown'),
+                                        'user': sender_user_id,
                                         'timestamp': msg_date.isoformat(),
                                         'channel': channel_name
                                     })
@@ -645,7 +649,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                             continue
                     
                     if paul_messages:
-                        print(f'    📱 Found {len(paul_messages)} Paul mentions in {channel_name}')
+                        print(f'    📱 Found {len(paul_messages)} Paul-related messages in {channel_name}')
                         paul_slack_content.extend(paul_messages)
                 
             except Exception as e:
@@ -698,7 +702,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                         'url': ticket.get('url', '#')
                     })
         
-        print(f'  📝 Found {len(paul_slack_content)} Slack mentions and {len(paul_jira_content)} Jira mentions')
+        print(f'  📝 Found {len(paul_slack_content)} Slack messages and {len(paul_jira_content)} Jira tickets related to Paul')
         
         # Generate AI TODO items if we have content
         if paul_slack_content or paul_jira_content:
@@ -706,14 +710,14 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
             slack_summary = ""
             if paul_slack_content:
                 slack_summary = f"""
-                Slack Messages Mentioning Paul (Last {paul_search_days} Days):
+                Slack Messages Involving Paul (Last {paul_search_days} Days):
                 {chr(10).join([f"- [{msg['channel']}] {msg['user']}: {msg['text'][:200]}..." for msg in paul_slack_content[:10]])}
                 """
             
             jira_summary = ""
             if paul_jira_content:
                 jira_summary = f"""
-                Jira Tickets Mentioning Paul:
+                Jira Tickets Involving Paul:
                 {chr(10).join([f"- {ticket['key']}: {ticket['summary']} (Status: {ticket['status']}, Assignee: {ticket['assignee']})" for ticket in paul_jira_content[:10]])}
                 """
             
@@ -735,7 +739,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
             todo_items = gemini_client.generate_content(todo_prompt)
             return todo_items if todo_items else "No specific action items identified at this time."
         
-        return f"No mentions of Paul Caramuto found in the last {paul_search_days} days."
+        return f"No Slack messages or Jira tickets involving Paul Caramuto found in the last {paul_search_days} days."
         
     except Exception as e:
         print(f'  ❌ Paul TODO generation failed: {e}')

@@ -98,13 +98,28 @@ if any(pattern.lower() in field_value.lower() for pattern in additional_patterns
     break
 ```
 
+## Purpose: Daily Activity Digest
+
+**Important**: This is not just a "TODO list" - it's a **daily activity digest** showing all conversations and tickets where Paul is involved.
+
+The goal is to give Paul a **quick overview at first glance** of:
+- What activities he's involved in
+- What conversations he's participating in  
+- What Jira tickets need his attention
+- Where he committed to taking action
+
+The AI then analyzes this context and suggests action items with clear references (Slack channels and Jira tickets), so Paul can quickly decide what needs focus that day.
+
 ## How It Works Now
 
 ### Detection Priority:
 
 #### Slack Messages:
-1. **Primary: Slack mention format** - `<@U04N9LTR47M>` (catches all `@Paul` mentions)
-2. **Fallback: Plain text patterns** - `paul`, `pacaramu`, `rhn-support-pacaramu` (catches plain text mentions)
+Captures messages where Paul is **involved** in the conversation:
+1. **Messages mentioning Paul** - `<@U04N9LTR47M>` (Slack mentions) or plain text patterns
+2. **Messages sent BY Paul** - Using his Slack user ID `U04N9LTR47M`
+
+This provides a complete view of all activities Paul is involved in, not just when others mention him.
 
 #### Jira Tickets:
 - **Plain text patterns** - `paul`, `pacaramu`, `rhn-support-pacaramu` (case-insensitive)
@@ -114,12 +129,13 @@ if any(pattern.lower() in field_value.lower() for pattern in additional_patterns
 ### Example Scenarios:
 
 #### Slack Messages:
-| Message in Slack | Stored As | Detected? |
-|-----------------|-----------|-----------|
-| "Hey @Paul, can you review?" | "Hey <@U04N9LTR47M>, can you review?" | ✅ YES (user ID match) |
-| "Paul, please check this" | "Paul, please check this" | ✅ YES (plain text match) |
-| "@pacaramu needs to approve" | "@pacaramu needs to approve" | ✅ YES (plain text match) |
-| "paul mentioned this earlier" | "paul mentioned this earlier" | ✅ YES (plain text match) |
+| Message in Slack | Sender | Detected? | Reason |
+|-----------------|--------|-----------|--------|
+| "Hey @Paul, can you review?" | Alice | ✅ YES | Slack mention `<@U04N9LTR47M>` |
+| "Paul, please check this" | Bob | ✅ YES | Plain text "paul" |
+| "I will classify each service..." | **Paul** | ✅ YES | **Paul is the sender** |
+| "Let me handle the deployment" | **Paul** | ✅ YES | **Paul is the sender** |
+| "@pacaramu needs to approve" | Charlie | ✅ YES | Plain text "pacaramu" |
 
 #### Jira Tickets:
 | Field | Content | Detected? | Reason |
