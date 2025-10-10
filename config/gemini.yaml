@@ -56,9 +56,10 @@ prompts:
     
     Please provide actionable items for each activity Paul is involved in.
     Keep each item concise but specific in this format:
-    - Slack channel <channel_name>: <action item>
+    - Slack channel <channel_name> (YYYY-MM-DD): <action item>
     - Jira ticket <ticket_key>: <action item>
     
+    For Slack messages, include the date in parenthesis (use the date provided in the message data).
     Include both items where others are asking Paul to do something, and items where Paul mentioned he would do something.
   # Jira tickets analysis
   jira_analysis: |

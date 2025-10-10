@@ -712,7 +712,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
             if paul_slack_content:
                 slack_summary = f"""
                 Slack Messages Involving Paul (Last {paul_search_days} Days):
-                {chr(10).join([f"- [{msg['channel']}] {msg['user']}: {msg['text'][:200]}..." for msg in paul_slack_content[:10]])}
+                {chr(10).join([f"- [{msg['channel']}] ({msg['timestamp'][:10]}) {msg['user']}: {msg['text'][:200]}..." for msg in paul_slack_content[:10]])}
                 """
             
             jira_summary = ""
