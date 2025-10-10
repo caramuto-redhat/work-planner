@@ -256,8 +256,18 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         from connectors.slack.client import SlackClient
         from connectors.slack.config import SlackConfig
         
+        # Check if environment variables are available
+        import os
+        slack_token = os.getenv('SLACK_XOXC_TOKEN')
+        if slack_token:
+            print(f'  ✅ Slack tokens available (token length: {len(slack_token)})')
+        else:
+            print(f'  ❌ SLACK_XOXC_TOKEN not found in environment')
+            raise RuntimeError("Slack tokens not available - cannot collect Slack data")
+        
         slack_config = SlackConfig.load('config/slack.yaml')
         slack_client = SlackClient(slack_config)
+        print(f'  ✅ Slack client initialized successfully')
         
         # Find team channels - map channel IDs to descriptive names
         slack_channels = slack_config.get('slack_channels', {})
@@ -358,7 +368,10 @@ def collect_team_data(team: str) -> Dict[str, Any]:
                     continue
                     
     except Exception as e:
+        import traceback
         print(f'  ❌ Slack collection failed: {e}')
+        print(f'  ❌ Full traceback:')
+        traceback.print_exc()
     
     # Collect Jira data organized by team vs SP organization
     try:
