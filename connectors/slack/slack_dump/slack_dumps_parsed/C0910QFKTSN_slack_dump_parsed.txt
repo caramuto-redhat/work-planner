@@ -1,8 +1,8 @@
 Slack Channel Dump
-Channel: #toolchain-AI
+Channel: toolchain-AI
 Channel ID: C0910QFKTSN
-Generated: 2025-10-03 19:32:13
-Total Messages: 52
+Generated: 2025-10-10 18:36:37
+Total Messages: 55
 ================================================================================
 
 Message 1 - 2025-06-11 14:05
@@ -74,11 +74,13 @@ https://docling-project.github.io/docling/#features
 Message 14 - 2025-06-26 19:10
 From: Juanje Ojeda
 ----------------------------------------
-I don't know if you watched the video that Petr shared about Cloud Code
-(https://www.youtube.com/watch?v=6eBSHbLKuN0&amp;t=6s) (which he used for his project), but it's
-very interesting. The problem is that you need a pro account for anthropic. Very recently, Google
-released a similar tool (but open source): Gemini cli (https://github.com/google-gemini/gemini-cli)
-Here is the blog post talking about it:
+From: Anthropic Title: Mastering Claude Code in 30 minutes Free and open source, Gemini CLI brings
+Gemini directly into developers’ terminals — with unmatched access for individuals. Title: Gemini
+CLI: your open-source AI agent I don't know if you watched the video that Petr shared about Cloud
+Code (https://www.youtube.com/watch?v=6eBSHbLKuN0&amp;t=6s) (which he used for his project), but
+it's very interesting. The problem is that you need a pro account for anthropic. Very recently,
+Google released a similar tool (but open source): Gemini cli
+(https://github.com/google-gemini/gemini-cli) Here is the blog post talking about it:
 https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/ It's
 basically the same tool (same options and ui), but working with gemini instead of claude, Well, and
 it's free, no need for a paid account. But it doesn't work (yet) with our RH account, but it works
@@ -90,13 +92,15 @@ with agents and MCPs.
 Message 15 - 2025-06-26 19:14
 From: Juanje Ojeda
 ----------------------------------------
-Here is a short video explaining a bit what gemini-cli is, how it compare with its competitors
-(claude-code) and showing it working a bit: https://www.youtube.com/watch?v=T76NbeTdDFA
+From: Developers Digest Title: Gemini CLI in 6 Minutes: Google's Free and Open-Source Coding
+Assistant Here is a short video explaining a bit what gemini-cli is, how it compare with its
+competitors (claude-code) and showing it working a bit: https://www.youtube.com/watch?v=T76NbeTdDFA
 
 Message 16 - 2025-06-27 09:34
 From: Ozan Unsal
 ----------------------------------------
-I was playning with gemini-cli and created a small project
+GitLab CI pipelines Title: Pipeline #1889153567 · Red Hat / Edge / ci-cd / Pipe X /
+pipelines-as-code · GitLab I was playning with gemini-cli and created a small project
 (https://github.com/ozanunsal/pipelinebot) for checking our product build pipeline status. Finds the
 failed jobs, if it is failed in testing-farm, it traces testing-farm logs for the error log. Then it
 finds the possible cause of error and suggests how to fix. Here is an example of a failed pipeline
@@ -189,7 +193,10 @@ Justin Pierce already went through that process and got it approved, you can fin
 Message 24 - 2025-07-08 00:17
 From: Juanje Ojeda
 ----------------------------------------
-Hi. I've been playing around with local AI agents and MCP servers
+Get started with the Model Context Protocol (MCP) Title: Introduction - Model Context Protocol Your
+open source AI agent, automating engineering tasks seamlessly. Title: codename goose | codename
+goose Enable multi-modal functionality by pairing LLMs to complete your tasks Title: Lead/Worker
+Multi-Model Setup | codename goose Hi. I've been playing around with local AI agents and MCP servers
 (https://modelcontextprotocol.io/introduction) lately and I found this one:
 https://block.github.io/goose/ It's open source and it can work with many LLMs, including local
 ones. It's similar to Gemini-cli or Claude-code, but it's not tied to just one LLM, and it has other
@@ -202,9 +209,10 @@ it has potential. We'll see.
 Message 25 - 2025-07-08 00:28
 From: Juanje Ojeda
 ----------------------------------------
-Another open source AI agent I came across recently is https://opencode.ai/ I heard good things, but
-i haven't tried it yet. It can run multiple agents in parallel in the same session, which looks
-useful (or messy :thinking_face: ) and suppose to be very fast.
+The AI coding agent built for the terminal. Title: opencode Another open source AI agent I came
+across recently is https://opencode.ai/ I heard good things, but i haven't tried it yet. It can run
+multiple agents in parallel in the same session, which looks useful (or messy :thinking_face: ) and
+suppose to be very fast.
 
 Message 26 - 2025-07-09 13:13
 From: Avihai Efrat
@@ -239,7 +247,9 @@ From: Inho Cho
 Message 30 - 2025-07-21 18:13
 From: Avihai Efrat
 ----------------------------------------
-Hi !here, Posting this here if you have a Q2 great example of AI usage in a form of Demo or blog.
+!channel - anyone think they have an associate who had a great example of AI usage in Q2? Mike it
+looking for a lit of highlights for recognition? From: Shawn Davis Sender: Slack Conversation Hi
+!here, Posting this here if you have a Q2 great example of AI usage in a form of Demo or blog.
 Please post it here and I’ll forward it to Shawn D. For some broad core platform level recognitions
 :trophy:
 
@@ -257,8 +267,11 @@ From: Kartik Shah
 Message 33 - 2025-08-11 16:29
 From: Avihai Efrat
 ----------------------------------------
-Hi hi folks! :face_with_cowboy_hat: Sharing very cool slides about writing MCp servers easily slides
-and recording made last week
+:mega:. Are you interested in writing an MCP server? or hooking up your AI agent to an MCP server?
+Come and join us at today's 10am Data and AI Open Forum to learn about Red Hat's approved MCP
+template and innersource place to share your MCP server! From: Tiffany Jacob Sender: Thread in Slack
+Conversation Hi hi folks! :face_with_cowboy_hat: Sharing very cool slides about writing MCp servers
+easily slides and recording made last week
 
 Message 34 - 2025-08-11 19:20
 From: Lei Wang
@@ -273,16 +286,30 @@ From: Nisha Saini
 Message 36 - 2025-08-18 15:16
 From: Juanje Ojeda
 ----------------------------------------
-In case anyone is interested on understanding a bit better some of the basic concepts about
-generative AI, how LLMs work, RAG, agents and other AI related topics, I curated a YouTuve list with
-good quality (and short) explanations. FYI, the videos have a logical and incremental order, so I
-recommend to follow it, but you can do as you wish :sweat_smile:
+Share your videos with friends, family, and the world Title: IA concepts In case anyone is
+interested on understanding a bit better some of the basic concepts about generative AI, how LLMs
+work, RAG, agents and other AI related topics, I curated a YouTuve list with good quality (and
+short) explanations. FYI, the videos have a logical and incremental order, so I recommend to follow
+it, but you can do as you wish :sweat_smile:
 https://youtube.com/playlist?list=PLfZui7DiPOPgU34wnruAMXcR_EzsnFSiB&amp;si=KYPwcBurIuDoXVID
 
 Message 37 - 2025-08-19 11:51
 From: Juanje Ojeda
 ----------------------------------------
-Interesting :thinking_face:
+*Agile AI Assistant - Next Phase*
+Back in June, we launched the initial version of the *Agile AI Assistant*. Our goal was to integrate
+internal Red Hat agile practices and make them accessible through a combination of the AI Combinator
+and Shadowbot. However, due to team reorganizations and reprioritizations, we've pivoted to using
+*NotebookLM* for the MVP instead. Our first results, based on a small selection of sources, were
+promising but not overwhelming. Now, we're expanding the knowledge base for the next phase. We've
+added all articles from the *Agile and Tooling Knowledge Hub*, the *2020 Scrum Guide*, and the *Open
+Decision Framework*.
+You can access the Agile AI Assistant here: https://red.ht/45ErTEN
+Please give it a try and share your thoughts! What's working well? What's missing? What could be
+improved? Your feedback is crucial as we move forward.
+*Agile AI Assistant Confluence space:*
+https://spaces.redhat.com/spaces/AAA/pages/614009143/Agile+AI+Assistant *Slack conversations:*
+#C0845CDHS1X| From: Jimmy Sjolund Sender: Thread in Slack Conversation Interesting :thinking_face:
 
 Message 38 - 2025-08-19 12:40
 From: Kanitha Chim
@@ -299,7 +326,8 @@ From: Michael Ho
 Message 40 - 2025-09-01 12:58
 From: Michael Ho
 ----------------------------------------
-I showed @Juanje Ojeda this video (https://www.youtube.com/watch?v=i0P56Pm1Q3U) and he asked I bring
+From: Yifan - Beyond the Hype Title: I Reverse-Engineered Claude Code: Learn These Agent Tricks I
+showed @Juanje Ojeda this video (https://www.youtube.com/watch?v=i0P56Pm1Q3U) and he asked I bring
 it up here to share further :meow_smilesweat: Didi shared this to us in a FoA meeting and it is very
 illuminating how Claude Code works and why simple llm prompting with local llms isn't equivalent
 
@@ -352,13 +380,14 @@ From: Rakesh Musalay
 Message 46 - 2025-09-08 23:24
 From: Juanje Ojeda
 ----------------------------------------
-I recommend anyone that's using Cursor, claude-code or any other AI tool for coding to us
-https://context7.com/ The LLM often have old knowledge about the libraries, APIs, etc and they can
-make the wrong assumptions, put the wrong versions or use deprecated functions. Context7 is an MCP
-server that give to the IDE the tools for checking the latest documentation for most of the libs
-you'll ever use. As a tip, add also to your cursor rules or your CLAUDE.md files to check with
-context7 before creating a new project, add a new library or while debugging errors. The results are
-normally much better.
+Generate context with up-to-date documentation for LLMs and AI code editors Title: Context7 -
+Up-to-date documentation for LLMs and AI code editors I recommend anyone that's using Cursor,
+claude-code or any other AI tool for coding to us https://context7.com/ The LLM often have old
+knowledge about the libraries, APIs, etc and they can make the wrong assumptions, put the wrong
+versions or use deprecated functions. Context7 is an MCP server that give to the IDE the tools for
+checking the latest documentation for most of the libs you'll ever use. As a tip, add also to your
+cursor rules or your CLAUDE.md files to check with context7 before creating a new project, add a new
+library or while debugging errors. The results are normally much better.
 
 Message 47 - 2025-09-09 06:41
 From: Maya Peretz
@@ -378,6 +407,7 @@ From: Avihai Efrat
 Message 50 - 2025-09-13 18:07
 From: Juanje Ojeda
 ----------------------------------------
+From: Tech With Tim Title: How to Build a Local AI Agent With Python (Ollama, LangChain &amp; RAG)
 Here you have a nice didactic video for building a super-simple chatbot in Python with langchain +
 ollama. And then adding a simple RAG using chroma for the vector database. It's super simple, but
 enough to see how that actually works at a basic level: https://www.youtube.com/watch?v=E4l91XKQSgw
@@ -385,9 +415,10 @@ enough to see how that actually works at a basic level: https://www.youtube.com/
 Message 51 - 2025-09-13 18:10
 From: Juanje Ojeda
 ----------------------------------------
-And for ppl more advance or that like to understand what the LLMs and the transformers really are,
-this is a masterpiece that explains many machine learning concepts, what are transformers and LLM,
-and how they work. Super interesting, but maybe not for everyone :sweat_smile:
+From: 3Blue1Brown Title: Transformers, the tech behind LLMs | Deep Learning Chapter 5 And for ppl
+more advance or that like to understand what the LLMs and the transformers really are, this is a
+masterpiece that explains many machine learning concepts, what are transformers and LLM, and how
+they work. Super interesting, but maybe not for everyone :sweat_smile:
 https://www.youtube.com/watch?v=wjZofJX0v4M
 
 Message 52 - 2025-09-29 09:48
@@ -396,4 +427,30 @@ From: Avihai Efrat
 Happy Monday AI enthusiasts:zap: Sharing a very cool vid (~1H) but totally worth it about Agentic AI
 I watch yesturday(also shared in mail "Red Hat 101: Agentic AI now available on demand") :
 https://source.redhat.com/about_red_hat/red_hat_101/red_hat_101/red_hat_101_agentic_ai
+
+Message 53 - 2025-10-07 17:31
+From: Juanje Ojeda
+----------------------------------------
+From: IBM Technology Title: A2A Protocol (Agent2Agent) Explained: How AI Agents Collaborate
+Interesting :thinking_face: https://www.youtube.com/watch?v=Tud9HLTk8hg
+
+Message 54 - 2025-10-07 17:32
+From: Juanje Ojeda
+----------------------------------------
+The Agent2Agent protocol is an open standard that allows different AI agents to securely
+communicate, collaborate, and solve complex problems together. Title: A2A Protocol &gt; The
+*Agent2Agent (A2A) Protocol* is an open standard developed by Google and donated to the Linux
+Foundation designed to enable seamless communication and collaboration between AI agents.
+https://a2a-protocol.org/latest/
+
+Message 55 - 2025-10-09 18:29
+From: Juanje Ojeda
+----------------------------------------
+Built to make you extraordinarily productive, Cursor is the best way to code with AI. Title:
+Introducing Plan Mode · Cursor If you're using Cursor for creating new projects or features for your
+projects, this new feature could be useful. I've just tried and it's looking good. If you normally
+as Cursor to create a detailed plan before starting to work, this is similar, but it's more
+integrated. It ask you some questions to clarify the goal and constraints and the create a detailer
+plan and ToDo. It saves the plan in markdown for future reference or changing stuff. Then you hit
+"build" and it start building the project/feature. https://cursor.com/blog/plan-mode
 

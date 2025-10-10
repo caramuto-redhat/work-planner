@@ -65,12 +65,25 @@ def send_team_daily_report_tool():
                     f"Could not import github_daily_report.py: {e}\n{traceback.format_exc()}"
                 )
             
+            # DEBUG: Check environment variables
+            slack_xoxc = os.getenv('SLACK_XOXC_TOKEN')
+            slack_xoxd = os.getenv('SLACK_XOXD_TOKEN')
+            print(f"\n🔍 Environment check:")
+            print(f"   SLACK_XOXC_TOKEN: {'✅ PRESENT (' + str(len(slack_xoxc)) + ' chars)' if slack_xoxc else '❌ MISSING'}")
+            print(f"   SLACK_XOXD_TOKEN: {'✅ PRESENT (' + str(len(slack_xoxd)) + ' chars)' if slack_xoxd else '❌ MISSING'}")
+            if not slack_xoxc or not slack_xoxd:
+                raise RuntimeError(
+                    "Slack tokens not available in environment. "
+                    "MCP server container needs SLACK_XOXC_TOKEN and SLACK_XOXD_TOKEN environment variables."
+                )
+            
             # Initialize clients (same as GitHub Actions)
-            print(f"📡 Initializing Slack client...")
+            print(f"\n📡 Initializing Slack client...")
             from connectors.slack.client import SlackClient
             from connectors.slack.config import SlackConfig
             slack_config = SlackConfig.load('config/slack.yaml')
             slack_client = SlackClient(slack_config)
+            print(f"   ✅ Slack client initialized successfully")
             
             print(f"📡 Initializing Jira client...")
             from connectors.jira.client import JiraClient

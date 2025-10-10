@@ -1,7 +1,7 @@
 Slack Channel Dump
-Channel: #toolchain-sla
+Channel: toolchain-sla
 Channel ID: C095CUUBNM9
-Generated: 2025-10-03 19:32:13
+Generated: 2025-10-10 18:36:37
 Total Messages: 115
 ================================================================================
 
@@ -403,12 +403,22 @@ I always prefer to keep context unless there's a reason not to. I bet someone ha
 Message 60 - 2025-07-31 15:24
 From: Jim Bair
 ----------------------------------------
+When you create a channel, you can choose to make it either public or private. Public channels are
+best for sharing information that anyone can find and read, while private channels are meant for
+d... Title: Convert a channel to private or public
 https://slack.com/help/articles/213185467-Convert-a-channel-to-private-or-public
 
 Message 61 - 2025-07-31 15:24
 From: Jim Bair
 ----------------------------------------
-By default, owners, admins, and Channel Managers
+When someone creates a channel, they're automatically assigned as the Channel Manager. Channel
+Managers can adjust administrative settings and permissions for any channel they're assigned to.
+Note:... Title: Understand Channel Managers in Slack From the permissions dashboard, Workspace
+Owners and Org Owners can adjust which role types can take the following channel management actions:
+Archive channels Convert group direct messages to p... Title: Adjust channel management permissions
+In Slack, you can find people you work with from the directory. Search for anyone to view their
+profile and find information, like their job title, local time zone, and more. What to expect You
+ca... Title: Browse people and user groups in Slack By default, owners, admins, and Channel Managers
 (https://slack.com/help/articles/8328303095443-Understand-Channel-Managers-in-Slack) can convert a
 channel to private, but owners can restrict this
 (https://slack.com/help/articles/115004988303-Adjust-channel-management-permissions). If you can't
@@ -721,15 +731,17 @@ From: Avihai Efrat
 Message 102 - 2025-09-09 21:04
 From: Avihai Efrat
 ----------------------------------------
-ACK received, thanks @Petr Sabata on the list Had a look in the proposal and added comments for both
-@Robert O'Brien and @Petr Sabata . as I mentioned above we need to refine the proposal and make it
-very clear on what are the most critical services each eith a matching realistic SLI,SLO and error
-budget and what that means for the team and program . NO service can realistically be 100% available
-(checkout Google SRE (https://sre.google/sre-book/embracing-risk/)handbook
-(https://sre.google/sre-book/embracing-risk/) chapter3 end Key Insights). This is a fundamental
-principle of Site Reliability Engineering (SRE). Even the most robust systems will experience some
-level of downtime, whether due to hardware failures, software bugs, network issues, or necessary
-maintenance like security patches.
+Discover the concept of embracing risk in the context of service reliability and how to effectively
+utilize error budgets for a more resilient system. Title: Google SRE - Embracing risk and
+reliability engineering book ACK received, thanks @Petr Sabata on the list Had a look in the
+proposal and added comments for both @Robert O'Brien and @Petr Sabata . as I mentioned above we need
+to refine the proposal and make it very clear on what are the most critical services each eith a
+matching realistic SLI,SLO and error budget and what that means for the team and program . NO
+service can realistically be 100% available (checkout Google SRE
+(https://sre.google/sre-book/embracing-risk/)handbook (https://sre.google/sre-book/embracing-risk/)
+chapter3 end Key Insights). This is a fundamental principle of Site Reliability Engineering (SRE).
+Even the most robust systems will experience some level of downtime, whether due to hardware
+failures, software bugs, network issues, or necessary maintenance like security patches.
 Let’s get to a more clear state on what we are actually proposing fast. A part of it is to Identify
 a Short list of 5 top critical services under our ATC control we already work to improve for
 building releases so we can move quickly to implement monitoring and not wait for the proposal back

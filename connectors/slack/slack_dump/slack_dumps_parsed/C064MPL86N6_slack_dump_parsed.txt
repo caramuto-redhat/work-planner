@@ -1,8 +1,8 @@
 Slack Channel Dump
-Channel: #toolchain-errata
+Channel: toolchain-errata
 Channel ID: C064MPL86N6
-Generated: 2025-10-03 19:32:14
-Total Messages: 192
+Generated: 2025-10-10 18:36:38
+Total Messages: 194
 ================================================================================
 
 Message 1 - 2023-11-07 14:51
@@ -692,12 +692,14 @@ build to reach ET, it will have already been run through rpminspect
 Message 120 - 2024-03-26 12:17
 From: Kanitha Chim
 ----------------------------------------
-We have follow up errata meeting at 14 CET, in case anyone interested: RHIVOS: Errata -
-Bootstrapping initial RHIVOS rpms advisories Tuesday, March 26 · 2:00 – 2:30pm Time zone:
-Europe/Prague Google Meet joining info Video call link: https://meet.google.com/yco-fkfg-dfs Or
-dial: ‪(CZ) +420 234 610 000‬ PIN: ‪560 036 927 5277‬# More phone numbers:
-https://tel.meet/yco-fkfg-dfs?pin=5600369275277 Or join via SIP: sip:5600369275277@gmeet.redhat.com
-(mailto:5600369275277@gmeet.redhat.com)
+Real-time meetings by Google. Using your browser, share your video, desktop, and presentations with
+teammates and customers. Title: Meet Real-time meetings by Google. Using your browser, share your
+video, desktop, and presentations with teammates and customers. Title: Meet We have follow up errata
+meeting at 14 CET, in case anyone interested: RHIVOS: Errata - Bootstrapping initial RHIVOS rpms
+advisories Tuesday, March 26 · 2:00 – 2:30pm Time zone: Europe/Prague Google Meet joining info Video
+call link: https://meet.google.com/yco-fkfg-dfs Or dial: ‪(CZ) +420 234 610 000‬ PIN: ‪560 036 927
+5277‬# More phone numbers: https://tel.meet/yco-fkfg-dfs?pin=5600369275277 Or join via SIP:
+sip:5600369275277@gmeet.redhat.com (mailto:5600369275277@gmeet.redhat.com)
 
 Message 121 - 2024-03-26 12:31
 From: Kanitha Chim
@@ -1195,7 +1197,13 @@ the rule set.
 Message 186 - 2025-09-10 12:12
 From: Marcel Banas
 ----------------------------------------
-Hello @Chuang Cao @U064YNKHH43, we wanted to ask about recently discussed
+any advisories have no problem for this? I see there are two variants for the label
+```RHIVOS-1.0.0``` in composeDB ```{ "query": "SELECT * FROM products WHERE label = :label",
+"params": { "label": "RHIVOS-1.0.0" }
+[ { "id": 226066, "label": "RHIVOS-1.0.0", "version": "RHIVOS-1.0.0", "variant": "9Base-RHIVOS",
+"allow_source_only": false }, { "id": 226334, "label": "RHIVOS-1.0.0", "version": "RHIVOS-1.0.0",
+"variant": "9Base-RHIVOS-1.0.0", "allow_source_only": false } ]``` From: Lu Zhang Sender: Thread in
+Slack Conversation Hello @Chuang Cao @U064YNKHH43, we wanted to ask about recently discussed
 (https://redhat-internal.slack.com/archives/C064MPL86N6/p1753789320313099?thread_ts=1753787090.090569&amp;cid=C064MPL86N6)
 product variants for RHIVOS-1.0.0. As of now, the variant's name for 1.0.0 version should be, as
 defined here
@@ -1282,4 +1290,24 @@ https://resultsdb.engineering.redhat.com/results?item:like=aboot*&amp;testcases=
 (https://resultsdb.engineering.redhat.com/results?item:like=aboot*&amp;testcases=rhivos.brew-build.functional-safety.continuous-certification&amp;since=2025-09-02T00%3A00%3A00%2C2025-10-01T23%3A59%3A59)
 but ET last result was 2 months ago
 https://errata.engineering.redhat.com/advisory/148805/test_run/rhivos_compose_fusa_gate
+
+Message 193 - 2025-10-06 05:54
+From: Marcel Banas
+----------------------------------------
+Hello, kindly asking for one more review on
+https://gitlab.cee.redhat.com/automotive/pipe-x/release-definitions/-/merge_requests/18 Thanks in
+advance :thanks-ty:
+
+Message 194 - 2025-10-09 12:07
+From: Marcel Banas
+----------------------------------------
+Hello @U04VATC9REZ, @U064YNKHH43, @Chuang Cao, we received validator results for RHIVOS compose fusa
+gate tests in Errata, but it doesn't look like they are updated automatically in Errata. For example
+for this advisory
+(https://errata.engineering.redhat.com/advisory/149342/test_run/rhivos_compose_fusa_gate), when
+manually refetching, the test passes. I wanted to ask, as by discussion in this ticket
+(https://issues.redhat.com/browse/RHELWF-13104) I believe there is no Errata API for this
+functionality, if there is any way to refetch for large number of advisories other than manual via
+UI?
+Thanks in advance :thanks-ty:
 

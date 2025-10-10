@@ -224,6 +224,20 @@ def _load_paul_todo_config():
         }
 
 
+def _run_async_helper(coro):
+    """Run async coroutine, handling existing event loop (for MCP server context)"""
+    import asyncio
+    try:
+        loop = asyncio.get_running_loop()
+        # Already in event loop - run in thread pool to avoid conflicts
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor() as pool:
+            return pool.submit(lambda: asyncio.run(coro)).result()
+    except RuntimeError:
+        # No event loop - use asyncio.run (GitHub Actions context)
+        return asyncio.run(coro)
+
+
 def collect_team_data(team: str, slack_client=None, jira_client=None) -> Dict[str, Any]:
     """Collect Slack and Jira data for a team with per-channel summaries and organized tickets
     
@@ -303,14 +317,16 @@ def collect_team_data(team: str, slack_client=None, jira_client=None) -> Dict[st
         user_mapping.update(unknown_users)
         
         if team_channels:
-            import asyncio
+            # Helper to run async functions (handles both event loop contexts)
+            async def get_messages_async(client, channel_id):
+                return await client.get_channel_history(channel_id)
             
             for channel_id, channel_name in team_channels.items():
                 try:
                     print(f'  📱 Processing channel: {channel_name} ({channel_id})')
                     
                     # Get messages from last 7 days
-                    messages = asyncio.run(slack_client.get_channel_history(channel_id))
+                    messages = _run_async_helper(get_messages_async(slack_client, channel_id))
                     print(f'  📱 Retrieved {len(messages)} messages from {channel_name}')
                     
                     if messages:
@@ -649,7 +665,10 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                     search_cutoff = latest_message_date - timedelta(days=paul_search_days)
                     
                     # Get all messages from the channel (not just recent ones)
-                    all_messages = asyncio.run(slack_client.get_channel_history(channel_id))
+                    # Use helper to handle both event loop contexts
+                    async def get_paul_messages_async():
+                        return await slack_client.get_channel_history(channel_id)
+                    all_messages = _run_async_helper(get_paul_messages_async())
                     
                     paul_messages = []
                     for msg in all_messages:

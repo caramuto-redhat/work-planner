@@ -1,42 +1,42 @@
 # Slack Channel Dump
 # Channel ID: C095CUUBNM9
-# Generated: 2025-10-03T19:32:13.323186
+# Generated: 2025-10-10T18:36:37.423188
 # Total Messages: 115
 
-[2025-07-12T21:18:41.348969] U04N9LTR47M: Hi everyone, I wanted to start a thread on the SLA topic so we're all aligned and working from the same page.
-[2025-07-12T21:22:33.532119] U04N9LTR47M: basically, we want to start looking at how to support the pipeline and its services and who will be responsible for what
-[2025-07-12T21:23:24.132649] U04N9LTR47M: besides looking at how we are going to organize ourselves to support it, we need to have a clear understanding of what's expected
-[2025-07-12T21:23:59.850729] U04N9LTR47M: and that's where the SLA comes in the picture
-[2025-07-12T21:26:19.823869] U04N9LTR47M: we need someone (I am looking at you Jim) to spearhead this effort, first by mapping what we have, and then identifying SMEs, understanding what expected, writing and SLA, and then formalizing how to go about executing the support plan (or SLA)
-[2025-07-12T21:29:37.538339] U04N9LTR47M: in the meantime, we asked Petr Sabata to open an initiative with an estimated timeline and then get stakeholders(PO’s) expectations and then socialize it in the program and PO calls
-[2025-07-13T09:31:37.170339] U02JHD5HMGC: <@U02JHD5HMGC> has joined the channel
-[2025-07-13T09:36:25.576509] U020YLADEKA: Thanks for starting this <@U04N9LTR47M>! *(ALL , Please answer on your working day/hours and appologies in advance)*
+[2025-07-12T21:18:41.348969] Paul Caramuto: Hi everyone, I wanted to start a thread on the SLA topic so we're all aligned and working from the same page.
+[2025-07-12T21:22:33.532119] Paul Caramuto: basically, we want to start looking at how to support the pipeline and its services and who will be responsible for what
+[2025-07-12T21:23:24.132649] Paul Caramuto: besides looking at how we are going to organize ourselves to support it, we need to have a clear understanding of what's expected
+[2025-07-12T21:23:59.850729] Paul Caramuto: and that's where the SLA comes in the picture
+[2025-07-12T21:26:19.823869] Paul Caramuto: we need someone (I am looking at you Jim) to spearhead this effort, first by mapping what we have, and then identifying SMEs, understanding what expected, writing and SLA, and then formalizing how to go about executing the support plan (or SLA)
+[2025-07-12T21:29:37.538339] Paul Caramuto: in the meantime, we asked Petr Sabata to open an initiative with an estimated timeline and then get stakeholders(PO’s) expectations and then socialize it in the program and PO calls
+[2025-07-13T09:31:37.170339] Robert O'Brien: <@U02JHD5HMGC> has joined the channel
+[2025-07-13T09:36:25.576509] Avihai Efrat: Thanks for starting this <@U04N9LTR47M>! *(ALL , Please answer on your working day/hours and appologies in advance)*
 I also added Robert and Petr to this thread as someone on the ATC team with experience and passion for the subject to help us out.
 
 Sharing also the first initiative on this subject added by Petr: <https://issues.redhat.com/browse/AUTOBU-886> (Improving infrastructure availability) , we need this more well defined as well as currently it's empty(disregard AI nice summery) .
 
 Maybe it's worth to add another workgroup channel for it with Petr S. in there to get immediate feedback for this one and direction.
-[2025-07-13T09:36:37.705819] U04NN2GEXLZ: <@U04NN2GEXLZ> has joined the channel
-[2025-07-13T12:32:11.808109] U04N9LTR47M: thanks Avi. Since the ticket's description is inaccurate, let's start with getting that straightened out. I gave Gemini some inputs and created this <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|description>, please feel free to comment.
-[2025-07-13T13:11:42.233749] U020YLADEKA: Please disregard the AI auto created summery as it's false.
+[2025-07-13T09:36:37.705819] Petr Sabata: <@U04NN2GEXLZ> has joined the channel
+[2025-07-13T12:32:11.808109] Paul Caramuto: thanks Avi. Since the ticket's description is inaccurate, let's start with getting that straightened out. I gave Gemini some inputs and created this <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|description>, please feel free to comment.
+[2025-07-13T13:11:42.233749] Avihai Efrat: Please disregard the AI auto created summery as it's false.
 Lets give <@U04NN2GEXLZ> (on his working days :slightly_smiling_face: ) some time to add the needed context the full description as the main stakeholder
-[2025-07-13T13:12:36.422039] U020YLADEKA: Let continue discussion tommorow Paul - It's your non-working day , please rest up and answer tommorow please :pray:
-[2025-07-13T14:16:27.915489] U04N9LTR47M: yeah, the description in the Jira ticket is inaccurate, we could work off the newly AI generated <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|description> (based on my inputs).
-[2025-07-14T10:56:41.362719] U04NN2GEXLZ: Less "inaccurate" and more like "totally empty"; I create it first and then was hoping to get a dedicated moment to think about the personas we discussed. That hasn't happened yet, but I'll get you something soonish so that you can start with the data gathering.
-[2025-07-14T11:02:05.478329] U020YLADEKA: Thanks you <@U04N9LTR47M> for starting the mentioned <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|description> doc, it's a solid start but I would not get attached to it as we did not get the actual requirments from the stakeholders yet.
+[2025-07-13T13:12:36.422039] Avihai Efrat: Let continue discussion tommorow Paul - It's your non-working day , please rest up and answer tommorow please :pray:
+[2025-07-13T14:16:27.915489] Paul Caramuto: yeah, the description in the Jira ticket is inaccurate, we could work off the newly AI generated <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|description> (based on my inputs).
+[2025-07-14T10:56:41.362719] Petr Sabata: Less "inaccurate" and more like "totally empty"; I create it first and then was hoping to get a dedicated moment to think about the personas we discussed. That hasn't happened yet, but I'll get you something soonish so that you can start with the data gathering.
+[2025-07-14T11:02:05.478329] Avihai Efrat: Thanks you <@U04N9LTR47M> for starting the mentioned <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|description> doc, it's a solid start but I would not get attached to it as we did not get the actual requirments from the stakeholders yet.
 Let's have <@U04NN2GEXLZ> get something more customized as a requirement as a stakeholder(PO) and refine the initiative (and <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|description> doc accordingly).
-[2025-07-14T15:58:16.074039] U04N9LTR47M: sounds good, yes I agree stakeholders will have a much more accurate requirement
-[2025-07-16T21:04:48.990269] U04NN2GEXLZ: I've taken Paul's AI summary and purpose, reworded it a little and put it in the initative. I dropped the rest, as it was too wordy for my taste and potentially implying things out of scope. I then added two more sections, one specifying the two phases, the other for the personas.
-[2025-07-16T21:05:11.470929] U04NN2GEXLZ: No personas yet, will add some soon. I also mentioned this to Rachel and Stephen today, they might provide some more.
-[2025-07-16T22:52:52.415679] U04N9LTR47M: thanks Petr, nice and clean; I like the clear description of the two Work Items
-[2025-07-17T07:21:52.959119] U020YLADEKA: Looks good <@U04NN2GEXLZ> ! Thanks for the refinements.
+[2025-07-14T15:58:16.074039] Paul Caramuto: sounds good, yes I agree stakeholders will have a much more accurate requirement
+[2025-07-16T21:04:48.990269] Petr Sabata: I've taken Paul's AI summary and purpose, reworded it a little and put it in the initative. I dropped the rest, as it was too wordy for my taste and potentially implying things out of scope. I then added two more sections, one specifying the two phases, the other for the personas.
+[2025-07-16T21:05:11.470929] Petr Sabata: No personas yet, will add some soon. I also mentioned this to Rachel and Stephen today, they might provide some more.
+[2025-07-16T22:52:52.415679] Paul Caramuto: thanks Petr, nice and clean; I like the clear description of the two Work Items
+[2025-07-17T07:21:52.959119] Avihai Efrat: Looks good <@U04NN2GEXLZ> ! Thanks for the refinements.
 My only change suggestion might be about better definition/wording for ‘auto toolchain pipeline’ as it’s pretty vague what it actually contains or impacts and change it to the released build pipeline instead to focus this proposal further.
 Would also like to get <@U02JHD5HMGC> and <@U04JV0JBEFM> thoughts on <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?tab=t.0|it> when they have some time to review.( no rush )
-[2025-07-17T09:56:56.811139] U04NN2GEXLZ: I don't think I have 'auto toolchain pipeline' anywhere in the text; I was actually replacing that with a different string in the ticket. Because yes, that didn't make much sense to me.
-[2025-07-17T09:58:52.989869] U020YLADEKA: I was looking here: <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?usp=drivesdk|https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?usp=drivesdk>
+[2025-07-17T09:56:56.811139] Petr Sabata: I don't think I have 'auto toolchain pipeline' anywhere in the text; I was actually replacing that with a different string in the ticket. Because yes, that didn't make much sense to me.
+[2025-07-17T09:58:52.989869] Avihai Efrat: I was looking here: <https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?usp=drivesdk|https://docs.google.com/document/d/11gIvSxQl_E3YibRIscHpARsbhilF9QT2Eiy--cTKlIQ/edit?usp=drivesdk>
 
-[2025-07-17T10:03:17.369629] U04NN2GEXLZ: Yeah, that's Paul's doc. I didn't touch it.
-[2025-07-17T10:13:11.914139] U02JHD5HMGC: Would epics for each of the ATC focus areas help to scope initial assessment?  I think each of us have a list of things that irritate us or slow us down.  There may be tasks already created, but not linked to any initiative for prioritisation or coordination.
+[2025-07-17T10:03:17.369629] Petr Sabata: Yeah, that's Paul's doc. I didn't touch it.
+[2025-07-17T10:13:11.914139] Robert O'Brien: Would epics for each of the ATC focus areas help to scope initial assessment?  I think each of us have a list of things that irritate us or slow us down.  There may be tasks already created, but not linked to any initiative for prioritisation or coordination.
 ```Gating
 Infra
 Distribution
@@ -46,83 +46,91 @@ Test Console
 Testing Farm Integration
 ATC Sec Compliance```
 The gdoc is not open for edit to me, persmission has been requested.
-[2025-07-17T10:14:20.562319] U04NN2GEXLZ: I'd say you can ignore the doc :slightly_smiling_face:
-[2025-07-17T10:14:53.817519] U04NN2GEXLZ: Paul just put it together before I populated the ticket, as something to potentially put in the summary. We now have the actual ticket (sans personas).
-[2025-07-17T10:15:25.553889] U04NN2GEXLZ: As for the area-specific epics, that might be one approach.
-[2025-07-17T10:23:51.050069] U020YLADEKA: Got it, so the Jira covers the changes .. I’ll have a look
-[2025-07-17T13:39:56.540939] U020YLADEKA: Ok, finnaly got to look at the Jira <https://issues.redhat.com/browse/AUTOBU-886>  wording and overall looks good <@U04NN2GEXLZ>.
+[2025-07-17T10:14:20.562319] Petr Sabata: I'd say you can ignore the doc :slightly_smiling_face:
+[2025-07-17T10:14:53.817519] Petr Sabata: Paul just put it together before I populated the ticket, as something to potentially put in the summary. We now have the actual ticket (sans personas).
+[2025-07-17T10:15:25.553889] Petr Sabata: As for the area-specific epics, that might be one approach.
+[2025-07-17T10:23:51.050069] Avihai Efrat: Got it, so the Jira covers the changes .. I’ll have a look
+[2025-07-17T13:39:56.540939] Avihai Efrat: Ok, finnaly got to look at the Jira <https://issues.redhat.com/browse/AUTOBU-886>  wording and overall looks good <@U04NN2GEXLZ>.
 Something to consider is to change from the very generic "RHIVOS toolchain pipeline" wording into clear one which will reflect the impact/outcome of this initiative.
 I suggest instead of "RHIVOS toolchain pipeline" to the a more specific wording as: "Release build pipeline/s" .(which is the original intent here and impact/outcome is clear: to unblock building multiple releases by increasing stability and performance)
-[2025-07-17T13:50:44.788979] U04NN2GEXLZ: I didn't want to be overly specific because things impacting our ability to deliver might not be specific to building, and they might not be specific to what the ATC team is actively working on. Regardless, we need to identify those to figure out our next steps.
-[2025-07-17T13:54:38.640529] U020YLADEKA: Understood I understamd your POV.
+[2025-07-17T13:50:44.788979] Petr Sabata: I didn't want to be overly specific because things impacting our ability to deliver might not be specific to building, and they might not be specific to what the ATC team is actively working on. Regardless, we need to identify those to figure out our next steps.
+[2025-07-17T13:54:38.640529] Avihai Efrat: Understood I understamd your POV.
 I was trying to not be too broad as there are many things behind "toolchain pipelines" (build, test ,deliver) and if we are too broad it will be harder to get from idea to implementation and actual impact (before Konflux comes in :slightly_smiling_face: ).
-[2025-07-17T13:56:58.889119] U04N9LTR47M: thank you both, so take it that we are all in agreement with the initiative description, next step is to work on the stories/tickets that will lead up to an SLA
-[2025-07-17T13:58:23.532489] U04N9LTR47M: will one of those tasks be related to assessing the expectations of stakeholders?
-[2025-07-17T13:59:09.098029] U04NN2GEXLZ: I'll be getting input from some for the personas; I don't think we need tickets to fill out a ticket :slightly_smiling_face:
-[2025-07-17T14:14:26.521459] U04NH4CEEJF: Hey folks, it would be great if you could make sure everyone has a chance to review the "Initiative: Improving Infrastructure Availability" document before we move forward. It was just shared *this morning (CET).*
+[2025-07-17T13:56:58.889119] Paul Caramuto: thank you both, so take it that we are all in agreement with the initiative description, next step is to work on the stories/tickets that will lead up to an SLA
+[2025-07-17T13:58:23.532489] Paul Caramuto: will one of those tasks be related to assessing the expectations of stakeholders?
+[2025-07-17T13:59:09.098029] Petr Sabata: I'll be getting input from some for the personas; I don't think we need tickets to fill out a ticket :slightly_smiling_face:
+[2025-07-17T14:14:26.521459] Shir Fishbain: Hey folks, it would be great if you could make sure everyone has a chance to review the "Initiative: Improving Infrastructure Availability" document before we move forward. It was just shared *this morning (CET).*
 also related to <https://issues.redhat.com/browse/AUTOBU-886>
-[2025-07-17T14:15:39.329799] U04NN2GEXLZ: :thinking:
-[2025-07-17T14:16:13.057339] U04NN2GEXLZ: <@U04NH4CEEJF> Shared where? It's still in progress and incomplete, as we're discussing here.
-[2025-07-17T14:17:34.520189] U04NH4CEEJF: It's seems like everyone agreement on the title and moving forward and I would like to give the opportunity also for US time zone to give their review before we are have an agreement on something, please
-[2025-07-17T14:17:40.483459] U04NN2GEXLZ: Paul generated the document with Gemini to provide some initial text for the initiative; I've reused some of it but please, let's not use the document for anything, fractioning the discussion. We have it in Jira.
-[2025-07-17T14:18:27.893109] U04NH4CEEJF: ok great, so only review the Jira, sorry for my confusion
-[2025-07-17T14:19:07.618519] U04N9LTR47M: I 'll go ahead and delete that doc now to avoid confusions
-[2025-07-17T14:19:17.820799] U04NH4CEEJF: ok, thanks!
-[2025-07-17T14:46:01.362889] U020YLADEKA: <@U04N9LTR47M> folks (EMEA/US timezones) might need more time to read the <https://issues.redhat.com/browse/AUTOBU-886|Jira> content and discuss at least on the Jira content before we move to adding tickets.
+[2025-07-17T14:15:39.329799] Petr Sabata: :thinking:
+[2025-07-17T14:16:13.057339] Petr Sabata: <@U04NH4CEEJF> Shared where? It's still in progress and incomplete, as we're discussing here.
+[2025-07-17T14:17:34.520189] Shir Fishbain: It's seems like everyone agreement on the title and moving forward and I would like to give the opportunity also for US time zone to give their review before we are have an agreement on something, please
+[2025-07-17T14:17:40.483459] Petr Sabata: Paul generated the document with Gemini to provide some initial text for the initiative; I've reused some of it but please, let's not use the document for anything, fractioning the discussion. We have it in Jira.
+[2025-07-17T14:18:27.893109] Shir Fishbain: ok great, so only review the Jira, sorry for my confusion
+[2025-07-17T14:19:07.618519] Paul Caramuto: I 'll go ahead and delete that doc now to avoid confusions
+[2025-07-17T14:19:17.820799] Shir Fishbain: ok, thanks!
+[2025-07-17T14:46:01.362889] Avihai Efrat: <@U04N9LTR47M> folks (EMEA/US timezones) might need more time to read the <https://issues.redhat.com/browse/AUTOBU-886|Jira> content and discuss at least on the Jira content before we move to adding tickets.
 I also raised some points there (about it being too broad), and others did not have a chance to have a look yet on the Jira ticket and might need more time(as we're all busy) to get in agreement before proceeding.
 <@U04NH4CEEJF> <@U04JV0JBEFM> <@U02JHD5HMGC> let us know when you're done and your thoughts here so we can discuss if needed and know when it's time to move forward.
-[2025-07-30T11:05:39.081759] U02JHD5HMGC: I have started a doc to list various monitoring related work we have done within ATC.  Will need to add more context to some of the work, but I wanted to start on gathering information on past work.
+[2025-07-30T11:05:39.081759] Robert O'Brien: I have started a doc to list various monitoring related work we have done within ATC.  Will need to add more context to some of the work, but I wanted to start on gathering information on past work.
 I will continue to update when I have reviewed more documents.
 <https://docs.google.com/document/d/1eyirAAJE3N5dLJo_y3lHbRYDfO3iyJuPP8HrQFUsYUo/edit?tab=t.0>
-[2025-07-30T11:28:34.263769] U020YLADEKA: Thanks <@U02JHD5HMGC> for starting this document on our current ATC monitoring efforts (created before we considered SLA), as monitoring is key for any metric we want to measure or maintain to comply with whatever SLA we decide on.
+[2025-07-30T11:28:34.263769] Avihai Efrat: Thanks <@U02JHD5HMGC> for starting this document on our current ATC monitoring efforts (created before we considered SLA), as monitoring is key for any metric we want to measure or maintain to comply with whatever SLA we decide on.
 
 About:
 `folks (EMEA/US timezones) might need more time to read the Jira content and discuss at least on the Jira content before we move to adding tickets.`
 <@U04JV0JBEFM> <@U04NH4CEEJF> <@U04N9LTR47M> <@U02JHD5HMGC> did you have a chance to go over the <https://issues.redhat.com/browse/AUTOBU-886|Jira initiative> short description ticket and review it?
 I'm OK with the current, please add :+1: or :-1: if you are OK with the content or not so we can move this forward.
-[2025-07-30T12:03:24.121499] U04NH4CEEJF: Hey folks, Jim is on PTO most of the week. He will be back tomorrow, and I will ping him then about reviewing the Jira initiative. Thanks for the reminder, Avi.
-[2025-07-31T13:00:05.415799] U020YLADEKA: BTW, About the  <https://issues.redhat.com/browse/AUTOBU-886|Jira initiative> first work item:
+[2025-07-30T12:03:24.121499] Shir Fishbain: Hey folks, Jim is on PTO most of the week. He will be back tomorrow, and I will ping him then about reviewing the Jira initiative. Thanks for the reminder, Avi.
+[2025-07-31T13:00:05.415799] Avihai Efrat: BTW, About the  <https://issues.redhat.com/browse/AUTOBU-886|Jira initiative> first work item:
 `The implementation of this initiative should be split into two parts:Objective assessment of the status quo. We should identify all components in the RHIVOS toolchain pipeline, including those that are external to the project (e.g. shared with RHEL).`
 Juanje and <@U04NNGY4QQ2> created an EPIC for the `identify all components in the RHIVOS toolchain pipeline`  <https://issues.redhat.com/browse/VROOM-22346|VROOM-22346 - Dependency mapping for the product pipeline/release build> (50% done) we can link/leverage torwards with the SLA initiative.
 We planned <https://issues.redhat.com/browse/VROOM-22346|VROOM-22346 - Dependency mapping for the product pipeline/release build> for Q4 but if we have capacity, maybe we can prioritize it back, up to you <@U04NN2GEXLZ>.
 
 Also saw an intresting mail about: `Petr Sabata using Claude Code to debug build issues in RHIVOS pipeline.  Impressive results` 
 <@U04NN2GEXLZ> Can you share with the ATC team/Demo/weekly somewere more about this one? If we can improve how we debug/respond to build issue it can improve our SLA's for debugging/fixing issues as well
-[2025-07-31T14:24:42.369819] U04JV0JBEFM: Back from PTO - I'll add some comments into AUTOBU-886 here shortly :slightly_smiling_face: Not sure how much I have to add but I'll add what I can
-[2025-07-31T14:25:16.105579] U04JV0JBEFM: Also, any thoughts about moving this from a group DM into a channel? Maybe something like #wg-auto-toolchain-sla or #wg-auto-toolchain-availability
-[2025-07-31T14:40:54.146939] U020YLADEKA: Welcome back <@U04JV0JBEFM>! :partying_face:
+[2025-07-31T14:24:42.369819] Jim Bair: Back from PTO - I'll add some comments into AUTOBU-886 here shortly :slightly_smiling_face: Not sure how much I have to add but I'll add what I can
+[2025-07-31T14:25:16.105579] Jim Bair: Also, any thoughts about moving this from a group DM into a channel? Maybe something like #wg-auto-toolchain-sla or #wg-auto-toolchain-availability
+[2025-07-31T14:40:54.146939] Avihai Efrat: Welcome back <@U04JV0JBEFM>! :partying_face:
 Thanks for looking into AUTOBU-886, comments are most welcome!
 I liked `#wg-auto-toolchain-sla` , can you set it up and jumpstart us on the new channel.
 I think current folks from here can be a good start as members and we'll need to add more (at least ATC leads as we grow)
-[2025-07-31T14:49:46.322719] U04JV0JBEFM: <@U020YLADEKA> I think you can migrate this channel into there from the top menu in this "channel"
+[2025-07-31T14:49:46.322719] Jim Bair: <@U020YLADEKA> I think you can migrate this channel into there from the top menu in this "channel"
 [2025-07-31T14:50:22.985689] USLACKBOT: <@U04JV0JBEFM> created this channel from a conversation with <@U020YLADEKA>, <@U02JHD5HMGC>, <@U04JV0JBEFM>, <@U04N9LTR47M>, <@U04NH4CEEJF>, and <@U04NN2GEXLZ>.
-[2025-07-31T14:50:30.636629] U04JV0JBEFM: Neat; it let me do it :slightly_smiling_face:
-[2025-07-31T14:51:04.012659] U04JV0JBEFM: I do not have access to make it a public channel though; I suspect whoever started it can do that
-[2025-07-31T14:51:46.183889] U04JV0JBEFM: has renamed the channel from "wg-auto-toolchain-sla" to "wg-team-auto-toolchain-sla"
-[2025-07-31T14:58:17.835549] U020YLADEKA: <@U04N9LTR47M> as this thread intiator , maybe you can help and change it to public ?
-[2025-07-31T15:20:48.458619] U04N9LTR47M: also don't have access...
-[2025-07-31T15:21:06.108739] U04N9LTR47M: we can always start a new one as public
-[2025-07-31T15:23:48.055669] U04JV0JBEFM: I always prefer to keep context unless there's a reason not to. I bet someone has access to :slightly_smiling_face:
-[2025-07-31T15:24:13.476179] U04JV0JBEFM: <https://slack.com/help/articles/213185467-Convert-a-channel-to-private-or-public>
-[2025-07-31T15:24:18.024019] U04JV0JBEFM: By default, owners, admins, and <https://slack.com/help/articles/8328303095443-Understand-Channel-Managers-in-Slack|Channel Managers> can convert a channel to private, but owners can <https://slack.com/help/articles/115004988303-Adjust-channel-management-permissions|restrict this>. If you can't convert a channel to private, <https://slack.com/help/articles/360003534892-Browse-people-and-user-groups-in-Slack|find an owner> and ask for help.
-[2025-07-31T15:25:41.808959] U04JV0JBEFM: but if we are unable to, then we can rename this to the same name with -private or something and fire up a new one :smile:
-[2025-07-31T15:47:33.136859] U04N9LTR47M: while we figure this out, shall we get the ball rolling with AI? Was thinking of listing possible tickets (and leveraging the work we've done) on a <https://docs.google.com/document/d/1KW_CS9MaOfcbzg3srGFQ2BUMrnxquIUQSzyVm_d2K_w/edit?usp=sharing|google doc> where we can all add comments before translating that back into Jira.. wdyt?
-[2025-07-31T15:52:27.178329] U04N9LTR47M: <@U04NN2GEXLZ>, I know you already have ideas about the kind of tickets you want to see, and the AI list might feel like overkill, so feel free to let us know how we can support you. <@U04JV0JBEFM>, if there are any areas where you think you could help us get started, we'd really appreciate your input.
-[2025-07-31T16:07:19.995109] U04NN2GEXLZ: <@U020YLADEKA> I did share it in <#C04QWCWQNJY|> back then, I think (or the other forum). But the code is here:
+[2025-07-31T14:50:30.636629] Jim Bair: Neat; it let me do it :slightly_smiling_face:
+[2025-07-31T14:51:04.012659] Jim Bair: I do not have access to make it a public channel though; I suspect whoever started it can do that
+[2025-07-31T14:51:46.183889] Jim Bair: has renamed the channel from "wg-auto-toolchain-sla" to "wg-team-auto-toolchain-sla"
+[2025-07-31T14:58:17.835549] Avihai Efrat: <@U04N9LTR47M> as this thread intiator , maybe you can help and change it to public ?
+[2025-07-31T15:20:48.458619] Paul Caramuto: also don't have access...
+[2025-07-31T15:21:06.108739] Paul Caramuto: we can always start a new one as public
+[2025-07-31T15:23:48.055669] Jim Bair: I always prefer to keep context unless there's a reason not to. I bet someone has access to :slightly_smiling_face:
+[2025-07-31T15:24:13.476179] Jim Bair: When you create a channel, you can choose to make it either public or private. Public channels are best for sharing information that anyone can find and read, while private channels are meant for d...
+Title: Convert a channel to private or public
+<https://slack.com/help/articles/213185467-Convert-a-channel-to-private-or-public>
+[2025-07-31T15:24:18.024019] Jim Bair: When someone creates a channel, they're automatically assigned as the Channel Manager. Channel Managers can adjust administrative settings and permissions for any channel they're assigned to. Note:...
+Title: Understand Channel Managers in Slack
+From the permissions dashboard, Workspace Owners and Org Owners can adjust which role types can take the following channel management actions: Archive channels Convert group direct messages to p...
+Title: Adjust channel management permissions
+In Slack, you can find people you work with from the directory. Search for anyone to view their profile and find information, like their job title, local time zone, and more. What to expect You ca...
+Title: Browse people and user groups in Slack
+By default, owners, admins, and <https://slack.com/help/articles/8328303095443-Understand-Channel-Managers-in-Slack|Channel Managers> can convert a channel to private, but owners can <https://slack.com/help/articles/115004988303-Adjust-channel-management-permissions|restrict this>. If you can't convert a channel to private, <https://slack.com/help/articles/360003534892-Browse-people-and-user-groups-in-Slack|find an owner> and ask for help.
+[2025-07-31T15:25:41.808959] Jim Bair: but if we are unable to, then we can rename this to the same name with -private or something and fire up a new one :smile:
+[2025-07-31T15:47:33.136859] Paul Caramuto: while we figure this out, shall we get the ball rolling with AI? Was thinking of listing possible tickets (and leveraging the work we've done) on a <https://docs.google.com/document/d/1KW_CS9MaOfcbzg3srGFQ2BUMrnxquIUQSzyVm_d2K_w/edit?usp=sharing|google doc> where we can all add comments before translating that back into Jira.. wdyt?
+[2025-07-31T15:52:27.178329] Paul Caramuto: <@U04NN2GEXLZ>, I know you already have ideas about the kind of tickets you want to see, and the AI list might feel like overkill, so feel free to let us know how we can support you. <@U04JV0JBEFM>, if there are any areas where you think you could help us get started, we'd really appreciate your input.
+[2025-07-31T16:07:19.995109] Petr Sabata: <@U020YLADEKA> I did share it in <#C04QWCWQNJY|> back then, I think (or the other forum). But the code is here:
 <https://github.com/contyk/watswromg>
 And the slides are here:
 <https://docs.google.com/presentation/d/1mo2q_pGA04WypVq7wUeUY5480XzSxvVw9OZtwauTaZM/edit?slide=id.g30e84f14e68_0_7037#slide=id.g30e84f14e68_0_7037>
-[2025-07-31T16:07:37.358429] U04NN2GEXLZ: Ozan was plugging something similar into the pipeline, with Gemini, I think.
-[2025-07-31T16:09:48.168919] U04NN2GEXLZ: <@U04N9LTR47M> I don't have specific ideas about the work items here, just at the high level:
+[2025-07-31T16:07:37.358429] Petr Sabata: Ozan was plugging something similar into the pipeline, with Gemini, I think.
+[2025-07-31T16:09:48.168919] Petr Sabata: <@U04N9LTR47M> I don't have specific ideas about the work items here, just at the high level:
 
 • investigate first, gather what is key for our delivery and set up monitoring, gather metrics
 • in the second phase, identify the low hanging fruit to achieve maximum improvement
 • also based on these activities, establish SLAs we can all agree to, and continuously improve later on
 • also, for the use cases, it's the personas I still haven't added; will do so before I leave for the weekend :slightly_smiling_face:
-[2025-07-31T16:10:04.137039] U04NN2GEXLZ: But they won't be particularly detailed, so not a game changer for the work.
-[2025-07-31T16:25:51.871149] U04NN2GEXLZ: I've added a handful. More ideas welcome but this should capture the core idea.
-[2025-07-31T17:25:36.227909] U04N9LTR47M: sounds like a great starting point <@U04NN2GEXLZ>
-[2025-07-31T19:16:33.848479] U020YLADEKA: All great ideas <@U04NN2GEXLZ> and <@U04N9LTR47M> .
+[2025-07-31T16:10:04.137039] Petr Sabata: But they won't be particularly detailed, so not a game changer for the work.
+[2025-07-31T16:25:51.871149] Petr Sabata: I've added a handful. More ideas welcome but this should capture the core idea.
+[2025-07-31T17:25:36.227909] Paul Caramuto: sounds like a great starting point <@U04NN2GEXLZ>
+[2025-07-31T19:16:33.848479] Avihai Efrat: All great ideas <@U04NN2GEXLZ> and <@U04N9LTR47M> .
 
 “investigate what is key for our delivery “ is indeed the first step but we need to clearly define what our delivery actually means ( FuSa delivery , Release delivery, Customers/partner/partners delivery.. etc) is too broad (as we have multiple services (not to mention dependencies) to monitor and if we get to broad we will not be able to do much till Konflux migration takes over (mid 26).
 
@@ -136,17 +144,17 @@ My point is we should start with a list of services coming from stakeholders/POs
 <@U04JV0JBEFM> will you be able to reach out to Steve L and me/Paul can ask Pier and we can add all the stakeholders requirements (critical services and expectations) as a first step in a doc , then add to the BU ticket? Just so we’ll have it all in one place.
 
 If we focus and clearly define that delivery = release/nightly builds services and dependencies at least as a starting point we might have a chance to monitor , get the baseline and bottlenecks and improve before Konflux arrives and leverage work already done there. 
-[2025-07-31T19:25:23.311759] U04NN2GEXLZ: <@U020YLADEKA> should be having a beer instead of working on a Thursday night.
-[2025-07-31T19:27:57.423689] U020YLADEKA: I’m logging out <@U04NN2GEXLZ> :beers: my Mind keeps pulling me in .. have a great weekend all :heart_hands: 
-[2025-07-31T19:43:17.663479] U04JV0JBEFM: Under the Program personas, I'm not sure this applies:
+[2025-07-31T19:25:23.311759] Petr Sabata: <@U020YLADEKA> should be having a beer instead of working on a Thursday night.
+[2025-07-31T19:27:57.423689] Avihai Efrat: I’m logging out <@U04NN2GEXLZ> :beers: my Mind keeps pulling me in .. have a great weekend all :heart_hands: 
+[2025-07-31T19:43:17.663479] Jim Bair: Under the Program personas, I'm not sure this applies:
 • Risks: loss of business, fines
 Do we risk fines? If so, that is news to me.
-[2025-07-31T19:44:04.058259] U04JV0JBEFM: And yes, I can speak with Steve to get his perspective as a stakeholder/PO in regards to ATC
-[2025-07-31T20:47:19.034459] U04N9LTR47M: `Risks: loss of business, fines`  in our world this means some people getting pissed off, or risk of missing Release target end dates (but good catch Jim)
-[2025-07-31T21:01:37.771669] U04N9LTR47M: `And yes, I can speak with Steve to get his perspective as a stakeholder/PO in regards to ATC` great. I already shared with him the autobu-886 ticket, told him we just started working in this, and invited him to review the ticket description.
-[2025-07-31T21:11:48.115849] U04N9LTR47M: btw, asked Gemini to simplify the wording (looks cleaner now): <https://docs.google.com/document/d/1KW_CS9MaOfcbzg3srGFQ2BUMrnxquIUQSzyVm_d2K_w/edit?usp=sharing|Initiative: AUTOBU-886 - Improving RHIVOS Pipeline Availability>
-[2025-08-07T14:26:54.969949] U02JHD5HMGC: set the channel description: Improving Infra availability <https://issues.redhat.com/browse/AUTOBU-886>
-[2025-09-08T15:45:59.082679] U020YLADEKA: Hi there :wave: 
+[2025-07-31T19:44:04.058259] Jim Bair: And yes, I can speak with Steve to get his perspective as a stakeholder/PO in regards to ATC
+[2025-07-31T20:47:19.034459] Paul Caramuto: `Risks: loss of business, fines`  in our world this means some people getting pissed off, or risk of missing Release target end dates (but good catch Jim)
+[2025-07-31T21:01:37.771669] Paul Caramuto: `And yes, I can speak with Steve to get his perspective as a stakeholder/PO in regards to ATC` great. I already shared with him the autobu-886 ticket, told him we just started working in this, and invited him to review the ticket description.
+[2025-07-31T21:11:48.115849] Paul Caramuto: btw, asked Gemini to simplify the wording (looks cleaner now): <https://docs.google.com/document/d/1KW_CS9MaOfcbzg3srGFQ2BUMrnxquIUQSzyVm_d2K_w/edit?usp=sharing|Initiative: AUTOBU-886 - Improving RHIVOS Pipeline Availability>
+[2025-08-07T14:26:54.969949] Robert O'Brien: set the channel description: Improving Infra availability <https://issues.redhat.com/browse/AUTOBU-886>
+[2025-09-08T15:45:59.082679] Avihai Efrat: Hi there :wave: 
 Long time no see :eyes: 
 This channel is too quiet for a MUSTDO initiative as <https://issues.redhat.com/browse/AUTOBU-886|https://issues.redhat.com/browse/AUTOBU-886> :wink: 
 How are we doing here <@U04JV0JBEFM> <@U02JHD5HMGC> ?
@@ -159,32 +167,32 @@ Last time I think we mentioned the following plan , just to make sure we’re sy
 5. This step can and will be done in parallel- improving the critical services (we already know about some of them: pipelines, artifacts storage, gitlab /AWS runners we use for building releases,autoSD webserver, RHIVOS webserver)
 Let’s get back on the this MUSTDO horse :racehorse:  
 Lets us know if you have capacity or other concerns and we’ll get you covered by the team or me/Paul .
-[2025-09-08T15:47:07.277339] U020YLADEKA: <@U04NN2GEXLZ> remind us what’s the expectation, priory to get this done ?
-[2025-09-08T15:47:49.025409] U020YLADEKA: <@U02JHD5HMGC> <@U04JV0JBEFM> where are we with the plan?
+[2025-09-08T15:47:07.277339] Avihai Efrat: <@U04NN2GEXLZ> remind us what’s the expectation, priory to get this done ?
+[2025-09-08T15:47:49.025409] Avihai Efrat: <@U02JHD5HMGC> <@U04JV0JBEFM> where are we with the plan?
 Did we finish step1 yet?
-[2025-09-08T15:48:47.825569] U04NN2GEXLZ: Priority is relatively high.
+[2025-09-08T15:48:47.825569] Petr Sabata: Priority is relatively high.
 The timeline we discussed was Q3 for the initial investigation + monitoring setup, Q4 to begin addressing the main pain points/low hanging fruit, i.e. starting to really improve things. And by the end of Q4 we should have an idea what SLAs to establish.
-[2025-09-08T15:52:50.567499] U02F2L89YTS: <@U02F2L89YTS> has joined the channel
-[2025-09-08T15:52:50.684479] U04MGT65NQJ: <@U04MGT65NQJ> has joined the channel
-[2025-09-08T15:52:50.780619] U0171SJF00H: <@U0171SJF00H> has joined the channel
-[2025-09-08T15:52:51.051649] U02DXVBD5CP: <@U02DXVBD5CP> has joined the channel
-[2025-09-08T15:52:51.157149] U04QNH25QA1: <@U04QNH25QA1> has joined the channel
-[2025-09-08T15:52:51.280709] U04NNGY4QQ2: <@U04NNGY4QQ2> has joined the channel
-[2025-09-08T15:54:43.200569] U020YLADEKA: Added more folks to be aware of this ^^ 
+[2025-09-08T15:52:50.567499] Juanje Ojeda: <@U02F2L89YTS> has joined the channel
+[2025-09-08T15:52:50.684479] Eitan Raviv: <@U04MGT65NQJ> has joined the channel
+[2025-09-08T15:52:50.780619] Hubert Stefanski: <@U0171SJF00H> has joined the channel
+[2025-09-08T15:52:51.051649] Kanitha Chim: <@U02DXVBD5CP> has joined the channel
+[2025-09-08T15:52:51.157149] Roni Eliezer: <@U04QNH25QA1> has joined the channel
+[2025-09-08T15:52:51.280709] Ozan Unsal: <@U04NNGY4QQ2> has joined the channel
+[2025-09-08T15:54:43.200569] Avihai Efrat: Added more folks to be aware of this ^^ 
 Let’s hear from <@U04JV0JBEFM> and <@U02JHD5HMGC> first 
-[2025-09-08T15:56:35.145959] U020YLADEKA: <@U04NN2GEXLZ> as one of the stakeholders do you already have a list of critical services and a starting SLO/SLIs for those services?
-[2025-09-08T15:59:10.492739] U020YLADEKA: We can start from there.
+[2025-09-08T15:56:35.145959] Avihai Efrat: <@U04NN2GEXLZ> as one of the stakeholders do you already have a list of critical services and a starting SLO/SLIs for those services?
+[2025-09-08T15:59:10.492739] Avihai Efrat: We can start from there.
 Just to note , There are multiple activities to improve many services for a while now..  but it seem we jumped ahead of a proposed set of services to monitor and metrics (SLO,SLI) .. so we’re improving greatly! But not monitoring most of it 
-[2025-09-08T16:24:20.861999] U020YLADEKA: <@U04NN2GEXLZ> maybe it’s best to explicitly add the expectations and deadlines in the AUTOBU so all folks are synced .
-[2025-09-08T17:02:40.387809] U04NN2GEXLZ: <@U020YLADEKA> Ideally we should interview the persona representatives; although if we need something to start with, I guess I could act as a package developer.
-[2025-09-08T17:27:14.479169] U02JHD5HMGC: I started this document today <https://docs.google.com/document/d/1ZdLvj8pIdv6KTSsvp9LmCyp_PkVXac-Hbm1UCw-n7cs/edit?tab=t.0> which references a couple of other previous docs and diagrams
+[2025-09-08T16:24:20.861999] Avihai Efrat: <@U04NN2GEXLZ> maybe it’s best to explicitly add the expectations and deadlines in the AUTOBU so all folks are synced .
+[2025-09-08T17:02:40.387809] Petr Sabata: <@U020YLADEKA> Ideally we should interview the persona representatives; although if we need something to start with, I guess I could act as a package developer.
+[2025-09-08T17:27:14.479169] Robert O'Brien: I started this document today <https://docs.google.com/document/d/1ZdLvj8pIdv6KTSsvp9LmCyp_PkVXac-Hbm1UCw-n7cs/edit?tab=t.0> which references a couple of other previous docs and diagrams
 Invite sent to Petr for tomorrow, to help me better understand requirements from other perspective.
-[2025-09-08T17:51:36.494369] U020YLADEKA: Thanks for sharing <@U02JHD5HMGC> !
+[2025-09-08T17:51:36.494369] Avihai Efrat: Thanks for sharing <@U02JHD5HMGC> !
 It’s a solid first draft but we need stakeholders data in there to get to the list of critical services fast so we can move to implementing monitoring on the selected list of services.
 Can we add a sign off list there with all stakeholders (POs) as first ones or any other mentioned persona and get that at least reviewed by EOW? 
-[2025-09-08T18:06:42.950519] U020YLADEKA: You can add me as engineering manager .. 
+[2025-09-08T18:06:42.950519] Avihai Efrat: You can add me as engineering manager .. 
 I’ll be :zap: quick 
-[2025-09-08T19:21:37.700429] U020YLADEKA: There are some comments I would like to add, please open this for comments <@U02JHD5HMGC> .
+[2025-09-08T19:21:37.700429] Avihai Efrat: There are some comments I would like to add, please open this for comments <@U02JHD5HMGC> .
 
 _*After*_ *you get to a set fof critical services:*
 You’ll  need to define and refine in that proposal or draft a new one with details for the services criticality levels (SLO/SLA) per service meaning :
@@ -194,7 +202,7 @@ In the context of infrastructure availability, an SLI (Service Level Indicator) 
 The SLO (Service Level Objective) is the target or goal you set for that metric over a specific period, for example, achieving a 90% success rate over a month for etc  . 
 Essentially, the SLI is the "what" you measure, and the SLO is the "goal" you aim for.
 
-[2025-09-08T19:36:41.879449] U020YLADEKA: Let’s stick to measurable metrics and refine general statements as:
+[2025-09-08T19:36:41.879449] Avihai Efrat: Let’s stick to measurable metrics and refine general statements as:
 “releases should be available for internal and external users” to what services need to be available with what metric should be used to measure them( SLI ) ,what is an acceptable availability measurement (SLO )for that to happen?
 This will help us define and continually measure where we are and how much we improved or not data based per critical service(web servers, pipelines, runners etc )
 
@@ -205,7 +213,7 @@ SLO (which is the target of the SLI)= Maintain a successful request rate of at l
 Another important thing to define is error budget.
 The error budget is the amount of acceptable unreliability calculated from Service Level Objective (SLO). For instance, with an SLO of 99.9% availability, your error budget is the remaining 0.1% downtime. This budget dictates l team's priorities: when it's healthy, you can release new features(whatever is your usual our usual D2D work ), but when it's breached, all work stops to focus on fixing the service’s reliability.
 Thus needs to be clearly defined and agreed with stakeholders and program to get that mandate to switch to error mode instead of developing RHIVOS2 features for example.
-[2025-09-09T15:08:53.787729] U020YLADEKA: Hi <@U02JHD5HMGC>,
+[2025-09-09T15:08:53.787729] Avihai Efrat: Hi <@U02JHD5HMGC>,
 Saw you comment about the suggested signoff names, thanks for asking!
 
 I added my thoughts there but for moving faster sake I'll also add my thoughts here and ask <@U04NN2GEXLZ> to ACK so we can advance faster.
@@ -218,8 +226,10 @@ I added my thoughts there but for moving faster sake I'll also add my thoughts h
 `I would also suggest adding our initial stakeholders - each Vertical POs ( Petr, Steve, Pier)`
 `About the names, I can suggest the following(see attachment):`
 `Petr Šabata Please confirm/add or revise.`
-[2025-09-09T15:09:37.721759] U020YLADEKA: 
-[2025-09-09T21:04:53.872899] U020YLADEKA: ACK received, thanks <@U04NN2GEXLZ>  on the list 
+[2025-09-09T15:09:37.721759] Avihai Efrat: 
+[2025-09-09T21:04:53.872899] Avihai Efrat: Discover the concept of embracing risk in the context of service reliability and how to effectively utilize error budgets for a more resilient system.
+Title: Google SRE - Embracing risk and reliability engineering book
+ACK received, thanks <@U04NN2GEXLZ>  on the list 
 Had a look in the proposal and added comments for both <@U02JHD5HMGC>  and <@U04NN2GEXLZ> .
 as I mentioned above we need to refine the proposal  and make it very clear on what are the most critical services each eith a matching realistic SLI,SLO and error budget and what that means for the team and program .
 NO service can realistically be 100% available (checkout <https://sre.google/sre-book/embracing-risk/|Google SRE ><https://sre.google/sre-book/embracing-risk/|handbook> chapter3 end  Key Insights). This is a fundamental principle of Site Reliability Engineering (SRE). Even the most robust systems will experience some level of downtime, whether due to hardware failures, software bugs, network issues, or necessary maintenance like security patches. 
@@ -230,15 +240,15 @@ A part of it is to Identify a Short list of 5 top critical services under our AT
 If the proposal will add new services we’ll add them to the monitoring list afterwards.
 
 Looking at the Epics added to this initiative I think we already know what they are, let’s start with them first, WDYT?
-[2025-09-09T21:07:17.840889] U020YLADEKA: We do NOT need to be perfect and have all the services monitored or identified (that would be nice in a perfect world with infinite time for completion) but not for this short term initiative to be concluded in Q4 with mass holidays and other MUSTHAVES initiatives in parallel 
-[2025-09-09T22:27:07.121879] U04N9LTR47M: <!channel>, alright, thanks for all the comments and Robert for drafting that document putting things into perspective. let me sum it up:
-[2025-09-09T22:33:07.637879] U04N9LTR47M: Q4: our focus is narrowed to the build pipeline. To support this, and get the ball rolling Robert and Jim will draft a proposal for our top 3-5 pipeline services
-[2025-09-09T22:34:07.946319] U04N9LTR47M: the draft should include:
+[2025-09-09T21:07:17.840889] Avihai Efrat: We do NOT need to be perfect and have all the services monitored or identified (that would be nice in a perfect world with infinite time for completion) but not for this short term initiative to be concluded in Q4 with mass holidays and other MUSTHAVES initiatives in parallel 
+[2025-09-09T22:27:07.121879] Paul Caramuto: <!channel>, alright, thanks for all the comments and Robert for drafting that document putting things into perspective. let me sum it up:
+[2025-09-09T22:33:07.637879] Paul Caramuto: Q4: our focus is narrowed to the build pipeline. To support this, and get the ball rolling Robert and Jim will draft a proposal for our top 3-5 pipeline services
+[2025-09-09T22:34:07.946319] Paul Caramuto: the draft should include:
 • Realistic SLOs/SLIs for each service.
 • A defined Error Budget Policy (what happens when we miss our target).
 • A clear "Out of Scope" section.
-[2025-09-09T22:39:40.272409] U04N9LTR47M: are we all on the same page? <@U020YLADEKA>, does this cover what you are thinking? <@U04NN2GEXLZ>, could you confirm the focus is stability and speed of our release-building pipelines?
-[2025-09-10T00:44:37.274859] U02F2L89YTS: I added a comment to the document, but I'll comment about it here as well.
+[2025-09-09T22:39:40.272409] Paul Caramuto: are we all on the same page? <@U020YLADEKA>, does this cover what you are thinking? <@U04NN2GEXLZ>, could you confirm the focus is stability and speed of our release-building pipelines?
+[2025-09-10T00:44:37.274859] Juanje Ojeda: I added a comment to the document, but I'll comment about it here as well.
 We need to be clear about what "the service" is. I think we're mixing things.
 • The autosd artifacts web service (CloudFront) is a service.
 • The rhivos web server is a service.
@@ -248,15 +258,15 @@ We need to be clear about what "the service" is. I think we're mixing things.
 • Having green pipelines is NOT a service.
 The pipelines, by definition, will fail from time to time and It's fine. They're meant to detect problems in the composes, packages or images. So they're not expected to be green X% of the time.
 It'd be nice, but also pointless.
-[2025-09-10T13:59:00.264659] U04JV0JBEFM: I reviewed the doc yesterday afternoon but I saw Avi working late to add comments and when I looked this morning before starting my morning, I saw some movement as well :slightly_smiling_face: I mostly was curious who the stakeholders are; I see per-area sign-off. Do we consider the table a complete list of the stakeholders for ATC SLA?
-[2025-09-11T14:49:26.712459] U04N9LTR47M: so, the immediate action plan as I see continues to be drafting a proposal for the top *3-5 critical* pipeline infrastructure *services* (our overall goal for this exercise is to improve the reliabitlyt of our build pipeline infra)
-[2025-09-11T14:50:34.345929] U04N9LTR47M: *CLARIFICATION*: Per Juanje's point, we are measuring the availability of our tools and systems, not the "_greenness_" of pipeline runs. A pipeline that fails because of a bug in the code is a success for the infrastructure. good examples of services: GitLab runner availability, Test Console uptime, the web server that hosts artifacts.
-[2025-09-11T14:51:23.008039] U04N9LTR47M: so, to summarize Avi's latest comment, *how* are we doing this:
-[2025-09-11T14:51:44.839039] U04N9LTR47M: • Classify each infrastructure service using the C1, C2, or C3 criticality tiers.
+[2025-09-10T13:59:00.264659] Jim Bair: I reviewed the doc yesterday afternoon but I saw Avi working late to add comments and when I looked this morning before starting my morning, I saw some movement as well :slightly_smiling_face: I mostly was curious who the stakeholders are; I see per-area sign-off. Do we consider the table a complete list of the stakeholders for ATC SLA?
+[2025-09-11T14:49:26.712459] Paul Caramuto: so, the immediate action plan as I see continues to be drafting a proposal for the top *3-5 critical* pipeline infrastructure *services* (our overall goal for this exercise is to improve the reliabitlyt of our build pipeline infra)
+[2025-09-11T14:50:34.345929] Paul Caramuto: *CLARIFICATION*: Per Juanje's point, we are measuring the availability of our tools and systems, not the "_greenness_" of pipeline runs. A pipeline that fails because of a bug in the code is a success for the infrastructure. good examples of services: GitLab runner availability, Test Console uptime, the web server that hosts artifacts.
+[2025-09-11T14:51:23.008039] Paul Caramuto: so, to summarize Avi's latest comment, *how* are we doing this:
+[2025-09-11T14:51:44.839039] Paul Caramuto: • Classify each infrastructure service using the C1, C2, or C3 criticality tiers.
 • Apply the corresponding SLO target (e.g., 99.59% uptime) to each one.
 • Define the Error Budget Policy for what happens when a service breaches its SLO.
-[2025-09-16T12:40:20.998829] URRPFQEMS: <@URRPFQEMS> has joined the channel
-[2025-09-17T12:03:21.228759] U020YLADEKA: Sharing post SRE conference this very important  SLA/SLO/SLI subject from a very experienced principal SRE Lisa for involved folks to leverage the knowldege there.
+[2025-09-16T12:40:20.998829] Lei Wang: <@URRPFQEMS> has joined the channel
+[2025-09-17T12:03:21.228759] Avihai Efrat: Sharing post SRE conference this very important  SLA/SLO/SLI subject from a very experienced principal SRE Lisa for involved folks to leverage the knowldege there.
 
 Presentation link:
 <https://docs.google.com/presentation/d/1vjhnOo_4v632RkgMulfhMYCFFb1DiHtlcMCFPD3PzmA/edit>

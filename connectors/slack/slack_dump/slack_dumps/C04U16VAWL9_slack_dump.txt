@@ -1,9 +1,8 @@
 # Slack Channel Dump
 # Channel ID: C04U16VAWL9
-# Generated: 2025-10-03T20:23:16.499415
+# Generated: 2025-10-10T18:36:36.845860
 # Total Messages: 1000
 
-[2023-06-13T13:56:11.127869] Michael Ho: Bad idea to copy from the previous release
 [2023-06-13T13:56:35.945759] Jim Bair: that's what I was told to do :smile:
 [2023-06-13T13:56:57.699179] Jim Bair: Are we supposed to build up configs from scratch every release?
 [2023-06-13T13:57:26.941089] Khaled El-Sayed: When I did the diff for 0.13 and 0.14, I got
@@ -1827,3 +1826,4 @@ Habemus RC3: <https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/RHIVOS-1/
 [2025-09-14T22:00:01.959459] Bot-B05NMKVG: The RHIVOS webserver at <http://rhivos.auto-toolchain.redhat.com|rhivos.auto-toolchain.redhat.com>     will instantiate self maintenance ten minutes from now. The maintenance work is     expected to last approximately five minutes. During this time the service might be     slower than usual or unavailable. A separate notification will be sent once the     maintenance is over. Sorry for the inconvenience. In case the service is not     available at all within 20 minutes please contact the Rhivos Autotoolchain team     :yellow_alert:
 [2025-09-21T22:00:01.891879] Bot-B05NMKVG: The RHIVOS webserver at <http://rhivos.auto-toolchain.redhat.com|rhivos.auto-toolchain.redhat.com>     will instantiate self maintenance ten minutes from now. The maintenance work is     expected to last approximately five minutes. During this time the service might be     slower than usual or unavailable. A separate notification will be sent once the     maintenance is over. Sorry for the inconvenience. In case the service is not     available at all within 20 minutes please contact the Rhivos Autotoolchain team     :yellow_alert:
 [2025-09-28T22:00:01.850599] Bot-B05NMKVG: The RHIVOS webserver at <http://rhivos.auto-toolchain.redhat.com|rhivos.auto-toolchain.redhat.com>     will instantiate self maintenance ten minutes from now. The maintenance work is     expected to last approximately five minutes. During this time the service might be     slower than usual or unavailable. A separate notification will be sent once the     maintenance is over. Sorry for the inconvenience. In case the service is not     available at all within 20 minutes please contact the Rhivos Autotoolchain team     :yellow_alert:
+[2025-10-05T22:00:02.470059] Bot-B05NMKVG: The RHIVOS webserver at <http://rhivos.auto-toolchain.redhat.com|rhivos.auto-toolchain.redhat.com>     will instantiate self maintenance ten minutes from now. The maintenance work is     expected to last approximately five minutes. During this time the service might be     slower than usual or unavailable. A separate notification will be sent once the     maintenance is over. Sorry for the inconvenience. In case the service is not     available at all within 20 minutes please contact the Rhivos Autotoolchain team     :yellow_alert:
