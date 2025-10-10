@@ -34,21 +34,31 @@ def send_team_daily_report_tool():
             print(f"\n🚀 Starting daily report generation for {team} team...")
             print(f"📍 Running from: {os.getcwd()}")
             
-            # Import the GitHub Actions workflow script
-            script_path = os.path.join(os.getcwd(), '.github', 'workflows', 'scripts')
-            if script_path not in sys.path:
-                sys.path.insert(0, script_path)
+            # Import the GitHub Actions workflow script using importlib
+            import importlib.util
             
+            script_path = os.path.join(os.getcwd(), '.github', 'workflows', 'scripts', 'github_daily_report.py')
             print(f"📍 Script path: {script_path}")
-            print(f"📍 Checking if github_daily_report.py exists: {os.path.exists(os.path.join(script_path, 'github_daily_report.py'))}")
+            print(f"📍 Script exists: {os.path.exists(script_path)}")
+            
+            if not os.path.exists(script_path):
+                return create_error_response(
+                    "Script not found",
+                    f"github_daily_report.py not found at {script_path}"
+                )
             
             try:
-                import github_daily_report
+                # Load the module from file path
+                spec = importlib.util.spec_from_file_location("github_daily_report", script_path)
+                github_daily_report = importlib.util.module_from_spec(spec)
+                sys.modules["github_daily_report"] = github_daily_report
+                spec.loader.exec_module(github_daily_report)
+                
                 collect_team_data = github_daily_report.collect_team_data
                 generate_ai_analysis = github_daily_report.generate_ai_analysis
                 generate_paul_todo_items = github_daily_report.generate_paul_todo_items
                 send_team_email = github_daily_report.send_team_email
-            except ImportError as e:
+            except Exception as e:
                 import traceback
                 return create_error_response(
                     "Failed to import GitHub Actions workflow",
