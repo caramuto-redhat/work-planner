@@ -162,6 +162,7 @@ user_display_names:
   "U9AA9E30B": "Jane Doe"      # Assessment team member
   "U06SS4RC5H7": "Bob Johnson" # Assessment team member
   "U02F97ACPN2": "Jeff Bastian" # Boa team member
+  "URRPFQEMS": "Lei Wang" # FoA team member
 # Unknown Users - Manual mapping required
 # Add real names when discovered, organize by channel and activity date
 unknown_users:

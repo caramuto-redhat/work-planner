@@ -4,10 +4,27 @@ Work Planner MCP Server
 Simple server that imports and registers tools from connectors
 """
 
+import os
 import signal
 import sys
 from fastmcp import FastMCP
 from utils.responses import create_success_response
+
+# Load environment variables from ENV_FILE if specified (for local development)
+# In container, variables are already set via --env-file flag
+env_file = os.getenv('ENV_FILE')
+if env_file and os.path.exists(env_file):
+    from dotenv import load_dotenv
+    load_dotenv(env_file)
+    print(f"✅ Loaded environment from {env_file}")
+else:
+    # Check if essential variables are already set (container mode)
+    slack_token = os.getenv('SLACK_XOXC_TOKEN')
+    jira_token = os.getenv('JIRA_API_TOKEN')
+    if slack_token and jira_token:
+        print(f"✅ Environment variables already available (container mode)")
+    else:
+        print(f"⚠️  No ENV_FILE specified and essential variables not found")
 
 # Signal handler for graceful shutdown
 def signal_handler(signum, frame):

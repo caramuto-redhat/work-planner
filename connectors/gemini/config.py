@@ -12,6 +12,36 @@ from utils.responses import create_error_response, create_success_response
 class GeminiConfig:
     """Configuration manager for Gemini AI connector"""
     
+    @staticmethod
+    def load(config_path: str) -> Dict[str, Any]:
+        """Load Gemini configuration from YAML file (static method for compatibility)"""
+        try:
+            with open(config_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+            return config or GeminiConfig._get_static_default_config()
+        except FileNotFoundError:
+            print(f"Warning: Gemini configuration file not found: {config_path}. Using defaults.")
+            return GeminiConfig._get_static_default_config()
+        except yaml.YAMLError as e:
+            print(f"Error parsing Gemini configuration file {config_path}: {e}. Using defaults.")
+            return GeminiConfig._get_static_default_config()
+        except Exception as e:
+            print(f"Warning: Could not load Gemini config from {config_path}: {e}. Using defaults.")
+            return GeminiConfig._get_static_default_config()
+    
+    @staticmethod
+    def _get_static_default_config() -> Dict[str, Any]:
+        """Get default configuration (static method)"""
+        return {
+            'model': 'models/gemini-2.0-flash',
+            'generation_config': {
+                'temperature': 0.7,
+                'top_p': 0.9,
+                'top_k': 40,
+                'max_output_tokens': 2048
+            }
+        }
+    
     def __init__(self, config_path: Optional[str] = None):
         """Initialize Gemini configuration"""
         self.config_path = config_path or os.path.join('config', 'gemini.yaml')
