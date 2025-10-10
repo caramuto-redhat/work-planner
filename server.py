@@ -118,9 +118,6 @@ try:
     from connectors.email.config import EmailConfig
     from connectors.email.tools import (
         send_email_tool,
-        send_daily_summary_tool,
-        send_alert_tool,
-        send_data_collection_report_tool,
         test_email_connection_tool,
         get_email_config_tool
     )
@@ -129,15 +126,12 @@ try:
     email_config = EmailConfig()
     email_client = EmailClient(email_config.get_config())
     
-    # Register Email tools
+    # Register Email tools (only working ones)
     mcp.tool()(send_email_tool(email_client, email_config.get_config()))
-    mcp.tool()(send_daily_summary_tool(email_client, email_config.get_config()))
-    mcp.tool()(send_alert_tool(email_client, email_config.get_config()))
-    mcp.tool()(send_data_collection_report_tool(email_client, email_config.get_config()))
     mcp.tool()(test_email_connection_tool(email_client, email_config.get_config()))
     mcp.tool()(get_email_config_tool(email_client, email_config.get_config()))
     
-    print("✅ Registered Email connector with 6 tools")
+    print("✅ Registered Email connector with 3 tools (send_email, test_email_connection, get_email_config)")
 except Exception as e:
     print(f"❌ Failed to register Email connector: {e}")
 
@@ -154,11 +148,10 @@ def list_available_tools() -> str:
             "dump_slack_data", "read_slack_data", "search_slack_data",
             "list_slack_channels", "list_slack_dumps",
             "analyze_jira_data", "generate_email_summary", "custom_ai_analysis", "ai_summary",
-            "send_email", "send_daily_summary", "send_alert",
-            "send_data_collection_report", "test_email_connection", "get_email_config",
+            "send_email", "test_email_connection", "get_email_config",
             "list_available_tools"
         ],
-        "total_tools": 23
+        "total_tools": 20  # Removed 3 broken email tools
     })
 
 if __name__ == "__main__":

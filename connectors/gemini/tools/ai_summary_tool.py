@@ -280,6 +280,8 @@ def _send_summary_email(analysis_results: Dict[str, Any], team: str, email_resul
         email_summary = email_results.get('email_content', f"Daily summary for team {team}")
         
         # Prepare content for email template
+        # NOTE: Email sending disabled - send_daily_summary uses non-existent 'daily_summary' template
+        # Use GitHub Actions workflow or send_email tool with 'team_daily_report_with_todo' template instead
         summary_data = {
             'slack_analysis': slack_analysis,
             'jira_analysis': jira_analysis,
@@ -287,16 +289,11 @@ def _send_summary_email(analysis_results: Dict[str, Any], team: str, email_resul
             'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')
         }
         
-        # Send email using simplified configuration
-        result = email_client.send_daily_summary(team, summary_data)
-        
-        if result['success']:
-            print(f"✅ Daily summary email sent successfully to team {team}")
-            print(f"📧 Recipients: {', '.join(result['recipients'])}")
-            return True
-        else:
-            print(f"❌ Failed to send daily summary email: {result.get('error', 'Unknown error')}")
-            return False
+        # DISABLED: Send email using simplified configuration
+        # result = email_client.send_daily_summary(team, summary_data)
+        print(f"⚠️  Email sending disabled in ai_summary tool (template 'daily_summary' doesn't exist)")
+        print(f"ℹ️  Use GitHub Actions workflow for full email reports")
+        return False
         
     except Exception as e:
         print(f"❌ Error sending summary email: {str(e)}")
