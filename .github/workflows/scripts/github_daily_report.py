@@ -30,6 +30,9 @@ sys.path.insert(0, project_root)
 print(f'🔍 Project root: {project_root}')
 print(f'🔍 Python path: {sys.path[:3]}...')
 
+# Import shared sprint utilities for consistency with MCP tools
+from utils.sprint_helpers import extract_active_sprint_from_issue
+
 async def _test_conversations_members(slack_client, channel_id: str) -> dict:
     """Test conversations.members API to see what user info we can get"""
     try:
@@ -204,6 +207,22 @@ def _load_gemini_prompts():
         return {}
 
 
+def _load_paul_todo_config():
+    """Load Paul TODO detection configuration from mail_template.yaml"""
+    try:
+        import yaml
+        with open('config/mail_template.yaml', 'r') as f:
+            config = yaml.safe_load(f)
+        return config.get('paul_todo_config', {})
+    except Exception as e:
+        print(f'  ⚠️  Warning: Could not load Paul TODO config: {e}')
+        # Fallback to default values
+        return {
+            'user_id': 'U04N9LTR47M',
+            'additional_patterns': ['paul', 'pacaramu']
+        }
+
+
 def collect_team_data(team: str) -> Dict[str, Any]:
     """Collect Slack and Jira data for a team with per-channel summaries and organized tickets"""
     print(f'📊 Collecting data for team: {team.upper()}')
@@ -212,6 +231,9 @@ def collect_team_data(team: str) -> Dict[str, Any]:
     time_ranges = _load_time_ranges_config()
     slack_config = time_ranges.get('slack', {})
     jira_config = time_ranges.get('jira', {})
+    
+    # Load Paul TODO detection configuration
+    paul_todo_config = _load_paul_todo_config()
     
     # Initialize data structure
     team_data = {
@@ -223,7 +245,8 @@ def collect_team_data(team: str) -> Dict[str, Any]:
         },
         'total_messages': 0,
         'total_tickets': 0,
-        'time_ranges': time_ranges  # Include config for template use
+        'time_ranges': time_ranges,  # Include config for template use
+        'paul_todo_config': paul_todo_config  # Include Paul TODO config
     }
     
     # Collect Slack data per channel
@@ -465,20 +488,12 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
                 
                 # Create AI prompt for channel
                 prompts = _load_gemini_prompts()
-                prompt_template = prompts.get('slack_channel_analysis', """
-                Analyze the last {activity_days} days of activity in the Slack channel "{channel_name}" for the {team} team.
+                prompt_template = prompts.get('slack_channel_analysis')
                 
-                Recent Messages ({message_count} messages):
-                {messages}
-                
-                Please provide a concise summary (2-3 sentences) covering:
-                1. Main topics and discussions
-                2. Key decisions or updates
-                3. Any blockers or issues
-                4. Team collaboration patterns
-                
-                Focus on actionable insights and important developments.
-                """)
+                if not prompt_template:
+                    print(f'  ⚠️  slack_channel_analysis prompt not found in gemini.yaml, skipping AI analysis')
+                    channel_summaries[channel_name] = "AI prompt configuration missing"
+                    continue
                 
                 prompt = prompt_template.format(
                     activity_days=slack_config.get('channel_activity_days', 7),
@@ -520,23 +535,12 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
             tickets_for_ai = all_tickets[:max_tickets_for_ai]
             
             prompts = _load_gemini_prompts()
-            prompt_template = prompts.get('team_executive_summary', """
-            Provide an executive summary for the {team} team based on the last {activity_days} days of activity:
+            prompt_template = prompts.get('team_executive_summary')
             
-            Team Activity Overview:
-            - {total_messages} messages across {channel_count} channels
-            - {ticket_count} active Jira tickets (analyzing most recent {max_tickets})
-            
-            Channel Summaries:
-            {channel_summaries}
-            
-            Please provide a high-level summary (2-3 sentences) covering:
-            1. Overall team productivity and focus areas
-            2. Key accomplishments or milestones
-            3. Any concerns or areas needing attention
-            
-            Keep it concise and executive-friendly.
-            """)
+            if not prompt_template:
+                print(f'  ⚠️  team_executive_summary prompt not found in gemini.yaml')
+                channel_summaries['overall'] = "Executive summary unavailable - prompt configuration missing"
+                return channel_summaries
             
             overall_prompt = prompt_template.format(
                 team=team_data["team"],
@@ -563,14 +567,26 @@ def generate_ai_analysis(team_data: Dict[str, Any]) -> Dict[str, str]:
 
 
 def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_client, gemini_client) -> str:
-    """Generate AI-powered TODO items for Paul Caramuto based on Slack and Jira mentions"""
+    """Generate AI-powered action items for Paul Caramuto based on Slack and Jira mentions"""
     try:
-        print(f'  📝 Generating Paul Caramuto TODO items...')
+        print(f'  📝 Generating Paul Caramuto ACTION items...')
         
         # Load time ranges configuration
         time_ranges = team_data.get('time_ranges', {})
         slack_config = time_ranges.get('slack', {})
         paul_search_days = slack_config.get('paul_todo_search_days', 30)
+        
+        # Load Paul TODO detection configuration
+        paul_config = team_data.get('paul_todo_config', {})
+        paul_user_id = paul_config.get('user_id', 'U04N9LTR47M')
+        additional_patterns = paul_config.get('additional_patterns', ['paul', 'pacaramu'])
+        
+        # Build detection patterns: prioritize Slack mention format
+        detection_patterns = [
+            f'<@{paul_user_id}>',  # Primary: Slack mention format (e.g., <@U04N9LTR47M>)
+        ] + additional_patterns  # Fallback: plain text patterns
+        
+        print(f'  🔍 Using detection patterns: Slack mention <@{paul_user_id}>, text patterns: {additional_patterns}')
         
         # Collect Slack messages mentioning Paul (configurable days back from latest message)
         paul_slack_content = []
@@ -613,9 +629,12 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                             timestamp = float(msg.get('ts', '0'))
                             msg_date = datetime.fromtimestamp(timestamp)
                             if msg_date >= search_cutoff:
-                                # Check if message mentions Paul
+                                # Check if message mentions Paul using configured patterns
                                 text = msg.get('text', '')
-                                if any(mention in text.lower() for mention in ['paul', 'pacaramu', '@paul', '@pacaramu']):
+                                text_lower = text.lower()
+                                
+                                # Check for Slack mention format (case-sensitive) or plain text patterns (case-insensitive)
+                                if f'<@{paul_user_id}>' in text or any(pattern.lower() in text_lower for pattern in additional_patterns):
                                     paul_messages.append({
                                         'text': text,
                                         'user': msg.get('user', 'Unknown'),
@@ -665,7 +684,8 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                     else:
                         field_value = str(field_value)
                     
-                    if any(mention in field_value.lower() for mention in ['paul', 'pacaramu']):
+                    # Use configured patterns for Jira detection (case-insensitive)
+                    if any(pattern.lower() in field_value.lower() for pattern in additional_patterns):
                         paul_mentioned = True
                         break
                 
@@ -698,22 +718,14 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
                 """
             
             # Generate TODO items using AI
+            # Load prompt from gemini.yaml - NO hardcoded fallback to ensure consistency
             prompts = _load_gemini_prompts()
-            prompt_template = prompts.get('paul_todo_items', """
-            Based on the following Slack conversations and Jira tickets that mention Paul Caramuto, generate a concise TODO list of items that require Paul's attention.
+            prompt_template = prompts.get('paul_todo_items')
             
-            {slack_summary}
-            {jira_summary}
-            
-            Please provide 3-5 specific, actionable TODO items in this format:
-            1. [Priority] Action item description
-            2. [Priority] Action item description
-            3. [Priority] Action item description
-            
-            Use priorities: HIGH, MEDIUM, LOW
-            Focus on items that require Paul's direct action or response.
-            Keep each item concise but specific.
-            """)
+            if not prompt_template:
+                error_msg = "ERROR: 'paul_todo_items' prompt not found in config/gemini.yaml"
+                print(f'  ❌ {error_msg}')
+                return error_msg
             
             todo_prompt = prompt_template.format(
                 slack_summary=slack_summary,
@@ -721,7 +733,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
             )
             
             todo_items = gemini_client.generate_content(todo_prompt)
-            return todo_items if todo_items else "No specific TODO items identified at this time."
+            return todo_items if todo_items else "No specific action items identified at this time."
         
         return f"No mentions of Paul Caramuto found in the last {paul_search_days} days."
         
@@ -790,39 +802,20 @@ def send_email(team: str, email_body: str) -> bool:
 
 
 def _get_sprint_title(team_data: Dict[str, Any]) -> str:
-    """Extract sprint title from team data"""
+    """
+    Extract sprint title from team data.
+    Uses shared sprint utilities for consistency with MCP tools.
+    """
     jira_tickets = team_data.get('jira_tickets', {})
     team_tickets = jira_tickets.get('toolchain', [])
     
     def get_most_common_sprint(tickets):
+        """Get the most common active sprint from tickets"""
         sprint_counts = {}
         for issue in tickets:
             if isinstance(issue, dict):
-                sprint_name = None
-                
-                # Check for customfield_12310940 first (the actual sprint field from Jira)
-                if 'customfield_12310940' in issue:
-                    sprint_data = issue.get('customfield_12310940', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        # Look for the ACTIVE sprint, not just the first one
-                        import re
-                        for sprint_string in sprint_data:
-                            sprint_str = str(sprint_string)
-                            # Check if this sprint is ACTIVE
-                            state_match = re.search(r'state=([^,]+)', sprint_str)
-                            if state_match and state_match.group(1) == 'ACTIVE':
-                                # Extract sprint name from the active sprint
-                                name_match = re.search(r'name=([^,]+)', sprint_str)
-                                if name_match:
-                                    sprint_name = name_match.group(1)
-                                    break
-                        
-                        # If no active sprint found, fall back to first sprint
-                        if not sprint_name:
-                            sprint_string = str(sprint_data[0])
-                            name_match = re.search(r'name=([^,]+)', sprint_string)
-                            if name_match:
-                                sprint_name = name_match.group(1)
+                # Use shared utility function (same as MCP tools)
+                sprint_name, sprint_num = extract_active_sprint_from_issue(issue)
                 
                 if sprint_name and sprint_name != 'Unknown Sprint':
                     sprint_counts[sprint_name] = sprint_counts.get(sprint_name, 0) + 1
@@ -938,19 +931,11 @@ def _generate_ai_jira_summary(team_data: Dict[str, Any], ai_summaries: Dict[str,
         
         # Generate AI analysis for Jira tickets
         prompts = _load_gemini_prompts()
-        prompt_template = prompts.get('jira_analysis', """
-        Analyze the following Jira tickets for the {team} team and provide insights:
+        prompt_template = prompts.get('jira_analysis')
         
-        Jira Tickets ({ticket_count} tickets analyzed):
-        {ticket_summaries}
-        
-        Please provide a concise analysis (2-3 sentences) covering:
-        1. Overall ticket status and progress patterns
-        2. Key blockers or issues that need attention
-        3. Team workload distribution and priorities
-        
-        Focus on actionable insights for project management.
-        """)
+        if not prompt_template:
+            print(f'  ⚠️  jira_analysis prompt not found in gemini.yaml')
+            return '<p><em>Jira analysis unavailable - prompt configuration missing</em></p>'
         
         jira_prompt = prompt_template.format(
             team=team_data["team"],
@@ -1011,18 +996,9 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
             if status != 'In Progress':
                 return (2, issue.get('key', ''))  # Lowest priority for non-In Progress
             
-            # Check for active sprint
-            has_active_sprint = False
-            if 'customfield_12310940' in issue:
-                sprint_data = issue.get('customfield_12310940', [])
-                if sprint_data and len(sprint_data) > 0:
-                    import re
-                    for sprint_string in sprint_data:
-                        sprint_str = str(sprint_string)
-                        state_match = re.search(r'state=([^,]+)', sprint_str)
-                        if state_match and state_match.group(1) == 'ACTIVE':
-                            has_active_sprint = True
-                            break
+            # Check for active sprint using shared utility
+            sprint_name, sprint_num = extract_active_sprint_from_issue(issue)
+            has_active_sprint = sprint_name is not None
             
             # Determine priority for In Progress tickets
             if has_active_sprint:
@@ -1042,23 +1018,12 @@ def _format_jira_ticket_details(team_data: Dict[str, Any]) -> str:
                 status = issue.get('status', {}).get('name', 'Unknown') if isinstance(issue.get('status'), dict) else str(issue.get('status', 'Unknown'))
                 assignee = issue.get('assignee', {}).get('displayName', 'Unassigned') if isinstance(issue.get('assignee'), dict) else str(issue.get('assignee', 'Unassigned'))
                 
-                # Get sprint information
-                sprint_info = "No Sprint"
-                if 'customfield_12310940' in issue:
-                    sprint_data = issue.get('customfield_12310940', [])
-                    if sprint_data and len(sprint_data) > 0:
-                        import re
-                        for sprint_string in sprint_data:
-                            sprint_str = str(sprint_string)
-                            state_match = re.search(r'state=([^,]+)', sprint_str)
-                            name_match = re.search(r'name=([^,]+)', sprint_str)
-                            if name_match:
-                                sprint_name = name_match.group(1)
-                                if state_match and state_match.group(1) == 'ACTIVE':
-                                    sprint_info = f"🏃 {sprint_name} (Active)"
-                                else:
-                                    sprint_info = f"🏃 {sprint_name}"
-                                break
+                # Get sprint information using shared utility
+                sprint_name, sprint_num = extract_active_sprint_from_issue(issue)
+                if sprint_name:
+                    sprint_info = f"🏃 {sprint_name} (Active)"
+                else:
+                    sprint_info = "No Sprint"
                 
                 tickets_html += f"<p><strong>{key}:</strong> {summary}<br><em>Status: {status} | Assignee: {assignee} | Sprint: {sprint_info}</em></p>"
         
@@ -1159,30 +1124,20 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
         # Generate consolidated AI summary of all TODOs
         print(f'  🤖 Generating consolidated AI summary...')
         prompts = _load_gemini_prompts()
-        prompt_template = prompts.get('paul_consolidated_todo', """
-        Review all TODO items for Paul Caramuto across {team_count} teams and provide a prioritized, consolidated action list.
+        prompt_template = prompts.get('paul_consolidated_todo')
         
-        Team TODO Summaries:
-        {team_todos}
-        
-        Please provide:
-        1. A consolidated, de-duplicated list of 5-7 highest priority action items
-        2. Group similar items together
-        3. Use format: [PRIORITY] Action item - (Related teams: X, Y)
-        4. Priorities: HIGH, MEDIUM, LOW
-        5. Focus on items requiring immediate attention
-        
-        Keep it concise and actionable.
-        """)
-        
-        consolidated_prompt = prompt_template.format(
-            team_count=total_todos,
-            team_todos=chr(10).join([f"Team {team.upper()}: {chr(10)}{data['ai_todos']}" for team, data in all_team_todos.items()])
-        )
-        
-        consolidated_todos_text = gemini_client.generate_content(consolidated_prompt)
-        if not consolidated_todos_text:
-            consolidated_todos_text = "Consolidated TODO analysis not available"
+        if not prompt_template:
+            print(f'  ⚠️  paul_consolidated_todo prompt not found in gemini.yaml')
+            consolidated_todos_text = "Consolidated TODO analysis unavailable - prompt configuration missing"
+        else:
+            consolidated_prompt = prompt_template.format(
+                team_count=total_todos,
+                team_todos=chr(10).join([f"Team {team.upper()}: {chr(10)}{data['ai_todos']}" for team, data in all_team_todos.items()])
+            )
+            
+            consolidated_todos_text = gemini_client.generate_content(consolidated_prompt)
+            if not consolidated_todos_text:
+                consolidated_todos_text = "Consolidated TODO analysis not available"
         
         # Format consolidated TODOs for HTML
         consolidated_todos_html = f"<pre style='white-space: pre-wrap; font-family: monospace; line-height: 1.6;'>{consolidated_todos_text}</pre>"

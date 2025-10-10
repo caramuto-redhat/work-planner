@@ -22,6 +22,15 @@ recipients:
   default: ["pacaramu@redhat.com"]
   email: "pacaramu@redhat.com"
 
+# Paul TODO Detection Configuration
+# Configure user ID and patterns for TODO item detection
+paul_todo_config:
+  user_id: "U04N9LTR47M"  # Paul's Slack user ID (primary detection method)
+  additional_patterns:     # Fallback plain text patterns (case-insensitive)
+    - "paul"
+    - "pacaramu"
+    - "rhn-support-pacaramu"  # Jira user ID (catches assignee/reporter fields)
+
 # Email Templates - Clean format inspired by jira-report-mpc
 templates:
   team_daily_report_with_todo:
