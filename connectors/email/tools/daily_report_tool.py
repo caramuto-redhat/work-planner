@@ -75,14 +75,14 @@ def send_team_daily_report_tool():
             print(f"📡 Initializing Jira client...")
             from connectors.jira.client import JiraClient
             from connectors.jira.config import JiraConfig
-            jira_config = JiraConfig()
-            jira_client = JiraClient(jira_config.get_config())
+            jira_config = JiraConfig.load('config/jira.yaml')
+            jira_client = JiraClient(jira_config)
             
             print(f"📡 Initializing Gemini AI client...")
             from connectors.gemini.client import GeminiClient
             from connectors.gemini.config import GeminiConfig
-            gemini_config = GeminiConfig()
-            gemini_client = GeminiClient(gemini_config.get_config())
+            gemini_config = GeminiConfig.load('config/gemini.yaml')
+            gemini_client = GeminiClient(gemini_config)
             
             # Step 1: Collect team data
             print(f"\n📊 Collecting data for {team} team...")
