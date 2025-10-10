@@ -19,13 +19,13 @@ def register_jira_report_tool(mcp: FastMCP):
     """Register Jira report generation tool"""
     
     @mcp.tool()
-    def generate_jira_team_report(team: str, status_filter: str = "All In Progress") -> str:
+    def generate_jira_team_report(team: str, status_filter: str = None) -> str:
         """
         Generate a comprehensive Jira team report in the style of jira-report-mpc.
         
         Args:
             team: Team name (e.g., 'toolchain', 'foa', 'assessment', 'boa')
-            status_filter: Jira status filter (default: 'All In Progress')
+            status_filter: Jira status filter (default: uses mcp_query_filters.default_status from config)
             
         Returns:
             JSON string with formatted report data
@@ -34,6 +34,11 @@ def register_jira_report_tool(mcp: FastMCP):
             # Initialize Jira client
             jira_config = JiraConfig.load('config/jira.yaml')
             jira_client = JiraClient(jira_config)
+            
+            # Use config default if status_filter not provided
+            if status_filter is None:
+                mcp_filters = jira_config.get("mcp_query_filters", {})
+                status_filter = mcp_filters.get("default_status")  # No hardcoded default
             
             # Get team issues
             from connectors.jira.tools.get_team_issues import get_team_issues_tool
@@ -114,19 +119,19 @@ def register_jira_report_tool(mcp: FastMCP):
             return create_error_response("Failed to generate Jira team report", str(e))
     
     @mcp.tool()
-    def generate_detailed_jira_report(team: str, status_filter: str = "All In Progress") -> str:
+    def generate_detailed_jira_report(team: str, status_filter: str = None) -> str:
         """
         Generate a detailed Jira report with individual ticket details.
         
         Args:
             team: Team name
-            status_filter: Jira status filter
+            status_filter: Jira status filter (default: uses mcp_query_filters.default_status from config)
             
         Returns:
             JSON string with detailed report
         """
         try:
-            # Get basic report first
+            # Get basic report first (it will handle None default)
             basic_report = generate_jira_team_report(team, status_filter)
             basic_data = json.loads(basic_report)
             
@@ -193,8 +198,8 @@ def register_jira_report_tool(mcp: FastMCP):
             JSON string with executive summary
         """
         try:
-            # Get team issues
-            team_report = generate_jira_team_report(team, "All In Progress")
+            # Get team issues (uses default from config)
+            team_report = generate_jira_team_report(team, None)
             team_data = json.loads(team_report)
             
             if not team_data.get('success'):

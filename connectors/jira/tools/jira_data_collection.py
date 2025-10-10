@@ -5,6 +5,7 @@ Functions for collecting and storing Jira data for AI analysis
 
 from utils.responses import create_error_response, create_success_response
 from utils.validators import validate_team_name
+from utils.sprint_helpers import filter_issues_by_latest_sprint
 from ..client import JiraClient
 from ..config import JiraConfig
 import os
@@ -26,17 +27,27 @@ def dump_jira_team_data_tool(client, config):
             jira_config = JiraConfig.load("config/jira.yaml")
             jira_client = JiraClient(jira_config)
             
-            # Build JQL query based on team and filter
-            jql_query = _build_jql_query(validated_team, tickets_filter)
+            # Build JQL query based on team and filter (pass config for mcp_query_filters)
+            jql_query = _build_jql_query(validated_team, tickets_filter, jira_config)
             
             # Get issues from Jira
             issues = jira_client.search_issues(jql_query)
+            
+            # Apply latest sprint filter if enabled
+            filter_to_latest_sprint = jira_config.get("mcp_query_filters", {}).get("filter_to_latest_sprint", False)
+            latest_sprint_num = None
+            original_count = len(issues)
+            if filter_to_latest_sprint and issues:
+                issues, latest_sprint_num = filter_issues_by_latest_sprint(issues)
             
             if not issues:
                 return create_success_response({
                     "team": validated_team,
                     "filter": tickets_filter,
                     "issues_found": 0,
+                    "original_count": original_count,
+                    "filtered_to_sprint": latest_sprint_num,
+                    "sprint_filter_applied": filter_to_latest_sprint,
                     "message": f"No issues found for team '{validated_team}' with filter '{tickets_filter}'"
                 })
             
@@ -56,6 +67,9 @@ def dump_jira_team_data_tool(client, config):
                 f.write(f"# Filter: {tickets_filter}\n")
                 f.write(f"# Generated: {datetime.now().isoformat()}\n")
                 f.write(f"# Total Issues: {len(issues)}\n")
+                if filter_to_latest_sprint and latest_sprint_num:
+                    f.write(f"# Filtered to Sprint: {latest_sprint_num}\n")
+                    f.write(f"# Original Count (before sprint filter): {original_count}\n")
                 f.write(f"# JQL Query: {jql_query}\n\n")
                 
                 for issue in issues:
@@ -76,6 +90,9 @@ def dump_jira_team_data_tool(client, config):
                     "filter": tickets_filter,
                     "generated": datetime.now().isoformat(),
                     "total_issues": len(issues),
+                    "original_count": original_count,
+                    "filtered_to_sprint": latest_sprint_num,
+                    "sprint_filter_applied": filter_to_latest_sprint,
                     "jql_query": jql_query,
                     "issues": issues_data
                 }, f, indent=2, ensure_ascii=False)
@@ -83,7 +100,10 @@ def dump_jira_team_data_tool(client, config):
             return create_success_response({
                 "team": validated_team,
                 "filter": tickets_filter,
-                "issues_found": len( issues),
+                "issues_found": len(issues),
+                "original_count": original_count,
+                "filtered_to_sprint": latest_sprint_num,
+                "sprint_filter_applied": filter_to_latest_sprint,
                 "file_path": filepath,
                 "filename": filename,
                 "json_file_path": json_filepath,
@@ -99,35 +119,64 @@ def dump_jira_team_data_tool(client, config):
     return dump_jira_team_data
 
 
-def _build_jql_query(team: str, tickets_filter: str) -> str:
+def _build_jql_query(team: str, tickets_filter: str, config: Dict[str, Any]) -> str:
     """Build JQL query based on team and filter"""
+    # Get MCP query filters configuration
+    mcp_filters = config.get("mcp_query_filters", {})
+    all_statuses = mcp_filters.get("all_statuses")  # No hardcoded default
+    order_by = mcp_filters.get("order_by", "updated DESC")
+    additional_jql = mcp_filters.get("additional_jql", "")
+    
     # Base query for automotive project
     base_jql = 'project = "Automotive Feature Teams"'
     
     # Add status filter
+    status_filter = None
     if "in progress" in tickets_filter.lower():
         status_filter = 'statusCategory = "In Progress"'
     elif "completed" in tickets_filter.lower():
         status_filter = 'statusCategory = "Done"'
     elif "blocked" in tickets_filter.lower():
         status_filter = 'status = "Blocked"'
+    elif "all" in tickets_filter.lower():
+        # Use configured all_statuses from mcp_query_filters if available
+        if all_statuses and len(all_statuses) > 0:
+            status_list = '", "'.join(all_statuses)
+            status_filter = f'status IN ("{status_list}")'
+        # else: no status filter when all_statuses is empty/commented
     else:
         # Default to all status
         status_filter = 'statusCategory IN ("To Do", "In Progress", "Done")'
     
-    # Map team names to their actual AssignedTeam field values
-    team_mapping = {
-        "toolchain": "rhivos-pdr-auto-toolchain",
-        "foa": "rhivos-pdr-auto-foa", 
-        "assessment": "rhivos-pdr-auto-assessment",
-        "boa": "rhivos-pdr-auto-boa"
-    }
+    # Get team config to find assigned_team
+    team_config = config.get("teams", {}).get(team, {})
+    assigned_team = team_config.get("assigned_team")
     
-    # Get the actual team identifier
-    assigned_team = team_mapping.get(team, f"{team}-team")
+    if not assigned_team:
+        # Fallback to old mapping if assigned_team not found
+        team_mapping = {
+            "toolchain": "rhivos-pdr-auto-toolchain",
+            "foa": "rhivos-fusa-foa", 
+            "assessment": "rhivos-fusa-assessment",
+            "boa": "rhivos-pdr-base-os-automotive"
+        }
+        assigned_team = team_mapping.get(team, f"{team}-team")
+    
     team_filter = f'AND "AssignedTeam" = "{assigned_team}"'
     
-    return f"{base_jql} AND {status_filter} {team_filter} ORDER BY updatedDate DESC"
+    # Build final JQL
+    jql = base_jql
+    if status_filter:
+        jql += f' AND {status_filter}'
+    jql += f' {team_filter}'
+    
+    # Add additional JQL filter if configured
+    if additional_jql:
+        jql += f' {additional_jql}'
+    
+    jql += f' ORDER BY {order_by}'
+    
+    return jql
 
 
 def _write_issue_details(file, issue):

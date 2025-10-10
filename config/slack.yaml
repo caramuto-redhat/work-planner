@@ -161,7 +161,7 @@ user_display_names:
   "U05ST6V6HDY": "John Smith"  # Assessment team member  
   "U9AA9E30B": "Jane Doe"      # Assessment team member
   "U06SS4RC5H7": "Bob Johnson" # Assessment team member
-
+  "U02F97ACPN2": "Jeff Bastian" # Boa team member
 # Unknown Users - Manual mapping required
 # Add real names when discovered, organize by channel and activity date
 unknown_users:
@@ -242,3 +242,4 @@ unknown_users:
   "USLACKBOT": "User USLACKBOT"  # team-toolchain-automotive - 172 messages - 2024-09-28
   "USRS4HYUS": "User USRS4HYUS"  # team-toolchain-automotive - 27 messages - 2024-09-28
   "UUFS0HRTR": "User UUFS0HRTR"  # team-toolchain-automotive - 2 messages - 2024-09-28
+ 

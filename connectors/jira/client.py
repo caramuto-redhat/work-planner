@@ -107,7 +107,11 @@ class JiraClient:
     
     def build_jql(self, project: str, status: str, assignees: list = None) -> str:
         """Build JQL query for project, status, and optional assignees"""
-        jql = f'project = "{project}" AND statusCategory = "{status}"'
+        jql = f'project = "{project}"'
+        
+        # Only add status filter if status is provided
+        if status:
+            jql += f' AND statusCategory = "{status}"'
         
         if assignees and len(assignees) > 0:
             assignee_list = ' OR '.join([f'assignee = "{assignee}"' for assignee in assignees])

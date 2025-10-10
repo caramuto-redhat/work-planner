@@ -47,22 +47,17 @@ prompts:
     
     Keep it concise and executive-friendly.
   
-  # Paul's TODO items from team data
+  # Paul's actions items from team data
   paul_todo_items: |
-    Based on the following Slack conversations and Jira tickets that mention Paul Caramuto, generate a concise TODO list of items that require Paul's attention.
+    Based on the following Slack conversations and Jira tickets that mention Paul Caramuto, generate a list of suggested action items that require Paul's attention.
     
     {slack_summary}
     {jira_summary}
     
-    Please provide 3-5 specific, actionable TODO items in this format:
-    1. [Priority] Action item description
-    2. [Priority] Action item description
-    3. [Priority] Action item description
-    
-    Use priorities: HIGH, MEDIUM, LOW
-    Focus on items that require Paul's direct action or response.
-    Keep each item concise but specific.
-  
+    Please provide actionable action items that require Paul's direct action or response.
+    Keep each item concise but specific in this format:
+    - Slack channel <channel_name>: <action item>
+    - Jira ticket <ticket_key>: <action item>
   # Jira tickets analysis
   jira_analysis: |
     Analyze the following Jira tickets for the {team} team and provide insights:
