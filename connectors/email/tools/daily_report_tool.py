@@ -84,9 +84,9 @@ def send_team_daily_report_tool():
             gemini_config = GeminiConfig.load('config/gemini.yaml')
             gemini_client = GeminiClient(gemini_config)
             
-            # Step 1: Collect team data
+            # Step 1: Collect team data (pass pre-initialized clients)
             print(f"\n📊 Collecting data for {team} team...")
-            team_data = collect_team_data(team)
+            team_data = collect_team_data(team, slack_client, jira_client)
             
             channels_count = len(team_data.get('channels', {}))
             messages_count = team_data.get('total_messages', 0)

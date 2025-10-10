@@ -224,14 +224,20 @@ def _load_paul_todo_config():
         }
 
 
-def collect_team_data(team: str) -> Dict[str, Any]:
-    """Collect Slack and Jira data for a team with per-channel summaries and organized tickets"""
+def collect_team_data(team: str, slack_client=None, jira_client=None) -> Dict[str, Any]:
+    """Collect Slack and Jira data for a team with per-channel summaries and organized tickets
+    
+    Args:
+        team: Team name
+        slack_client: Optional pre-initialized SlackClient (if None, will create new one)
+        jira_client: Optional pre-initialized JiraClient (if None, will create new one)
+    """
     print(f'📊 Collecting data for team: {team.upper()}')
     
     # Load time ranges configuration
     time_ranges = _load_time_ranges_config()
-    slack_config = time_ranges.get('slack', {})
-    jira_config = time_ranges.get('jira', {})
+    slack_config_dict = time_ranges.get('slack', {})
+    jira_config_dict = time_ranges.get('jira', {})
     
     # Load Paul TODO detection configuration
     paul_todo_config = _load_paul_todo_config()
@@ -253,21 +259,20 @@ def collect_team_data(team: str) -> Dict[str, Any]:
     # Collect Slack data per channel
     try:
         print(f'  📱 Collecting Slack data...')
-        from connectors.slack.client import SlackClient
-        from connectors.slack.config import SlackConfig
         
-        # Check if environment variables are available
-        import os
-        slack_token = os.getenv('SLACK_XOXC_TOKEN')
-        if slack_token:
-            print(f'  ✅ Slack tokens available (token length: {len(slack_token)})')
+        # Use provided client or create new one
+        if slack_client is None:
+            from connectors.slack.client import SlackClient
+            from connectors.slack.config import SlackConfig
+            print(f'  📱 Creating new Slack client...')
+            slack_config = SlackConfig.load('config/slack.yaml')
+            slack_client = SlackClient(slack_config)
         else:
-            print(f'  ❌ SLACK_XOXC_TOKEN not found in environment')
-            raise RuntimeError("Slack tokens not available - cannot collect Slack data")
+            print(f'  📱 Using provided Slack client...')
+            from connectors.slack.config import SlackConfig
+            slack_config = SlackConfig.load('config/slack.yaml')
         
-        slack_config = SlackConfig.load('config/slack.yaml')
-        slack_client = SlackClient(slack_config)
-        print(f'  ✅ Slack client initialized successfully')
+        print(f'  ✅ Slack client ready')
         
         # Find team channels - map channel IDs to descriptive names
         slack_channels = slack_config.get('slack_channels', {})
@@ -376,11 +381,20 @@ def collect_team_data(team: str) -> Dict[str, Any]:
     # Collect Jira data organized by team vs SP organization
     try:
         print(f'  🎫 Collecting Jira data...')
-        from connectors.jira.client import JiraClient
-        from connectors.jira.config import JiraConfig
         
-        jira_config = JiraConfig.load('config/jira.yaml')
-        jira_client = JiraClient(jira_config)
+        # Use provided client or create new one
+        if jira_client is None:
+            from connectors.jira.client import JiraClient
+            from connectors.jira.config import JiraConfig
+            print(f'  🎫 Creating new Jira client...')
+            jira_config = JiraConfig.load('config/jira.yaml')
+            jira_client = JiraClient(jira_config)
+        else:
+            print(f'  🎫 Using provided Jira client...')
+            from connectors.jira.config import JiraConfig
+            jira_config = JiraConfig.load('config/jira.yaml')
+        
+        print(f'  ✅ Jira client ready')
         
         # Toolchain team tickets
         teams_config = jira_config.get('teams', {})
