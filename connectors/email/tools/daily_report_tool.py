@@ -35,19 +35,24 @@ def send_team_daily_report_tool():
             print(f"📍 Running from: {os.getcwd()}")
             
             # Import the GitHub Actions workflow script
-            sys.path.insert(0, os.path.join(os.getcwd(), '.github', 'workflows', 'scripts'))
+            script_path = os.path.join(os.getcwd(), '.github', 'workflows', 'scripts')
+            if script_path not in sys.path:
+                sys.path.insert(0, script_path)
+            
+            print(f"📍 Script path: {script_path}")
+            print(f"📍 Checking if github_daily_report.py exists: {os.path.exists(os.path.join(script_path, 'github_daily_report.py'))}")
             
             try:
-                from github_daily_report import (
-                    collect_team_data,
-                    generate_ai_analysis,
-                    generate_paul_todo_items,
-                    send_team_email
-                )
+                import github_daily_report
+                collect_team_data = github_daily_report.collect_team_data
+                generate_ai_analysis = github_daily_report.generate_ai_analysis
+                generate_paul_todo_items = github_daily_report.generate_paul_todo_items
+                send_team_email = github_daily_report.send_team_email
             except ImportError as e:
+                import traceback
                 return create_error_response(
                     "Failed to import GitHub Actions workflow",
-                    f"Could not import github_daily_report.py: {e}"
+                    f"Could not import github_daily_report.py: {e}\n{traceback.format_exc()}"
                 )
             
             # Initialize clients (same as GitHub Actions)
