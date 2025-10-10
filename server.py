@@ -119,7 +119,8 @@ try:
     from connectors.email.tools import (
         send_email_tool,
         test_email_connection_tool,
-        get_email_config_tool
+        get_email_config_tool,
+        send_team_daily_report_tool
     )
     
     # Create Email client and config
@@ -130,8 +131,9 @@ try:
     mcp.tool()(send_email_tool(email_client, email_config.get_config()))
     mcp.tool()(test_email_connection_tool(email_client, email_config.get_config()))
     mcp.tool()(get_email_config_tool(email_client, email_config.get_config()))
+    mcp.tool()(send_team_daily_report_tool())  # NEW: GitHub Actions workflow wrapper
     
-    print("✅ Registered Email connector with 3 tools (send_email, test_email_connection, get_email_config)")
+    print("✅ Registered Email connector with 4 tools (send_email, test_email_connection, get_email_config, send_team_daily_report)")
 except Exception as e:
     print(f"❌ Failed to register Email connector: {e}")
 
@@ -148,10 +150,10 @@ def list_available_tools() -> str:
             "dump_slack_data", "read_slack_data", "search_slack_data",
             "list_slack_channels", "list_slack_dumps",
             "analyze_jira_data", "generate_email_summary", "custom_ai_analysis", "ai_summary",
-            "send_email", "test_email_connection", "get_email_config",
+            "send_email", "test_email_connection", "get_email_config", "send_team_daily_report",
             "list_available_tools"
         ],
-        "total_tools": 20  # Removed 3 broken email tools
+        "total_tools": 21  # Removed 3 broken, added 1 new (send_team_daily_report)
     })
 
 if __name__ == "__main__":
