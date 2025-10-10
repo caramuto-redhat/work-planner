@@ -594,7 +594,7 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
         
         for channel_name, channel_data in channels.items():
             channel_id = channel_data.get('channel_id')
-            messages = channel_data.get('recent_messages', [])
+            messages = channel_data.get('messages', [])
             
             if not channel_id or not messages:
                 continue
