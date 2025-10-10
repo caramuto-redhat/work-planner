@@ -97,13 +97,60 @@ query_filters:
   # Status filter for team tickets
   # List statuses to include in reports
   statuses:
-    - "In Progress"
     - "To Do"
-    - "In Review"
+    - "In Progress"
+    - "Review"
+  #  - "Done"
+  #  - "Blocked"
+  #  - "Code Review"
   
-  # Sort order for query results
-  order_by: "updated DESC"
+  # Sort by sprint, then priority
+  order_by: "priority DESC, updated DESC"
+  
+  # Only show tickets in active sprints
+  additional_jql: 'AND sprint in openSprints()'
   
   # Optional: Additional JQL filter fragments
   # additional_jql: 'AND priority in (High, Highest)'
   # additional_jql: 'AND labels in (critical, urgent)'
+  # additional_jql: 'AND sprint = "Sprint 24"'
+
+# Query Filters Configuration for MCP Servers
+# Controls default filtering behavior for MCP tool queries
+mcp_query_filters:
+  # Default status filter for MCP tools
+  # If empty/commented, uses MCP tool's hardcoded defaults
+  # default_status: "In Progress"
+  
+  # List of statuses to include when using "All" filters
+  # Used by tools like dump_jira_team_data with "All In Progress" filter
+  # When set, this becomes the default status filter for MCP tools
+  # IMPORTANT: Use Jira statusCategory values: "To Do", "In Progress", or "Done"
+  # Recommended: Include only active work statuses to avoid slow queries
+  all_statuses:
+   - "To Do"
+   - "In Progress"
+   - "Review"
+  #  - "Done"  # Uncomment to include completed tickets
+  
+  # Default sort order for MCP queries
+  order_by: "updated DESC"
+  
+  # Maximum number of results to return from Jira
+  # Important: Set high enough to capture all tickets when filtering by latest sprint
+  # Without status filters, you might have 200+ tickets
+  max_results: 200
+  
+  # Additional JQL filter to apply to all MCP queries
+  # Leave empty for no additional filtering
+  additional_jql: 'AND sprint in openSprints()'
+  
+  # Filter to only the latest sprint when multiple open sprints exist
+  # When true, post-processes results to keep only tickets from the highest sprint number
+  filter_to_latest_sprint: true
+  
+  # Optional: Uncomment to filter by sprint
+  # additional_jql: 'AND sprint in openSprints()'
+  
+  # Optional: Uncomment to filter by priority
+  # additional_jql: 'AND priority in (High, Highest)'
