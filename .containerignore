@@ -3,7 +3,7 @@
 __pycache__
 *.pyc
 slack_dumps_parsed/
-.github/
+.github/workflows/daily-team-report.yml
 *.md
 .git/
 .gitignore
