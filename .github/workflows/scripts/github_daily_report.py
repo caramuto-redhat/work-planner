@@ -747,6 +747,92 @@ def generate_paul_todo_items(team_data: Dict[str, Any], slack_client, jira_clien
         return f"TODO generation failed: {str(e)}"
 
 
+def generate_sp_engineer_summaries(team_data: Dict[str, Any], gemini_client) -> str:
+    """Generate AI summaries for each SP engineer showing what they're working on"""
+    try:
+        print(f'  👥 Generating SP Engineer action summaries...')
+        
+        # Get SP organization tickets
+        sp_tickets = team_data.get('jira_tickets', {}).get('sp_organization', [])
+        
+        if not sp_tickets:
+            return ""
+        
+        # Group tickets by assignee
+        tickets_by_engineer = {}
+        for ticket in sp_tickets:
+            if isinstance(ticket, dict):
+                assignee_data = ticket.get('assignee', {})
+                if isinstance(assignee_data, dict):
+                    assignee = assignee_data.get('displayName', 'Unassigned')
+                else:
+                    assignee = str(assignee_data) if assignee_data else 'Unassigned'
+                
+                if assignee != 'Unassigned':
+                    if assignee not in tickets_by_engineer:
+                        tickets_by_engineer[assignee] = []
+                    tickets_by_engineer[assignee].append(ticket)
+        
+        if not tickets_by_engineer:
+            return ""
+        
+        # Generate AI summary for each engineer
+        engineer_summaries_html = ""
+        
+        for engineer, tickets in sorted(tickets_by_engineer.items()):
+            print(f'    👤 Analyzing {engineer} ({len(tickets)} tickets)...')
+            
+            # Prepare ticket data for AI
+            ticket_list = []
+            for ticket in tickets:
+                key = ticket.get('key', 'N/A')
+                summary = ticket.get('summary', 'No summary')
+                status = ticket.get('status', {}).get('name', 'Unknown') if isinstance(ticket.get('status'), dict) else str(ticket.get('status', 'Unknown'))
+                ticket_list.append(f"- {key}: {summary} (Status: {status})")
+            
+            # Load AI prompt for SP engineer summary
+            prompts = _load_gemini_prompts()
+            prompt_template = prompts.get('sp_engineer_summary')
+            
+            if not prompt_template:
+                # Inline fallback prompt
+                prompt_template = """
+                Analyze the following Jira tickets for {engineer_name} and provide a brief summary of what they're working on and how they could be supported.
+                
+                Tickets ({ticket_count} in active sprint):
+                {ticket_list}
+                
+                Please provide:
+                1. Brief summary of their current focus (1-2 sentences)
+                2. Potential areas where support might be helpful (1-2 items)
+                
+                Keep it concise and actionable.
+                """
+            
+            prompt = prompt_template.format(
+                engineer_name=engineer,
+                ticket_count=len(tickets),
+                ticket_list=chr(10).join(ticket_list)
+            )
+            
+            summary = gemini_client.generate_content(prompt)
+            
+            if summary:
+                engineer_summaries_html += f"""
+                <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #28a745; background: #f8f9fa; border-radius: 5px;">
+                    <h4 style="margin-top: 0; color: #28a745; font-size: 16px;">👤 {engineer} ({len(tickets)} tickets)</h4>
+                    <div style="line-height: 1.6; color: #333; margin: 10px 0;">{summary}</div>
+                </div>
+                """
+        
+        print(f'  ✅ Generated summaries for {len(tickets_by_engineer)} SP engineers')
+        return engineer_summaries_html
+        
+    except Exception as e:
+        print(f'  ❌ SP Engineer summary generation failed: {e}')
+        return ""
+
+
 # Note: create_email_content function has been removed as email formatting 
 # is now handled by templates in mail_template.yaml
 
@@ -1068,6 +1154,9 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
             
         email_client = EmailClient(config)
         
+        # Generate SP Engineer summaries
+        sp_engineer_summaries = generate_sp_engineer_summaries(team_data, gemini_client)
+        
         # Prepare template data for team_daily_report_with_todo template
         template_data = {
             'team': team.upper(),
@@ -1075,6 +1164,7 @@ def send_team_email(team: str, team_data: Dict[str, Any], ai_summaries: Dict[str
             'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
             'executive_summary': ai_summaries.get('overall', 'AI analysis not available'),
             'paul_todo_items': paul_todo_items,
+            'sp_engineer_summaries': sp_engineer_summaries,
             'slack_channel_details': _format_slack_channel_details(team_data, ai_summaries),
             'ai_jira_summary': _generate_ai_jira_summary(team_data, ai_summaries),
             'sprint_title': _get_sprint_title(team_data),

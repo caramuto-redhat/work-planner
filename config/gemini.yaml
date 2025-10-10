@@ -61,6 +61,20 @@ prompts:
     
     For Slack messages, include the date in parenthesis (use the date provided in the message data).
     Include both items where others are asking Paul to do something, and items where Paul mentioned he would do something.
+  
+  # SP Engineer action items - what they're working on and how to support them
+  sp_engineer_summary: |
+    Analyze the following Jira tickets for {engineer_name} and provide a brief summary of what they're working on and how they could be supported.
+    
+    Tickets ({ticket_count} in active sprint):
+    {ticket_list}
+    
+    Please provide:
+    1. Brief summary of their current focus (1-2 sentences)
+    2. Potential areas where support might be helpful (1-2 actionable items)
+    
+    Keep it concise and actionable. Focus on practical ways to help them succeed.
+  
   # Jira tickets analysis
   jira_analysis: |
     Analyze the following Jira tickets for the {team} team and provide insights:

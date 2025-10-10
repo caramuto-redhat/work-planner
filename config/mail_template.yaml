@@ -52,7 +52,7 @@ templates:
         </div>
         
         <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 25px 0; border-radius: 5px;">
-          <h3 style="margin-top: 0; color: #856404; font-size: 18px;">📝 Paul Caramuto: TODO Items</h3>
+          <h3 style="margin-top: 0; color: #856404; font-size: 18px;">📝 Paul Caramuto: ACTION Items</h3>
           <div style="white-space: pre-line; line-height: 1.8; color: #333; margin: 10px 0;">{paul_todo_items}</div>
         </div>
         
@@ -71,6 +71,16 @@ templates:
             {ai_jira_summary}
           </div>
         </div>
+        
+        {% if sp_engineer_summaries %}
+        <div style="margin: 30px 0;">
+          <h3 style="color: #28a745; border-bottom: 2px solid #28a745; padding-bottom: 8px; font-size: 18px;">👥 SP Engineer Action Items</h3>
+          <p style="color: #666; font-size: 14px; margin: 10px 0;">What each SP engineer is working on and how you can support them</p>
+          <div style="margin: 15px 0;">
+            {sp_engineer_summaries}
+          </div>
+        </div>
+        {% endif %}
         
         <div style="margin: 30px 0;">
           <h3 style="color: #0066cc; border-bottom: 2px solid #0066cc; padding-bottom: 8px; font-size: 18px;">{sprint_title}</h3>
