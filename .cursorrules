@@ -10,7 +10,21 @@
 - **ONLY** modify the MCP server (`tools` folder) to add new MCP tools
 - **ONLY** use the existing 6 MCP tools for all Jira interactions
 
-### 2. PROJECT STRUCTURE ENFORCEMENT
+### 2. MCP TOOL EXECUTION PRIORITY
+- **ALWAYS** use available MCP tools instead of running Python scripts directly
+- **ONLY** run Python scripts directly if there is NO equivalent MCP tool available
+- **PREFER** MCP tools for:
+  - Sending daily reports (use `send_team_daily_report` tool, NOT `.github/workflows/scripts/github_daily_report.py`)
+  - All Slack operations (use Slack MCP tools)
+  - All Jira operations (use Jira MCP tools)
+  - All email operations (use Email MCP tools)
+  - All Gemini AI operations (use Gemini MCP tools)
+- **BEFORE** running any Python script, check if an MCP tool exists for that functionality
+- **Example**: For daily reports, use the tool rather than running the script:
+  - ✅ CORRECT: Use `send_team_daily_report` MCP tool
+  - ❌ WRONG: Run `python .github/workflows/scripts/github_daily_report.py`
+
+### 3. PROJECT STRUCTURE ENFORCEMENT
 - **ONLY** these files are allowed in the project root:
   - `server.py` - Main MCP server
   - `jira-config.yaml` - Configuration
@@ -27,7 +41,7 @@
 - **NEVER** add new Python files outside of the tools folder
 - **NEVER** create additional subdirectories beyond tools/
 
-### 3. CODE MODIFICATION RULES
+### 4. CODE MODIFICATION RULES
 - **ONLY** modify files in the `tools/` folder to:
   - Add new MCP tools (using `@mcp.tool()` decorator)
   - Improve existing MCP tool functionality
@@ -41,7 +55,7 @@
   - Testing or debugging code in production files
   - Import statements for non-MCP related libraries
 
-### 4. MCP TOOL REQUIREMENTS
+### 5. MCP TOOL REQUIREMENTS
 - All new MCP tools must:
   - Use the `@mcp.tool()` decorator
   - Return JSON-formatted responses
@@ -49,13 +63,13 @@
   - Follow the existing naming convention
   - Be documented in the README.md
 
-### 5. CONTAINER-FIRST APPROACH
+### 6. CONTAINER-FIRST APPROACH
 - **NEVER** add development dependencies or testing tools
 - **NEVER** create local development scripts
 - **ONLY** modify files that are part of the production container
 - **MAINTAIN** the clean, minimal container design
 
-### 6. DOCUMENTATION REQUIREMENTS
+### 7. DOCUMENTATION REQUIREMENTS
 - **ALWAYS** update README.md when adding new MCP tools
 - **ALWAYS** document new configuration options
 - **NEVER** remove existing documentation without replacement
