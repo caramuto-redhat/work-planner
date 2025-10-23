@@ -27,6 +27,8 @@ imap:
       - "[Newsletter]"
       - "Unsubscribe"
       - "Marketing"
+      - "Consolidated TODO List"  # Exclude emails sent by this work-planner repo
+      - "Team Daily Report"  # Exclude team daily reports sent by this repo
     
     # Only check unread emails by default
     unread_only: false
