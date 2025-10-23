@@ -1257,10 +1257,13 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
             
         email_client = EmailClient(config)
         
+        # Filter out metadata keys (those starting with '_')
+        team_todos_only = {k: v for k, v in all_team_todos.items() if not k.startswith('_')}
+        
         # Calculate summary statistics
-        total_todos = len(all_team_todos)
-        total_slack_mentions = sum(data['slack_mentions_count'] for data in all_team_todos.values())
-        total_jira_mentions = sum(data['jira_mentions_count'] for data in all_team_todos.values())
+        total_todos = len(team_todos_only)
+        total_slack_mentions = sum(data['slack_mentions_count'] for data in team_todos_only.values())
+        total_jira_mentions = sum(data['jira_mentions_count'] for data in team_todos_only.values())
         
         # Generate consolidated AI summary of all TODOs
         print(f'  🤖 Generating consolidated AI summary...')
@@ -1273,7 +1276,7 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
         else:
             consolidated_prompt = prompt_template.format(
                 team_count=total_todos,
-                team_todos=chr(10).join([f"Team {team.upper()}: {chr(10)}{data['ai_todos']}" for team, data in all_team_todos.items()])
+                team_todos=chr(10).join([f"Team {team.upper()}: {chr(10)}{data['ai_todos']}" for team, data in team_todos_only.items()])
             )
             
             consolidated_todos_text = gemini_client.generate_content(consolidated_prompt)
@@ -1283,9 +1286,9 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
         # Format consolidated TODOs for HTML
         consolidated_todos_html = f"<pre style='white-space: pre-wrap; font-family: monospace; line-height: 1.6;'>{consolidated_todos_text}</pre>"
         
-        # Format TODOs by team
+        # Format TODOs by team (exclude metadata keys)
         todos_by_team_html = ""
-        for team, data in all_team_todos.items():
+        for team, data in team_todos_only.items():
             todos_by_team_html += f"""
             <div style="margin: 20px 0; padding: 20px; border: 1px solid #dee2e6; border-radius: 5px; background: #ffffff;">
                 <h4 style="margin-top: 0; color: #007acc;">🔧 {team.upper()} Team</h4>
@@ -1310,7 +1313,7 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
             'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
             'search_days': search_days,
             'total_todos': total_todos,
-            'teams_count': len([k for k in all_team_todos.keys() if not k.startswith('_')]),  # Exclude metadata keys
+            'teams_count': len(team_todos_only),  # Use filtered dictionary
             'slack_mentions_count': total_slack_mentions,
             'jira_mentions_count': total_jira_mentions,
             'email_todos_count': email_todos_count,
