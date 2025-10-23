@@ -1300,17 +1300,21 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
         slack_config = time_ranges.get('slack', {})
         search_days = slack_config.get('paul_todo_search_days', 30)
         
+        # Get email TODOs data (passed as parameter)
+        email_todos_count = all_team_todos.get('_email_todos_count', 0)
+        email_action_items = all_team_todos.get('_email_action_items', '<p style="color: #666; font-style: italic;">Email TODO extraction not enabled.</p>')
+        
         # Prepare template data
         template_data = {
             'date': datetime.now().strftime('%Y-%m-%d'),
             'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
             'search_days': search_days,
             'total_todos': total_todos,
-            'teams_count': len(all_team_todos),
+            'teams_count': len([k for k in all_team_todos.keys() if not k.startswith('_')]),  # Exclude metadata keys
             'slack_mentions_count': total_slack_mentions,
             'jira_mentions_count': total_jira_mentions,
-            'email_todos_count': 0,  # Default for GitHub Actions (email extraction not enabled)
-            'email_action_items': '<p style="color: #666; font-style: italic;">Email TODO extraction not enabled in GitHub Actions workflow.</p>',
+            'email_todos_count': email_todos_count,
+            'email_action_items': email_action_items,
             'consolidated_todos': consolidated_todos_html,
             'todos_by_team': todos_by_team_html
         }
@@ -1336,6 +1340,102 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
         return False
 
 
+def extract_email_todos_for_github(gemini_client, time_ranges: Dict) -> tuple:
+    """Extract email TODOs for GitHub Actions workflow"""
+    try:
+        print('\n📧 Extracting Email TODOs...')
+        from connectors.email.config import EmailConfig
+        from connectors.email.tools.inbox_tools import extract_email_todos_tool
+        
+        # Initialize email config
+        email_config = EmailConfig()
+        
+        # Get configurable search days
+        slack_config = time_ranges.get('slack', {})
+        search_days = slack_config.get('paul_todo_search_days', 30)
+        
+        # Get Gemini config as dict
+        gemini_config_dict = gemini_client.config if hasattr(gemini_client, 'config') else {}
+        
+        # Create email extraction tool
+        email_tool = extract_email_todos_tool(email_config, gemini_config_dict)
+        
+        # Extract TODOs
+        print(f'  📧 Analyzing inbox (last {search_days} days)...')
+        result = email_tool(days_back=search_days)
+        
+        # Parse result
+        import json
+        data = json.loads(result)
+        
+        todos = data.get('todos', [])
+        emails_analyzed = data.get('emails_analyzed', 0)
+        
+        print(f'  ✅ Email extraction complete: {len(todos)} TODOs from {emails_analyzed} emails')
+        
+        # Format TODOs for HTML display
+        if todos:
+            email_todos_html = '<div style="margin: 10px 0;">'
+            
+            # Group by urgency
+            urgency_groups = {'critical': [], 'high': [], 'medium': [], 'low': []}
+            for todo in todos:
+                urgency = todo.get('urgency', 'low')
+                if urgency in urgency_groups:
+                    urgency_groups[urgency].append(todo)
+            
+            # Display by urgency
+            urgency_colors = {
+                'critical': '#dc3545',
+                'high': '#fd7e14',
+                'medium': '#ffc107',
+                'low': '#28a745'
+            }
+            
+            urgency_icons = {
+                'critical': '🔴',
+                'high': '🟠',
+                'medium': '🟡',
+                'low': '🟢'
+            }
+            
+            for urgency in ['critical', 'high', 'medium', 'low']:
+                urgency_todos = urgency_groups[urgency]
+                if urgency_todos:
+                    email_todos_html += f'<h4 style="color: {urgency_colors[urgency]}; margin-top: 15px;">{urgency_icons[urgency]} {urgency.upper()} Priority ({len(urgency_todos)} items)</h4>'
+                    
+                    for todo in urgency_todos[:10]:  # Limit to 10 per urgency
+                        desc = todo.get('description', 'No description')
+                        deadline = todo.get('deadline') or 'No deadline'
+                        confidence = float(todo.get('confidence', 0))
+                        metadata = todo.get('metadata', {})
+                        from_email = metadata.get('from', 'Unknown')
+                        subject = metadata.get('subject', 'No subject')
+                        
+                        email_todos_html += f'''
+                        <div style="margin: 10px 0; padding: 10px; border-left: 3px solid {urgency_colors[urgency]}; background: #f8f9fa;">
+                            <p style="margin: 5px 0;"><strong>{desc}</strong></p>
+                            <p style="margin: 5px 0; font-size: 12px; color: #666;">
+                                📅 Deadline: {deadline} | 📈 Confidence: {confidence:.2f}<br>
+                                📧 From: {from_email[:50]}<br>
+                                📝 Subject: {subject[:60]}
+                            </p>
+                        </div>
+                        '''
+            
+            email_todos_html += '</div>'
+        else:
+            email_todos_html = '<p style="color: #666; font-style: italic;">No actionable email TODOs found in the specified time period.</p>'
+        
+        return len(todos), email_todos_html
+        
+    except Exception as e:
+        print(f'  ❌ Email TODO extraction failed: {e}')
+        import traceback
+        traceback.print_exc()
+        return 0, '<p style="color: #dc3545; font-style: italic;">Email TODO extraction failed. Check logs for details.</p>'
+
+
 def main():
     """Main function for GitHub Actions with enhanced reporting"""
     print('🚀 Starting Enhanced Daily Team Report Generation...')
@@ -1359,9 +1459,14 @@ def main():
     
     teams = ['toolchain', 'foa', 'assessment', 'boa']
     
+    # Load time ranges early for email extraction
+    time_ranges = _load_time_ranges_config()
+    
+    # Extract Email TODOs (once, not per-team)
+    email_todos_count, email_action_items_html = extract_email_todos_for_github(gemini_client, time_ranges)
+    
     # Store Paul's TODO data from all teams
     all_team_todos = {}
-    time_ranges = None
     
     for team in teams:
         print(f'\n📊 Processing team: {team.upper()}')
@@ -1397,6 +1502,10 @@ def main():
         # Send enhanced email with per-channel summaries and Paul TODO (pass pre-generated TODOs)
         send_team_email(team, team_data, ai_summaries, paul_todo_items, slack_client, jira_client, gemini_client)
     
+    # Store email TODOs data for consolidated email (use special keys starting with _)
+    all_team_todos['_email_todos_count'] = email_todos_count
+    all_team_todos['_email_action_items'] = email_action_items_html
+    
     # Send consolidated Paul TODO email
     print('\n📋 Generating consolidated Paul TODO email...')
     send_paul_consolidated_todo_email(all_team_todos, gemini_client, time_ranges or {})
@@ -1404,7 +1513,7 @@ def main():
     print('\n🎉 Enhanced Daily Team Report generation completed!')
     print('📧 Check your email for:')
     print('   - 4 detailed team reports with per-channel summaries and team-specific TODOs')
-    print('   - 1 consolidated Paul TODO email aggregating all teams')
+    print(f'   - 1 consolidated Paul TODO email aggregating all teams + {email_todos_count} email TODOs')
 
 
 if __name__ == '__main__':
