@@ -1,0 +1,39 @@
+Slack Channel Dump
+Channel: #SP-RHIVOS team channel
+Channel ID: C06B9BCD456
+Generated: 2025-10-22 20:05:55
+Total Messages: 5
+================================================================================
+
+Message 1 - 2025-10-01 17:13
+From: Paul Caramuto
+----------------------------------------
+Hi everyone, just a quick reminder to fill out the Google form
+(https://docs.google.com/forms/d/e/1FAIpQLSczeswvXgSvhrE6X1z_3GyKifuIzKec8NVYMilSVSAJjaxTLA/viewform?usp=header)
+for the Q3 Eng AI goal. It only has a few questions about how you used AI, the challenges you ran
+into, and how you plan to use it next quarter
+
+Message 2 - 2025-10-01 17:15
+From: Paul Caramuto
+----------------------------------------
+remember that the deadline set by Rob is Oct 6th
+
+Message 3 - 2025-10-19 19:25
+From: Paul Caramuto
+----------------------------------------
+Hi team, just a quick reminder that the RHAS survey is open until Oct. 21. If you haven’t completed
+it yet, look for the email titled “Red Hat Associate Survey” and use your unique link to submit it.
+have a great day!
+
+Message 4 - 2025-10-19 19:40
+From: Paul Caramuto
+----------------------------------------
+Also, another reminder that Quarterly Connections
+(https://source.redhat.com/career/talent_management#tab-quarterly-connections) will be mass advanced
+to managers on October 24th.
+
+Message 5 - 2025-10-19 19:43
+From: Paul Caramuto
+----------------------------------------
+so please make sure to complete it before then :thank_you_flash:
+

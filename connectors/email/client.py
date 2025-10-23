@@ -1,17 +1,20 @@
 """
 Email Client for Work Planner MCP Server
-Handles email sending, validation, and template rendering
+Handles email sending, validation, and template rendering, and inbox reading via IMAP
 """
 
 import os
 import smtplib
+import imaplib
+import email
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.application import MIMEApplication
 from email import encoders
+from email.header import decode_header
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
 import logging
 
@@ -358,4 +361,260 @@ class EmailClient:
                 'success': False,
                 'error': str(e),
                 'provider': self.provider_config
+            }
+
+
+class InboxReader:
+    """IMAP client for reading emails from inbox"""
+    
+    def __init__(self, imap_config: Dict[str, Any]):
+        """Initialize inbox reader with IMAP configuration"""
+        self.imap_config = imap_config
+        self.filtering_config = imap_config.get('filtering', {})
+        self.connection = None
+    
+    def connect(self) -> bool:
+        """Connect to IMAP server"""
+        try:
+            server = self.imap_config.get('server', 'imap.gmail.com')
+            port = self.imap_config.get('port', 993)
+            security = self.imap_config.get('security', 'ssl')
+            
+            username = os.getenv('EMAIL_USERNAME')
+            password = os.getenv('EMAIL_PASSWORD')
+            
+            if not username or not password:
+                logger.error("Missing EMAIL_USERNAME or EMAIL_PASSWORD environment variables")
+                return False
+            
+            # Connect based on security type
+            if security == 'ssl':
+                self.connection = imaplib.IMAP4_SSL(server, port)
+            else:
+                self.connection = imaplib.IMAP4(server, port)
+                if security == 'tls':
+                    self.connection.starttls()
+            
+            # Login
+            self.connection.login(username, password)
+            logger.info(f"Successfully connected to IMAP server: {server}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to connect to IMAP server: {str(e)}")
+            return False
+    
+    def disconnect(self):
+        """Disconnect from IMAP server"""
+        try:
+            if self.connection:
+                self.connection.logout()
+                logger.info("Disconnected from IMAP server")
+        except Exception as e:
+            logger.warning(f"Error disconnecting from IMAP: {str(e)}")
+    
+    def fetch_emails(self, days_back: int = 30, folder: str = 'INBOX') -> List[Dict[str, Any]]:
+        """
+        Fetch emails from inbox
+        
+        Args:
+            days_back: Number of days to look back
+            folder: IMAP folder to read from
+            
+        Returns:
+            List of email dictionaries with parsed content
+        """
+        try:
+            if not self.connection:
+                if not self.connect():
+                    return []
+            
+            # Select folder
+            self.connection.select(folder, readonly=True)
+            
+            # Calculate date range
+            since_date = (datetime.now() - timedelta(days=days_back)).strftime("%d-%b-%Y")
+            
+            # Search for emails
+            unread_only = self.filtering_config.get('unread_only', False)
+            if unread_only:
+                search_criteria = f'(UNSEEN SINCE {since_date})'
+            else:
+                search_criteria = f'(SINCE {since_date})'
+            
+            status, messages = self.connection.search(None, search_criteria)
+            
+            if status != 'OK':
+                logger.error(f"Failed to search emails: {status}")
+                return []
+            
+            email_ids = messages[0].split()
+            max_emails = self.filtering_config.get('max_emails', 100)
+            
+            # Limit number of emails
+            email_ids = email_ids[-max_emails:] if len(email_ids) > max_emails else email_ids
+            
+            emails = []
+            for email_id in email_ids:
+                email_data = self._fetch_email_by_id(email_id)
+                if email_data and self._should_include_email(email_data):
+                    emails.append(email_data)
+            
+            logger.info(f"Fetched {len(emails)} emails from {folder} (last {days_back} days)")
+            return emails
+            
+        except Exception as e:
+            logger.error(f"Failed to fetch emails: {str(e)}")
+            return []
+    
+    def _fetch_email_by_id(self, email_id: bytes) -> Optional[Dict[str, Any]]:
+        """Fetch and parse a single email by ID"""
+        try:
+            status, msg_data = self.connection.fetch(email_id, '(RFC822)')
+            
+            if status != 'OK':
+                return None
+            
+            # Parse email
+            email_body = msg_data[0][1]
+            email_message = email.message_from_bytes(email_body)
+            
+            # Decode subject
+            subject = self._decode_header(email_message['Subject'])
+            
+            # Get sender
+            from_header = email_message.get('From', '')
+            
+            # Get date
+            date_str = email_message.get('Date', '')
+            email_date = self._parse_date(date_str)
+            
+            # Get body
+            body = self._get_email_body(email_message)
+            
+            return {
+                'id': email_id.decode(),
+                'from': from_header,
+                'subject': subject,
+                'date': email_date,
+                'body': body,
+                'raw_date': date_str
+            }
+            
+        except Exception as e:
+            logger.warning(f"Failed to parse email {email_id}: {str(e)}")
+            return None
+    
+    def _decode_header(self, header: str) -> str:
+        """Decode email header"""
+        if not header:
+            return ''
+        
+        try:
+            decoded_parts = decode_header(header)
+            decoded_str = ''
+            for part, encoding in decoded_parts:
+                if isinstance(part, bytes):
+                    decoded_str += part.decode(encoding or 'utf-8', errors='ignore')
+                else:
+                    decoded_str += part
+            return decoded_str
+        except Exception as e:
+            logger.warning(f"Failed to decode header: {str(e)}")
+            return str(header)
+    
+    def _get_email_body(self, email_message) -> str:
+        """Extract email body (plain text preferred)"""
+        body = ''
+        
+        try:
+            if email_message.is_multipart():
+                for part in email_message.walk():
+                    content_type = part.get_content_type()
+                    content_disposition = str(part.get('Content-Disposition', ''))
+                    
+                    # Skip attachments
+                    if 'attachment' in content_disposition:
+                        continue
+                    
+                    # Get plain text
+                    if content_type == 'text/plain':
+                        try:
+                            payload = part.get_payload(decode=True)
+                            if payload:
+                                body = payload.decode('utf-8', errors='ignore')
+                                break
+                        except Exception as e:
+                            logger.warning(f"Failed to decode email part: {str(e)}")
+                    
+                    # Fall back to HTML if no plain text
+                    elif content_type == 'text/html' and not body:
+                        try:
+                            payload = part.get_payload(decode=True)
+                            if payload:
+                                body = payload.decode('utf-8', errors='ignore')
+                        except Exception as e:
+                            logger.warning(f"Failed to decode HTML part: {str(e)}")
+            else:
+                # Not multipart - get payload directly
+                payload = email_message.get_payload(decode=True)
+                if payload:
+                    body = payload.decode('utf-8', errors='ignore')
+        
+        except Exception as e:
+            logger.error(f"Failed to extract email body: {str(e)}")
+        
+        return body
+    
+    def _parse_date(self, date_str: str) -> str:
+        """Parse email date to ISO format"""
+        try:
+            from email.utils import parsedate_to_datetime
+            dt = parsedate_to_datetime(date_str)
+            return dt.strftime('%Y-%m-%d %H:%M:%S')
+        except Exception as e:
+            logger.warning(f"Failed to parse date '{date_str}': {str(e)}")
+            return date_str
+    
+    def _should_include_email(self, email_data: Dict[str, Any]) -> bool:
+        """Check if email should be included based on filtering rules"""
+        # Check sender exclusions
+        exclude_senders = self.filtering_config.get('exclude_senders', [])
+        sender = email_data.get('from', '').lower()
+        for excluded in exclude_senders:
+            if excluded.lower() in sender:
+                return False
+        
+        # Check subject exclusions
+        exclude_subjects = self.filtering_config.get('exclude_subjects', [])
+        subject = email_data.get('subject', '').lower()
+        for excluded in exclude_subjects:
+            if excluded.lower() in subject:
+                return False
+        
+        return True
+    
+    def test_connection(self) -> Dict[str, Any]:
+        """Test IMAP connection"""
+        try:
+            if self.connect():
+                # Try to list folders
+                status, folders = self.connection.list()
+                self.disconnect()
+                
+                return {
+                    'success': True,
+                    'server': self.imap_config.get('server'),
+                    'port': self.imap_config.get('port'),
+                    'folders_count': len(folders) if status == 'OK' else 0
+                }
+            else:
+                return {
+                    'success': False,
+                    'error': 'Failed to connect'
+                }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
             }

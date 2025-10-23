@@ -1,0 +1,1861 @@
+Slack Channel Dump
+Channel: #team-auto-assessment
+Channel ID: C065HHG49QB
+Generated: 2025-10-22 20:05:51
+Total Messages: 301
+================================================================================
+
+Message 1 - 2025-09-23 08:41
+From: Amanda Sopkin
+----------------------------------------
+As I understand it (thanks to the assessor-certificed wikipedia use) MISTRA C is a set of coding
+guidelines for automotive users using C. Does anyone know if it requires to utilise C98? Or was it
+simply based on C98 since it is old?
+
+Message 2 - 2025-09-23 08:42
+From: Amanda Sopkin
+----------------------------------------
+I'm reading between the lines of some of exida's comments and it might be linked to clients wanting
+to use MISTRA C.
+
+Message 3 - 2025-09-23 08:59
+From: Bob Johnson
+----------------------------------------
+Can you point to the comment?
+
+Message 4 - 2025-09-23 09:01
+From: Amanda Sopkin
+----------------------------------------
+AID-143 " Supported C language features for C11 are described at
+https://gcc.gnu.org/projects/c-status.html#c11" - if the user follows MISRA C / or MISRA C subset,
+is it also required to look at c-status.html - or is MISRA a superset of rules? Which MISRA version
+can be used? "
+
+Message 5 - 2025-09-23 09:01
+From: Amanda Sopkin
+----------------------------------------
+as part of https://issues.redhat.com/browse/VROOM-33180
+
+Message 6 - 2025-09-23 09:02
+From: Amanda Sopkin
+----------------------------------------
+I've already commented that C11 is an standard and MISTRA are coding guidelines, but maybe I'm not
+understanding some client-related context
+
+Message 7 - 2025-09-23 09:02
+From: Bob Johnson
+----------------------------------------
+The assessors are somehow stepping beyond their responsibility here. We say we want to certify the
+C11 (or better: GNU11) language. We do not refer to MISRA.
+
+Message 8 - 2025-09-23 09:03
+From: Amanda Sopkin
+----------------------------------------
+yep, I added "We make no claims about coding guidelines"
+
+Message 9 - 2025-09-23 09:04
+From: Bob Johnson
+----------------------------------------
+We should state: The restrictions of supported language functionality is described in &lt;URL&gt;.
+The end users need to check the suitability or compatibility of that certified scope of language
+functionality with any other internal or external coding guideline they may want to apply in their
+development.
+
+Message 10 - 2025-09-23 09:05
+From: Bob Johnson
+----------------------------------------
+I personally do not see the need for an AoU, though, because that is pretty clear.
+
+Message 11 - 2025-09-23 10:10
+From: U04Q5LSQ0R5
+----------------------------------------
+Hi All :slightly_smiling_face: The top level RA is reviewed
+(https://docs.google.com/document/d/13LQl607X7VSyr38jNoJBqN17SZjx1qq9mp9qyOibg04/edit?tab=t.0)and
+has 1 open finding about freezing workitems (RHIVOS-4091, RHIVOS-8957, RHIVOS-9008, RHIVOS-9854,
+RHIVOS-22859 are not frozen). It would be great if someone can freeze these workitems and close this
+finding .
+
+Message 12 - 2025-09-23 10:25
+From: U04Q5LSQ0R5
+----------------------------------------
+Thanks a lot @Tom Callaway :+1:
+
+Message 13 - 2025-09-23 10:49
+From: Pavol Brilla
+----------------------------------------
+@Tom Callaway we have a miraculous travelling ticket that I wonder if you might be able to take lead
+on -- @Amanda Sopkin and @U04QAEAG56V have both touched it so it's a little sticky (you know how
+Dennis is). AIUI we have 2 remaining to dos roughly: Follow up with the glibc team to complete
+questions confirming review of the architecture and addressing some questions
+(https://issues.redhat.com/browse/VROOM-32974?focusedId=28092197&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28092197)
+from exida about malloc. Would you be willing to have a look and see if you can take that over?
+Gomathi nudged me to say that her team will be OOO from tomorrow evening through Monday, so it would
+be ideal if we could grab time with them tomorrow :grimacing:
+
+Message 14 - 2025-09-23 11:07
+From: Pavol Brilla
+----------------------------------------
+FYI !here unfortunately exida has made clear that they will not complete all P1 feedback to us until
+Friday of this week which means that we will not be able to hit our Thursday goal, with that said,
+we should work to close what's on our plate as quickly as we can so that we're ready for last minute
+requests as we need to resubmit as close to Monday as possible. I'll keep you posted as we learn
+more.
+
+Message 15 - 2025-09-23 11:33
+From: Pavol Brilla
+----------------------------------------
+@Bob Johnson making sure you saw the request to reschedule on the dbus meeting?
+
+Message 16 - 2025-09-23 11:33
+From: Pavol Brilla
+----------------------------------------
+(I think you often don't get emails for events on that calendar)
+
+Message 17 - 2025-09-23 11:53
+From: Bob Johnson
+----------------------------------------
+I have saw it; and I asked Lukas to make it possible to join on Wednesday if possible. He agreed,
+but we will try to keep it short.
+
+Message 18 - 2025-09-23 11:54
+From: Pavol Brilla
+----------------------------------------
+ok just making sure!
+
+Message 19 - 2025-09-24 08:54
+From: U04QAEAG56V
+----------------------------------------
+My status: • new amazing colorful diagram for tmt in the works for highlighting input + output and
+the requirements. Will be done EOB • data collection for seccomp and libseccomp in progress, hope to
+finish with Pillar 3 by tomorrow
+
+Message 20 - 2025-09-24 09:02
+From: Pavol Brilla
+----------------------------------------
+@U04QAEAG56V what remains after Pillar 3?
+
+Message 21 - 2025-09-24 09:24
+From: Bob Johnson
+----------------------------------------
+I cannot join midpoint due to the dbus maintainer meeting. AID-035 on ext. obj. controls is
+basically done from my side. I am waiting for pillar 3 from Dennis. AID-035 on dbus-broker should be
+done with the interview today. My technical reviews were all done, but then new AID from exida were
+dropping in. I can redo any Technical Review quickly whenever needed. If anyone needs support with
+something, just let me know or assign tasks to me. Besides the sprint log, I am supporting Sergei to
+get the syzbot results presentable.
+
+Message 22 - 2025-09-24 09:25
+From: Pavol Brilla
+----------------------------------------
+Thanks @Bob Johnson! for my understanding then, you don't need anything beyond pillar 3 for EOC?
+
+Message 23 - 2025-09-24 09:26
+From: Bob Johnson
+----------------------------------------
+Well, I think we must have pillar 3; it would be nice to have the data on pillar 4, pillar 2 and
+pillar 1, but I am fine with a more hand-waving argument for those.
+
+Message 24 - 2025-09-24 09:29
+From: U04Q5LSQ0R5
+----------------------------------------
+I have a suggestion from Lucie to add list of people who can be contacted to approve a CR at
+https://docs.google.com/document/d/1VAXzsmORqO-eKMAR4FrRYv9ZPA06skET3yIpm-cBaWs/edit?tab=t.0#heading=h.3tp09sl8na91
+WDYT. For now I pointed her to the key personnel doc which lists tech expert and FuSa mgrs
+
+Message 25 - 2025-09-24 12:13
+From: Amanda Sopkin
+----------------------------------------
+@Pavol Brilla @John Smith thanks to the architectural diagram we (Lukas and I) found out that the
+archiver (ar) is missing from the tool qualification. This is used to create a collection of
+relocatable objects, so you don't need the static linker.
+
+Message 26 - 2025-09-24 12:14
+From: Amanda Sopkin
+----------------------------------------
+the end user doesn't need to use it, but the distro uses it
+
+Message 27 - 2025-09-24 12:17
+From: John Smith
+----------------------------------------
+:tired_face:
+
+Message 28 - 2025-09-24 12:18
+From: John Smith
+----------------------------------------
+Is the archiver used during the standard build when producing our rpms?
+
+Message 29 - 2025-09-24 12:21
+From: Amanda Sopkin
+----------------------------------------
+if the RPM has an *.a file, then the archiver has been used
+
+Message 30 - 2025-09-24 12:22
+From: John Smith
+----------------------------------------
+And do we know if that .a file gets used?
+
+Message 31 - 2025-09-24 12:25
+From: Amanda Sopkin
+----------------------------------------
+as in runtime? no, *.a-s are used when building
+
+Message 32 - 2025-09-24 12:45
+From: John Smith
+----------------------------------------
+I'm not sure if I understand that, but if we can show that an error in the .a cannot introduce a
+failure in the deployed system, then the archiver might be TCL1.
+
+Message 33 - 2025-09-24 13:46
+From: U04QAEAG56V
+----------------------------------------
+&gt; found out that the archiver (ar) is missing from the tool qualification. This is used to create
+a collection of relocatable objects, so you don't need the static linker. I really like how this
+terminology is misleading. .a files are packed libraries that get statically linked, i.e. they
+should not appear in the final rpm except they are meant for inclusion in end-user ELF objects.
+The last change to the ar sources [1] has been made in 2013 by Nick fwiw. I have no idea if the
+linker would fail for any type of fault ar can introduce
+[1] arparse.y arlex.l ar.c not-ranlib.c arsup.c rename.c binemul.c bucomm.c version.c filemode.c
+emul_vanilla.c
+
+Message 34 - 2025-09-24 15:39
+From: Pavol Brilla
+----------------------------------------
+I see that Scheduler was closed out - I wonder if anyone has bandwidth to steal Tech Review tasks
+from Dennis?
+
+Message 35 - 2025-09-24 15:39
+From: Pavol Brilla
+----------------------------------------
+https://issues.redhat.com/browse/VROOM-32045 and https://issues.redhat.com/browse/VROOM-32034
+
+Message 36 - 2025-09-24 15:40
+From: U04Q5LSQ0R5
+----------------------------------------
+I can take up VROOM-32045
+
+Message 37 - 2025-09-25 05:27
+From: Albert Esteve
+----------------------------------------
+hi! dumb question, what are the numbers in brackets that appear in the RA docs, in the `Potential
+Safety Concern` row and `Suggested Mitigations` row of some questions?
+
+Message 38 - 2025-09-25 05:27
+From: Albert Esteve
+----------------------------------------
+I thought they were IDs in the summary table below, but they do not correlate
+
+Message 39 - 2025-09-25 05:29
+From: Fabrizio Tronci
+----------------------------------------
+> I thought they were IDs in the summary table below it should be that...in theory. sometimes we
+have already updated those tables to reference the actual Polarion work items but it has not been
+applied consistently to all the RAs
+
+Message 40 - 2025-09-25 05:31
+From: Albert Esteve
+----------------------------------------
+I was looking at `systemd` RA as an example and in question 35 there is ```[4] RHIVOS-4540``` which
+is ID 6 in the table below, so it threw me off a bit
+
+Message 41 - 2025-09-25 05:34
+From: Albert Esteve
+----------------------------------------
+but yeah, the others do correlate (at least for that question)
+
+Message 42 - 2025-09-25 05:34
+From: Albert Esteve
+----------------------------------------
+thanks for confirming
+
+Message 43 - 2025-09-25 06:21
+From: Fabrizio Tronci
+----------------------------------------
+!here reminder for everyone: especially on gdocs and gsheet please update the versions of the doc in
+the change history table because we are sharing many draft versions to exida. If they see different
+contents of the doc with the same version it could just invite scrutiny
+
+Message 44 - 2025-09-25 07:40
+From: Albert Esteve
+----------------------------------------
+not sure what to do with this finding:
+https://docs.google.com/document/d/1JoiL8EZiNiRfb2pR1qzTPu4jmCubvcSIgiU-ziURSb4/edit?tab=t.0#heading=h.29uezw16i6n2
+looks like a FoA ticket that was not filled? or at least not linked in the document?
+
+Message 45 - 2025-09-25 07:53
+From: Bob Johnson
+----------------------------------------
+I will take care. Formalities.
+
+Message 46 - 2025-09-25 08:10
+From: Bob Johnson
+----------------------------------------
+done.
+
+Message 47 - 2025-09-25 09:27
+From: Pavol Brilla
+----------------------------------------
+nice progress on AID-035 today!!! :heart:
+
+Message 48 - 2025-09-25 09:52
+From: Bob Johnson
+----------------------------------------
+I am basically at the end of my sprint log. Please assign me things you see me contributing to.
+Otherwise, I will be looking into helping Sergei on syzbot-results-analysis.
+
+Message 49 - 2025-09-25 10:39
+From: Pavol Brilla
+----------------------------------------
+@Tom Callaway @Amanda Sopkin how are things looking with podman &amp; glibc AID-035 today? I know
+you guys are getting close
+
+Message 50 - 2025-09-25 12:14
+From: Fabrizio Tronci
+----------------------------------------
+@Bob Johnson as you may have bandwidth, can you please support the VROOM-32974
+(https://issues.redhat.com/browse/VROOM-32974)?
+
+Message 51 - 2025-09-25 12:37
+From: Bob Johnson
+----------------------------------------
+Sure. I believe and hope that emotional support is all that is needed at this point, though. It
+seems that we covered it well at this point, the horse is dead, but I surely beat it just a couple
+more times to be sure.
+
+Message 52 - 2025-09-26 09:49
+From: U04QAEAG56V
+----------------------------------------
+We do have (at least) three FoA that are related: • MC: Execute all relevant RHIVOS QE tests on the
+RHIVOS debug kernel to detect memory corruption-related failures. ◦
+https://polarion.engineering.redhat.com/polarion/#/project/RHIVOS/workitem?id=RHIVOS-8972&amp;revision=15401026
+• MM: Confirm RHIVOS QE executes all available RHIVOS tests using the final kernel configuration
+with a debug build where “KASAN” and “memory leaker” are enabled. All tests must pass, with no
+“KASAN” or “memory leaker” errors reported, or if there are any identified issues these must be
+analyzed and waived or tracked as defects. ◦
+https://polarion.engineering.redhat.com/polarion/#/project/RHIVOS/workitem?id=RHIVOS-8786 • tmt:
+Implement and use a journald based checker plugin for tmt. ◦
+https://polarion.engineering.redhat.com/polarion/#/project/RHIVOS/workitem?id=RHIVOS-22146&amp;revision=15810060
+For the MC FoA there is a FoA Tailoring Rationale: &gt; The activities requested by this FoA are
+essentially done by RHIVOS-8786
+(https://polarion.engineering.redhat.com/polarion/#/project/RHIVOS/workitem?id=RHIVOS-8786) in the
+Memory Management Risk Assessment. The list of tests to be run with KASAN and memory leaker checks
+appears to be the same. This statement is not entirely true. For MC we also required lockdep, list
+debugging etc.
+How should I link them? So in our kernel-tests repo we have more than 80 tests which interfere with
+the old dmesg checker, that's how the tmt FoA comes into play. The two for MM and MC are almost
+identical, but not completely.
+
+Message 53 - 2025-09-26 10:02
+From: U09F4VDKSCD
+----------------------------------------
+I'm technically not able to join our technical round table meeting, page is frozen and browser
+restart doesn't help. I will reboot.
+
+Message 54 - 2025-09-26 12:28
+From: Pavol Brilla
+----------------------------------------
+@Tom Callaway did someone volunteer for the informal review of glibc?
+
+Message 55 - 2025-09-26 12:49
+From: Tom Callaway
+----------------------------------------
+Anyone know how to get a full list of components from Jira?
+
+Message 56 - 2025-09-26 13:58
+From: Pavol Brilla
+----------------------------------------
+I want to highlight to the group that thanks to your work and @Fabrizio Tronci’s meticulous
+management - we are down to only 10 open P1s to address (TMT revisions, seccomp/EOC updates, and
+today's TCL discussion). This is a great way to end the week! We may have more to look into on
+Monday but a big thank you to you all today :tada::tada::tada:
+
+Message 57 - 2025-09-26 16:12
+From: Pavol Brilla
+----------------------------------------
+just a reminder that Polarion will be coming down soon. From: Brian Murray Sender: Slack
+Conversation
+
+Message 58 - 2025-09-27 01:34
+From: U04QAEAG56V
+----------------------------------------
+The `ar` story. Friday afternoons I'm always a bit distracted, so sorry if I did not convey properly
+what I meant. I guess @Jane Doe has some opinion here.
+We are producing more than 500 archives during a regular RHEL kernel build and I strongly assume
+it's used for more packages. Build systems like CMake automatically create some collection of packed
+together objects for later static linking into the final ELF object. So we definitely have binaries
+in RHIVOS which used ar during the build phase.
+But if we go down this path, we can fall back to Ric's old estimate of finishing 2050. Why?
+For the kernel we require for building (not a complete list, just some highlights): • make • gcc •
+gcc-c++ • openssl • perl • python • gawk • xz • bash • m4 • elfutils • tar • binutils • bison • flex
+• ... ar is just a small part of the binutils package. It's of a size that one skilled developer may
+be able to write within two days. Please provide evidence that the signing of the kernel does not
+mess with it. Or the final compression using xz or zlib. Or that our scanner generator and parser
+generators, flex and bison, don't mess around considering the enormous input space for their scanner
+and parser generator code + the inputs for the generated scanners and parsers. This more heavily
+impacts the build of gcc itself.
+If we go down this path, we'll also never qualify `a-i-b` a-i-b uses a lot of tools to produce the
+final images. mkfs.ext4, rpm, dnf, bash...
+We'll never finish qualifying `tmt`. This requires python, bash, ssh, rsync, beakerlib..
+So we really need to find a way to make this like systemd. `ar` is disallowed to be used by the end
+user (for now), but we use it internally in a way that's just fine. If we can't argue that in a
+reasonable way for the collection of tools that are used like `ar`, then I don't know where this
+leads us. If we can make a proven in use argument for all those helpers as a collection, then fine.
+Let's enumerate them and make the argument. It does not work for them as we discussed, because
+compare to `ar` most of the other tools and libraries change frequently over time.
+The UNIX principle is our enemy here because at one point smart people decided to not create the one
+and only master compiler binary which did everything, but to rather split into individual binaries
+at a reasonable level.
+
+Message 59 - 2025-09-27 01:34
+From: Bot-B04JHQDP
+----------------------------------------
+Ian McLeod, you got your first kudos. Cheers to you! :partying_face:
+Kudos given!!!
+
+Message 60 - 2025-09-29 03:59
+From: U04QAEAG56V
+----------------------------------------
+I've had a very tough weekend health-wise and I still haven't recovered, so you won't see much of me
+today
+
+Message 61 - 2025-09-30 04:00
+From: Bot-B06KYLGU
+----------------------------------------
+Reminder : Please add your demos for tomorrow! :slightly_smiling_face:
+https://docs.google.com/document/d/1HDTZ-dyRO9ksmelWVilXylYmrq8Txu5jw2h0UnoQTwE/edit. Thanks, team!
+
+Message 62 - 2025-09-30 09:46
+From: Pavol Brilla
+----------------------------------------
+@U04QAEAG56V @Tom Callaway @Bob Johnson any ETA on wrapping up the EOC &amp; glibc revisions for
+AID-035?
+
+Message 63 - 2025-09-30 09:46
+From: Pavol Brilla
+----------------------------------------
+and @U04QAEAG56V knowing that seccomp is likely taking up much of your time, is there any help you
+need on the TMT cleanup?
+
+Message 64 - 2025-09-30 09:48
+From: Tom Callaway
+----------------------------------------
+I'm hoping to get the final okay on glibc revisions for AID-035 done this morning.
+
+Message 65 - 2025-09-30 09:51
+From: Bob Johnson
+----------------------------------------
+For glibc, I have just informally reviewed the changes. I think if we create two new JIRA tickets,
+one for a short-term technical debt duplication and a second to clean it up later, we are good. I am
+happy to define the tickets and implement the change if Joe agrees on doing so.
+
+Message 66 - 2025-09-30 09:54
+From: Tom Callaway
+----------------------------------------
+I'm okay with that approach.
+
+Message 67 - 2025-09-30 09:54
+From: Bob Johnson
+----------------------------------------
+Okay, tickets are following.
+
+Message 68 - 2025-09-30 09:55
+From: Tom Callaway
+----------------------------------------
+I confirmed with Carlos that the dynlink, TLS, errno interaction takes place for all of the malloc
+testing and use cases.
+
+Message 69 - 2025-09-30 13:20
+From: Pavol Brilla
+----------------------------------------
+@Albert Esteve I also understand that you agreed to help out with some minor changes to the MM /
+Scheduler RAs - making sure you're on track to wrap those up? If you need any assistance just speak
+up :smile:
+
+Message 70 - 2025-10-01 03:51
+From: U04QAEAG56V
+----------------------------------------
+Do we need to re-evaluate Jira because of the clout migration? Asking for a friend because of &gt;
+We have been able to remediate the database corruption that was resulting in errors with our test
+migrations. What can possibly go wrong. :upside_down_face:
+
+Message 71 - 2025-10-01 04:29
+From: Bob Johnson
+----------------------------------------
+I think this serves as evidence that this tool is TCL1, aka "even if the tool is total crap, we got
+capable people that detect when crappy things are going on and will take care of the crap output of
+the tool".
+
+Message 72 - 2025-10-01 09:18
+From: Pavol Brilla
+----------------------------------------
+I think the point here is this was identified as part of testing to prepare for the migration - be
+aware of your words please
+
+Message 73 - 2025-10-01 09:21
+From: Pavol Brilla
+----------------------------------------
+!here I have a conflict for standup this morning (with a c language vendor) @John Smith would you
+mind being the adult today? :smile: Please focus on anything that can go back to exida for review as
+a priority and let me know if you need any assistance or have concerns that I can help with :heart:
+
+Message 74 - 2025-10-01 09:32
+From: Pavol Brilla
+----------------------------------------
+@Bob Johnson Matthew is explaining to Piotr that we don't have 100% code coverage right now, could
+you please get folks started?
+
+Message 75 - 2025-10-01 10:38
+From: U04Q5LSQ0R5
+----------------------------------------
+Hi :slightly_smiling_face: The Review of Test Sufficiency for Podman is done with 2 open findings -
+https://docs.google.com/document/d/1szyEt4hbMKI6kD-JMfdFJIvXIXcU70WlhEkUcq0AEPk/edit?tab=t.0#heading=h.qtg99bk1u8n2
+It would be great if someone can take up the fixes.
+
+Message 76 - 2025-10-01 10:45
+From: Bob Johnson
+----------------------------------------
+I will take care.
+
+Message 77 - 2025-10-01 10:55
+From: Bob Johnson
+----------------------------------------
+Findings addressed. Please have a look and confirm closure or acceptance.
+
+Message 78 - 2025-10-01 11:00
+From: U04Q5LSQ0R5
+----------------------------------------
+Many thanks! LGTM
+
+Message 79 - 2025-10-01 12:00
+From: Pavol Brilla
+----------------------------------------
+@Fabrizio Tronci unless you guys discussed in standup, could I ask you to communicate here when you
+confirm that glibc tech reviews are unblocked b/c you've handed off revisions
+(https://issues.redhat.com/browse/VROOM-32974) to exida?
+
+Message 80 - 2025-10-01 12:01
+From: Bob Johnson
+----------------------------------------
+Yes, we have let Priyanka know.
+
+Message 81 - 2025-10-01 12:01
+From: Pavol Brilla
+----------------------------------------
+great! we probably could distribute these reviews also since there are at least 6 docs to be
+reviewed
+
+Message 82 - 2025-10-01 12:03
+From: Pavol Brilla
+----------------------------------------
+@Bob Johnson @U04QAEAG56V I understand we are going to drastically minimize the scope of what's
+needed for seccomp - could I ask that you describe the new scope? My understanding is that work on
+seccomp test sufficiency is no longer a blocker for our resubmission.
+
+Message 83 - 2025-10-01 12:05
+From: Bob Johnson
+----------------------------------------
+We have decided to provide the test sufficiency analysis evidence after GA and consider AID-035
+addressed referring to that future activity. We have a justification in place that this does not
+cause any risk.
+
+Message 84 - 2025-10-01 12:05
+From: Pavol Brilla
+----------------------------------------
+so is there any further revision required for https://issues.redhat.com/browse/VROOM-32973 ?
+
+Message 85 - 2025-10-01 12:20
+From: Bob Johnson
+----------------------------------------
+I will probably need to write something up with Dennis tomorrow, referring to the podman end-to-end
+seccomp tests.
+
+Message 86 - 2025-10-01 12:21
+From: Bob Johnson
+----------------------------------------
+Then we pass it on to Fabrizio.
+
+Message 87 - 2025-10-01 12:22
+From: Pavol Brilla
+----------------------------------------
+that's great news, thank you guys!
+
+Message 88 - 2025-10-01 13:36
+From: Fabrizio Tronci
+----------------------------------------
+regarding this ticket VROOM-32974 (https://issues.redhat.com/browse/VROOM-32974) please @Tom
+Callaway apply all the baselines in Polarion if the review is completed because. currently the
+baseline is not updated with respect to the previous docs shared with exida
+
+Message 89 - 2025-10-01 14:19
+From: U04Q5LSQ0R5
+----------------------------------------
+Review of the malloc API group Risk Assessment is done with 1 minor finding
+https://docs.google.com/document/d/1z_hMROi39Oeq3GFV5ffhi42xQoMjEL-15o3a6ymntr4/edit?tab=t.0 would
+anyone like to fix this one.
+
+Message 90 - 2025-10-02 04:30
+From: Pavol Brilla
+----------------------------------------
+@Bob Johnson @Fabrizio Tronci could one of you confirm if this is a GA blocker?
+https://issues.redhat.com/browse/VROOM-33367
+
+Message 91 - 2025-10-02 04:50
+From: Fabrizio Tronci
+----------------------------------------
+morning, as both me and Dennis worked on this doc, can anyone take an informal review on this
+VROOM-33179 (https://issues.redhat.com/browse/VROOM-33179)?
+
+Message 92 - 2025-10-02 11:18
+From: Amanda Sopkin
+----------------------------------------
+re about rewrite of https://issues.redhat.com/browse/VROOM-31740 , Pillar 2 H1, "The volume and
+diversity of upstream use is high". in the glibc toolchain. The target metric is "The number of
+RHEL/Fedora users is at least two orders of magnitude larger than the amount of workloads." Which is
+difficult to frame in the glibc toolchain use case. We decided to define "user" as a package, which
+invokes the compiler with certain flags. The invocation of a unique set of flags by a user/package
+is “workload”. Since we saw no other possible mapping with the usage of the toolchain. I gathered
+the data of the compiler flag usage for all the RHEL packages (see
+https://docs.google.com/spreadsheets/d/1o8f0tAgFNtmOTp9908eulFHtllFK4uxbQEKqBLhQRdY/edit?gid=227217608#gid=227217608
+) and the goal was to argument that RHEL has more workloads than the workloads used to build ASIL B
+packages. In retrospective, I don't know if this fits.
+
+Message 93 - 2025-10-02 11:20
+From: Amanda Sopkin
+----------------------------------------
+The data that we gathered lists the workloads (aka set of compilation options) used by each package,
+for instance, the `389-ds-base` package uses these 11 different workloads: ```1) -O2 -fPIE
+-fasynchronous-unwind-tables -fcf-protection=none -fexceptions -ffat-lto-objects -fltrans
+-fno-openacc -fno-openmp -fplugin=annobin -fstack-clash-protection -fstack-protector-strong -g
+-mabi=lp64 -mlittle-endian 2) -O2 -fPIE -fasynchronous-unwind-tables -fexceptions -ffat-lto-objects
+-flto -fplugin=annobin -fstack-clash-protection -fstack-protector-strong -g -mabi=lp64
+-mlittle-endian 3) -O2 -O3 -fPIC -fcf-protection=none -fltrans -fno-openacc -fno-openmp
+-fplugin=annobin -g -mabi=lp64 -mlittle-endian 4) -O2 -O3 -fPIC -fasynchronous-unwind-tables
+-fexceptions -ffat-lto-objects -flto -fplugin=annobin -fstack-clash-protection
+-fstack-protector-strong -funroll-loops -fvisibility=hidden -g -g3 -mabi=lp64 -mlittle-endian
+-std=gnu11 5) -O2 -O3 -fPIC -fasynchronous-unwind-tables -fexceptions -ffat-lto-objects -flto
+-fplugin=annobin -fstack-clash-protection -fstack-protector-strong -fvisibility=hidden -g -g3
+-mabi=lp64 -mlittle-endian -std=c++17 6) -O2 -fPIC -fcf-protection=none -fltrans -fno-openacc
+-fno-openmp -fplugin=annobin -fstack-protector-strong -g -mabi=lp64 -mlittle-endian 7) -O2 -fPIC
+-fasynchronous-unwind-tables -fexceptions -ffat-lto-objects -flto -fplugin=annobin
+-fstack-clash-protection -fstack-protector-strong -g -mabi=lp64 -mlittle-endian 8) -O2 -fPIC
+-fasynchronous-unwind-tables -fexceptions -ffat-lto-objects -flto -fplugin=annobin
+-fstack-clash-protection -fstack-protector-strong -g -mabi=lp64 -mlittle-endian 9) -O2 -O3 -fPIC
+-fcf-protection=none -fltrans -fno-openacc -fno-openmp -fplugin=annobin -g -mabi=lp64
+-mlittle-endian 10) -O2 -O3 -fPIC -fasynchronous-unwind-tables -fexceptions -ffat-lto-objects -flto
+-fplugin=annobin -fstack-clash-protection -fstack-protector-strong -funroll-loops
+-fvisibility=hidden -g -g3 -mabi=lp64 -mlittle-endian -std=gnu11 11) -O2 -O3 -fPIC
+-fasynchronous-unwind-tables -fexceptions -ffat-lto-objects -flto -fplugin=annobin
+-fstack-clash-protection -fstack-protector-strong -fvisibility=hidden -g -g3 -mabi=lp64
+-mlittle-endian -std=c++17``` each workload is used N times.
+
+Message 94 - 2025-10-02 11:23
+From: Amanda Sopkin
+----------------------------------------
+Then we argue that RHEL has 996 unique workloads used by 1603 packages, which result in 207042
+invocations of the compiler. We list the workloads for ASIL-B packages, and no surprise, they are
+less since they are also less packages: 47 unique workloads, 8 ASIL-B packages, 3819 invocations of
+the compiler
+
+Message 95 - 2025-10-02 11:25
+From: Amanda Sopkin
+----------------------------------------
+So, the amount of ASIL-B packages has changed (then: dbus-broker, glibc, libselinux, selinux,
+podman, systemd), thereby the data will slightly change.
+
+Message 96 - 2025-10-02 13:45
+From: Pavol Brilla
+----------------------------------------
+@John Smith @Jane Doe @Fabrizio Tronci could I ask you to weigh in on the above when you have time?
+Want to be sure we're clear on the plan here before Irene leaves :heart:
+
+Message 97 - 2025-10-02 13:48
+From: Pavol Brilla
+----------------------------------------
+*HOLD THE PRESSES!!!* We have one very special AID that is now awaiting exida: everyone say goodbye
+to AID-035!!!
+
+Message 98 - 2025-10-02 15:16
+From: Pavol Brilla
+----------------------------------------
+Also, Piotr has messaged that he is done with his document reviews at this time and will now begin
+reviews of our AID responses
+
+Message 99 - 2025-10-03 10:26
+From: Pavol Brilla
+----------------------------------------
+Irene: "I see JIRA as the enemy"
+
+Message 100 - 2025-10-03 11:49
+From: Fabrizio Tronci
+----------------------------------------
+in the external object control RA, /sys/fs/selinux is mentioned as a pseudofs entry but then it is
+not mentioned as an entry point. Does anyone of you know why? I've seen that many of the
+modifications on the RA have been applied by @Bob Johnson but I don't know if anyone else
+participated to the interviews
+
+Message 101 - 2025-10-03 15:43
+From: John Smith
+----------------------------------------
+Hi all. Per the discussion in today's round table, I have added the following question into the risk
+assessment review template: "If this revision to the risk assessment includes fundamental changes to
+the technical details, is there clear evidence of discussion and review with the maintainer(s)?
+Include a link or reference to that evidence here."
+
+Message 102 - 2025-10-03 15:44
+From: John Smith
+----------------------------------------
+Thus, cosmetic and clarification changes need not have maintainer involvement. Everything else does.
+
+Message 103 - 2025-10-06 04:02
+From: U09F4VDKSCD
+----------------------------------------
+Hi all, I have a question related to the new AoU that I am supposed to add to the Kernel File Systm
+and Storage RA (VROOM-31446 (https://issues.redhat.com/browse/VROOM-31446)): &gt; RHIVOS end users
+shall not configure image creation to use volume management. All filesystems shall be created on
+block devices or partitions of block devices. Is my understanding correct, that in general LVM will
+not be used in the final SW (including RHIVOS itself)? So only PVs respectively traditional
+partitions are to be used in a system where RHIVOS operates, correct? (Just for my understanding,
+it's clear that we do not need to inform the customer about it).
+
+Message 104 - 2025-10-06 06:36
+From: Bob Johnson
+----------------------------------------
+Concerning the GA scope, the math library is currently not in GA scope, right, because we never
+updated that document and the certificate is outdated by now if I remember it correctly.
+
+Message 105 - 2025-10-06 06:36
+From: Fabrizio Tronci
+----------------------------------------
+correct, not in scope
+
+Message 106 - 2025-10-06 07:53
+From: Bob Johnson
+----------------------------------------
+Who is allowed to set AoUs to approved or back to Open?
+
+Message 107 - 2025-10-06 07:53
+From: Bob Johnson
+----------------------------------------
+Or when does that happen?
+
+Message 108 - 2025-10-06 08:50
+From: Fabrizio Tronci
+----------------------------------------
+AoUs are approved when the doc is approved. And set back to open when modified by a CR
+
+Message 109 - 2025-10-06 08:53
+From: Bob Johnson
+----------------------------------------
+Thanks. So, I need to think about if the query in the safety guidance document should really be on
+"status: Approved" or if it has other criteria instead.
+
+Message 110 - 2025-10-06 08:54
+From: Bob Johnson
+----------------------------------------
+It seems that we have some content approved once in the past, but we do not want it to show in the
+released safety guidance document.
+
+Message 111 - 2025-10-06 10:08
+From: U04Q5LSQ0R5
+----------------------------------------
+Sorry I have a call with my daughter's teacher (hopefully short one)
+
+Message 112 - 2025-10-06 12:18
+From: Tom Callaway
+----------------------------------------
+Does the wording "Only “C” locale are allowed to be used by the safety related applications"
+constitute correct formulation for an AoU? I can update it to use "shall" if we want to do that but
+didn't want to change an Approved AoU without making sure that we are all aware for updating the
+related document(s).
+https://polarion.engineering.redhat.com/polarion/#/project/RHIVOS/workitem?id=RHIVOS-4233&amp;revision=15999371
+
+Message 113 - 2025-10-06 18:54
+From: U04Q5LSQ0R5
+----------------------------------------
+Tech sufficiency review for strings is complete with 1 minor finding -
+https://issues.redhat.com/browse/VROOM-32028
+
+Message 114 - 2025-10-06 18:54
+From: U04Q5LSQ0R5
+----------------------------------------
+https://docs.google.com/document/d/11OUw38EdW1eW0k-6eTHEcT3J6NQiaRRQYdlH3G1Vzrg/edit?tab=t.0
+
+Message 115 - 2025-10-06 18:54
+From: U04Q5LSQ0R5
+----------------------------------------
+It would be great if anyone can take a look
+
+Message 116 - 2025-10-06 19:11
+From: U04Q5LSQ0R5
+----------------------------------------
+About RA review template
+https://docs.google.com/document/d/1T3ZsdAs7XQK4Jq_Zp8zBNfh14gs0T9smS8QFofUuzKo/edit?tab=t.0
+
+Message 117 - 2025-10-06 19:12
+From: U04Q5LSQ0R5
+----------------------------------------
+We have a new 20th question . We need to use this newer version starting now? If yes, then many of
+our already closed reviews will have 19 questions and the new ones will have 20
+
+Message 118 - 2025-10-06 19:13
+From: U04Q5LSQ0R5
+----------------------------------------
+(its about maintainer review of the new changes - review evidence)
+
+Message 119 - 2025-10-07 04:59
+From: Bob Johnson
+----------------------------------------
+Are we resubmitting a validator report for Re-submission 3.5? This ticket
+https://issues.redhat.com/browse/VROOM-30670 is currently marked as Submission 3.5 material, but I
+fail to understand if it is part of a specific artefact planned or not.
+
+Message 120 - 2025-10-07 04:59
+From: Fabrizio Tronci
+----------------------------------------
+no, at the moment is for GA only. not planned a re-submission of the validator report to exida
+
+Message 121 - 2025-10-07 05:01
+From: Bob Johnson
+----------------------------------------
+Okay. So, I will remap it accordingly in my mind.
+
+Message 122 - 2025-10-07 09:51
+From: U04QAEAG56V
+----------------------------------------
+When a AoU/RoU work item is referenced in a document, do we require a corresponding safety concern
+to be present in that document?
+For EOC we have 3 work items which do not have a safety concern in EOC, but in systemd for example
+
+Message 123 - 2025-10-07 09:57
+From: John Smith
+----------------------------------------
+Referenced how? Like in a maintainer answer?
+
+Message 124 - 2025-10-07 09:59
+From: U04QAEAG56V
+----------------------------------------
+In the table which describes the entry points
+
+Message 125 - 2025-10-07 10:00
+From: Bob Johnson
+----------------------------------------
+I wondered about the same when doing that...
+
+Message 126 - 2025-10-07 10:01
+From: John Smith
+----------------------------------------
+So there is an AoU that restricts access to the EOC entry point that came about from the systemd RA?
+Is the systemd SC (linked to that AoU) relevant for EOC?
+
+Message 127 - 2025-10-07 10:09
+From: Bob Johnson
+----------------------------------------
+The reference on this AoU from systemd and from EOC is clearly visible in Polarion. It is also clear
+that using the EOC risk assessment is not possible without systemd (and podman), the EOC risk
+assessment is only valid in the context of the use with systemd and podman, but not in the context
+of any other use.
+
+Message 128 - 2025-10-07 10:16
+From: Bob Johnson
+----------------------------------------
+You could come up with arbitrary safety concern, being almost as generic as "End users may assume
+that the safety claims stated in safety guidance document, are implemented by individual independent
+pieces of the RHIVOS distribution, and they may split and compose the individual pieces together as
+they wish." but clearly that is not the case. The RHIVOS safety claims hold for RHIVOS as a whole.
+Once something has been added to the scope of the RHIVOS certification, it is actually pretty
+difficult to remove it again without risking that all other safety claims are also invalidated. Or
+in other words, the confidence of the validity of the other safety claims decreases if the removal
+(for whatever reason) of one safety claim is not done with care.
+
+Message 129 - 2025-10-07 15:15
+From: John Smith
+----------------------------------------
+@Bob Johnson: I'm not sure if that's a yes or no answer. I'm essentially asking whether the systemd
+SC applies at all to EOC. If it does not, that's fine.
+
+Message 130 - 2025-10-07 15:57
+From: U04Q5LSQ0R5
+----------------------------------------
+Review of the glibc Memory Management Risk Assessment
+(https://docs.google.com/document/d/10AGxcb8Jd-hE4F5EfGpT-wCLD4aTdlSIP3TZrnDgSLE/edit?tab=t.0#heading=h.nle2zzn3b3l0)
+is complete with two open findings. It would be great if someone can do these quick fixes.
+:slightly_smiling_face:
+
+Message 131 - 2025-10-07 16:09
+From: U04Q5LSQ0R5
+----------------------------------------
+Same goes for Review of Test Sufficiency Analysis - glibc string and memory routines
+(https://docs.google.com/document/d/11OUw38EdW1eW0k-6eTHEcT3J6NQiaRRQYdlH3G1Vzrg/edit?tab=t.0#heading=h.nle2zzn3b3l0)
+only 1 minor finding probably only needs justification no fixes.
+
+Message 132 - 2025-10-07 16:10
+From: U04Q5LSQ0R5
+----------------------------------------
+https://issues.redhat.com/browse/VROOM-32028
+
+Message 133 - 2025-10-08 08:44
+From: Pavol Brilla
+----------------------------------------
+!here fyi due to a conflict with our daily chat with Piotr, I’m going to reduce our midpoint to 30
+mins :two_hearts:
+
+Message 134 - 2025-10-08 15:50
+From: U04QAEAG56V
+----------------------------------------
+There is a Michael Medoff looking at the menu - he is not in the Red Hat ldap. Is he from exida? He
+has access through mdmedoff@gmail.com (mailto:mdmedoff@gmail.com)
+
+Message 135 - 2025-10-08 15:52
+From: U04QAEAG56V
+----------------------------------------
+^ This is not exactly trustworthy. Google says he has something to do with exida.
+
+Message 136 - 2025-10-08 15:52
+From: U04QAEAG56V
+----------------------------------------
+(if that's really him and not somebody impersonating him)
+
+Message 137 - 2025-10-08 15:54
+From: John Smith
+----------------------------------------
+Yes, he's an exida assessor.
+
+Message 138 - 2025-10-08 16:00
+From: U04QAEAG56V
+----------------------------------------
+I finished the technical review for EOC, who can address the 2 findings?
+https://issues.redhat.com/browse/VROOM-32042
+The biggest finding is that one procfs entrypoint was missed during all of the previous reviews, but
+that shouldn't be a big deal.
+
+Message 139 - 2025-10-08 16:03
+From: U04Q5LSQ0R5
+----------------------------------------
+I have come out for a doctor’s visit. I should be back in an hourish
+
+Message 140 - 2025-10-08 16:11
+From: Pavol Brilla
+----------------------------------------
+@U04QAEAG56V it's your anniversary?!
+
+Message 141 - 2025-10-08 16:11
+From: U04QAEAG56V
+----------------------------------------
+Almost
+
+Message 142 - 2025-10-08 16:12
+From: Pavol Brilla
+----------------------------------------
+ok I won't spoil the celebration :smile:
+
+Message 143 - 2025-10-08 16:12
+From: U04QAEAG56V
+----------------------------------------
+Last year my friendly manager (I won't tell who it is) did not write a friendly message about how
+nice it is to have me here. So let's see what happens this year
+
+Message 144 - 2025-10-08 16:13
+From: Pavol Brilla
+----------------------------------------
+managers... amirite?!
+
+Message 145 - 2025-10-08 16:13
+From: U04QAEAG56V
+----------------------------------------
+Well.. I still got the one who is to blame
+
+Message 146 - 2025-10-08 16:14
+From: U04QAEAG56V
+----------------------------------------
+I'm not blaming anybody specific of course
+
+Message 147 - 2025-10-08 16:14
+From: U04QAEAG56V
+----------------------------------------
+:grin:
+
+Message 148 - 2025-10-08 16:14
+From: U04QAEAG56V
+----------------------------------------
+I'd never blame @Jochen Breuer
+
+Message 149 - 2025-10-08 16:17
+From: U04QAEAG56V
+----------------------------------------
+And just now Slack reloaded and I got some fancy 4 years tag. Wtf. The anniversary is a lie
+
+Message 150 - 2025-10-08 16:18
+From: Pavol Brilla
+----------------------------------------
+time is a flat circle
+
+Message 151 - 2025-10-08 16:20
+From: U04QAEAG56V
+----------------------------------------
+At least Newton's motion laws are time reversal invariant
+
+Message 152 - 2025-10-08 16:21
+From: U04QAEAG56V
+----------------------------------------
+goes to his ananymous physicists meetup
+
+Message 153 - 2025-10-08 16:22
+From: U04QAEAG56V
+----------------------------------------
+also invites Jan and Luciana
+
+Message 154 - 2025-10-09 03:36
+From: U09F4VDKSCD
+----------------------------------------
+&gt; At least Newton's motion laws are time reversal invariant Which was all the same to the apple
+hitting him on the head! Thermodynamics... Hi, my name is Jan, I have suffered from physics long
+time and it still heavily shapes my everyday life. I believe I am able to control it, though. Just
+briefly adding that where there is symmetry, there is conservation... hem...
+
+Message 155 - 2025-10-09 04:33
+From: Bob Johnson
+----------------------------------------
+I am still waiting for the physics to explain the creation of all these AIDs. After the creation of
+the universe is explain, this might be next question to get a good answer for.
+
+Message 156 - 2025-10-09 04:43
+From: U04QAEAG56V
+----------------------------------------
+Some theories say the sum of all energy in the universe is zero. So where there is light, there
+needs to be shadow.
+
+Message 157 - 2025-10-09 04:44
+From: U09F4VDKSCD
+----------------------------------------
+To me, this seems to be a question that needs to be addressed not by physical methods but by life
+sciences since the whole system is too complex to make predictions based on first principles. We
+rather need a heuristic approach for this...
+
+Message 158 - 2025-10-09 04:45
+From: U09F4VDKSCD
+----------------------------------------
+Even might have to apply psychological models to explain that!
+
+Message 159 - 2025-10-09 04:45
+From: Bob Johnson
+----------------------------------------
+I guess Piotr is the origin of all dark matter... that explains it :smile:
+
+Message 160 - 2025-10-09 06:14
+From: U04QAEAG56V
+----------------------------------------
+Great tools that help us :grimacing:
+
+Message 161 - 2025-10-09 07:20
+From: Pavol Brilla
+----------------------------------------
+on positive side you can always Learn more :slightly_smiling_face:
+
+Message 162 - 2025-10-09 07:26
+From: U09F4VDKSCD
+----------------------------------------
+I have a question on File system and storage FoA 3.1: Support for NFS shall be removed from the
+kernel (VROOM-25137 (https://issues.redhat.com/browse/VROOM-25137)). The only linked Task in that
+Epic is for removing NFS support by correspondingly configuring the kernel. Isn't this something
+which should be checked by a validator in addition? Or is this implicitly covered by some already
+existing validator?
+
+Message 163 - 2025-10-09 07:59
+From: Michel Normand
+----------------------------------------
+```Michael Medoff (mdmedoff@gmail.com (mailto:mdmedoff@gmail.com)) is requesting access to the
+following document: Podman risk assessment (2024-01-29 19:06 GMT+1) - Transcript```
+
+Message 164 - 2025-10-09 07:59
+From: Michel Normand
+----------------------------------------
+what is this?
+
+Message 165 - 2025-10-09 07:59
+From: Michel Normand
+----------------------------------------
+Should i grant it?
+
+Message 166 - 2025-10-09 08:00
+From: U04QAEAG56V
+----------------------------------------
+There is a Michael Medoff looking at the menu - he is not in the Red Hat ldap. Is he from exida? He
+has access through mdmedoff@gmail.com (mailto:mdmedoff@gmail.com) From: Dennis Brendel Sender: Slack
+Conversation https://redhat-internal.slack.com/archives/C065HHG49QB/p1759949435306329
+
+Message 167 - 2025-10-09 08:00
+From: Fabrizio Tronci
+----------------------------------------
+He's another exida member. I think we haven't opened the transcripts to exida so far so let's
+continue with the same approach atm
+
+Message 168 - 2025-10-09 08:01
+From: Fabrizio Tronci
+----------------------------------------
+they have the Q&amp;A in the risk assessments as evidence
+
+Message 169 - 2025-10-09 08:19
+From: Pavol Brilla
+----------------------------------------
+I’m sure we’ll get an AID for it, don’t worry
+
+Message 170 - 2025-10-09 10:13
+From: Pavol Brilla
+----------------------------------------
+Hi all, I'm checking in on our AID status this morning - I think 247 &amp; 5 are the only remaining
+items (thanks to Joe &amp; Lukas for wrapping up 120) • I see activity from Pablo on 5 this morning
+- any concerns from your side @Fabrizio Tronci? • @Bob Johnson have you gotten an ETA from Luigi on
+247?
+
+Message 171 - 2025-10-09 10:13
+From: Bob Johnson
+----------------------------------------
+Yes, ETA is done five minutes ago.
+
+Message 172 - 2025-10-09 10:13
+From: Pavol Brilla
+----------------------------------------
+wait - the ticket is done?
+
+Message 173 - 2025-10-09 10:14
+From: Bob Johnson
+----------------------------------------
+He is waiting for an informal review from my side, then we will push it to Fabrizio.
+
+Message 174 - 2025-10-09 10:14
+From: Pavol Brilla
+----------------------------------------
+amazing!
+
+Message 175 - 2025-10-09 10:15
+From: Fabrizio Tronci
+----------------------------------------
+> • I see activity from Pablo on 5 this morning - any concerns from your side @Fabrizio Tronci? 4k
+read/write entries not fuzzed have been identified in VROOM-33478
+(https://issues.redhat.com/browse/VROOM-33478). I suggested to Pablo to raise it during the today's
+meeting if he may need support because the update may take several days in his opinion
+
+Message 176 - 2025-10-09 10:16
+From: Pavol Brilla
+----------------------------------------
+I'll check in with him
+
+Message 177 - 2025-10-09 10:16
+From: Fabrizio Tronci
+----------------------------------------
+thanks
+
+Message 178 - 2025-10-09 10:20
+From: Fabrizio Tronci
+----------------------------------------
+btw @Pavol Brilla there is also a handful of tickets which require updates to the safety guidance. I
+think you mentioned only the long poles there, right?
+
+Message 179 - 2025-10-09 10:20
+From: Pavol Brilla
+----------------------------------------
+yup, and those are within our control - not awaiting action from another team :smile:
+
+Message 180 - 2025-10-09 10:23
+From: Pavol Brilla
+----------------------------------------
+but if you have any concerns about those let me know also
+
+Message 181 - 2025-10-09 10:24
+From: Pavol Brilla
+----------------------------------------
+@U04QAEAG56V did anyone volunteer to pick up the EOC findings?
+https://issues.redhat.com/browse/VROOM-32042
+
+Message 182 - 2025-10-09 10:24
+From: Bob Johnson
+----------------------------------------
+Hmm, that was a tab I had already opened...
+
+Message 183 - 2025-10-09 10:25
+From: U04QAEAG56V
+----------------------------------------
+Not yet. I wanted to start another round of nagging when I soon finished the corresponding test
+sufficiency review, but anybody can still take it
+
+Message 184 - 2025-10-09 10:27
+From: Pavol Brilla
+----------------------------------------
+@Bob Johnson are you saying you're looking at EOC?
+
+Message 185 - 2025-10-09 10:29
+From: Bob Johnson
+----------------------------------------
+Yes, I am half through.
+
+Message 186 - 2025-10-09 10:30
+From: Pavol Brilla
+----------------------------------------
+awesome, I'll add you to the ticket :smile:
+
+Message 187 - 2025-10-09 10:35
+From: Bob Johnson
+----------------------------------------
+Work done. Dennis to confirm closure.
+
+Message 188 - 2025-10-09 10:38
+From: U09F4VDKSCD
+----------------------------------------
+I assume we need a formal FoA in Polarion to create this validator and refer to it in the RA, right?
++ a Jira task to get it done + another AoU stating that end users should not load the NFS kernel
+module with modprobe. Is that right?
+
+Message 189 - 2025-10-09 10:45
+From: Pavol Brilla
+----------------------------------------
+REMINDER: If you are working on an AID ticket, please assign it to Fabrizio when you are done so
+that he can update the menu - he will close it once that's complete! (I moved the build env ticket
+back)
+
+Message 190 - 2025-10-09 10:46
+From: Bob Johnson
+----------------------------------------
+Ture.
+
+Message 191 - 2025-10-09 10:47
+From: Bob Johnson
+----------------------------------------
+I was in such a flow of closing :smile:
+
+Message 192 - 2025-10-09 10:48
+From: Pavol Brilla
+----------------------------------------
+I generally support it :smile:
+
+Message 193 - 2025-10-09 10:49
+From: Pavol Brilla
+----------------------------------------
+but the real pleasure in closing an item is closing an AID
+
+Message 194 - 2025-10-09 10:50
+From: Bob Johnson
+----------------------------------------
+Sure, if a project manager would only need to monitor one list of items to be closed... dream on...
+
+Message 195 - 2025-10-09 10:50
+From: Pavol Brilla
+----------------------------------------
+or if the list only stayed put...
+
+Message 196 - 2025-10-09 11:01
+From: Tom Callaway
+----------------------------------------
+The glibc compiler toolchain RA has been updated and needs another round of technical review.
+
+Message 197 - 2025-10-09 11:13
+From: U04QAEAG56V
+----------------------------------------
+I created 5 minor findings for the EOC test sufficiency document that can be addressed.
+https://issues.redhat.com/browse/VROOM-32030
+
+Message 198 - 2025-10-09 11:16
+From: Bob Johnson
+----------------------------------------
+Wait, it is getting more?
+
+Message 199 - 2025-10-09 11:17
+From: Bob Johnson
+----------------------------------------
+I am on it.
+
+Message 200 - 2025-10-10 08:15
+From: U04NDGABHHA
+----------------------------------------
+Hi all.
+I am looking at the safety guidance doc in the main branch and I see that math is QM now even if it
+was the first certficate we got
+
+Message 201 - 2025-10-10 08:15
+From: U04NDGABHHA
+----------------------------------------
+can anybody explain ?
+
+Message 202 - 2025-10-10 08:19
+From: Fabrizio Tronci
+----------------------------------------
+the current safety guidance is based on the scope of the RHIVOS 1.0 GA which doesn't include math.
+we are not including the evidence of math in this submission (e.g. tests, validators..) so in this
+version of the doc it is not considered in the safety scope
+
+Message 203 - 2025-10-10 08:20
+From: U04NDGABHHA
+----------------------------------------
+So if a customer ask we should say that math cannot be used by ASIL B apps ?
+
+Message 204 - 2025-10-10 08:21
+From: Bob Johnson
+----------------------------------------
+Please avoid hypothetical questions. Thanks.
+
+Message 205 - 2025-10-10 08:22
+From: U04NDGABHHA
+----------------------------------------
+Ok removing the hypothesis
+
+Message 206 - 2025-10-10 08:22
+From: U04NDGABHHA
+----------------------------------------
+Can math APIs be invoked by ASIL B apps or not ?
+
+Message 207 - 2025-10-10 08:23
+From: Bob Johnson
+----------------------------------------
+Yes. They can. And if they do, we will include them into the certification scope upon request.
+
+Message 208 - 2025-10-10 08:23
+From: U04NDGABHHA
+----------------------------------------
+Ok thanks, so today math is not in the safety scope
+
+Message 209 - 2025-10-10 08:27
+From: Bob Johnson
+----------------------------------------
+You are right. Just note that we have a certification for math. So, we did it once, and we can do it
+again, we just do it upon request.
+
+Message 210 - 2025-10-13 07:15
+From: U04QAEAG56V
+----------------------------------------
+https://issues.redhat.com/browse/VROOM-33417
+Can someone justify why the safety guidance is in draft state for the GCC quality review? This is
+the only finding
+
+Message 211 - 2025-10-13 08:43
+From: Bob Johnson
+----------------------------------------
+I will take care.
+
+Message 212 - 2025-10-13 08:46
+From: Bob Johnson
+----------------------------------------
+I provided a suitable rationale.
+
+Message 213 - 2025-10-13 08:53
+From: U04QAEAG56V
+----------------------------------------
+Thank you!
+
+Message 214 - 2025-10-13 09:31
+From: Pavol Brilla
+----------------------------------------
+@U04NDGABHHA repeat request - please do not file tickets and list me as the Reporter if you are the
+Reporter :smile:
+
+Message 215 - 2025-10-13 09:31
+From: Pavol Brilla
+----------------------------------------
+I am going to flip the ones I see in my inbox
+
+Message 216 - 2025-10-13 09:32
+From: Bob Johnson
+----------------------------------------
+Cloning is evil :smile:
+
+Message 217 - 2025-10-13 10:43
+From: Tom Callaway
+----------------------------------------
+May I please have a DocID for "Review of RHIVOS Release For Production for RHIVOS 1.0 GA"?
+
+Message 218 - 2025-10-13 11:03
+From: Tom Callaway
+----------------------------------------
+I've completed the technical review of the Release For Production document for VROOM-30607
+(https://issues.redhat.com/browse/VROOM-30607) with 1 minor finding. Who should I assign the ticket
+to for addressing the finding?
+
+Message 219 - 2025-10-13 13:18
+From: U04Q5LSQ0R5
+----------------------------------------
+Review of glibc compiler toolchain Risk Assessment
+(https://docs.google.com/document/d/1v0o6SKuPnwV9NoKk-lF32m1vNrJbZwxGQum8T_BDsPo/edit?tab=t.0#heading=h.nle2zzn3b3l0)
+is complete with 4 findings. Does anyone have cycles to address the findings?
+
+Message 220 - 2025-10-13 13:27
+From: Pavol Brilla
+----------------------------------------
+@U04Q5LSQ0R5 are these mechanical / cosmetic or do they need an SME?
+
+Message 221 - 2025-10-13 13:27
+From: U04Q5LSQ0R5
+----------------------------------------
+They dont need SME
+
+Message 222 - 2025-10-13 13:28
+From: U04Q5LSQ0R5
+----------------------------------------
+Mostly about absent linking , freezing workitems and Arch diagram color key (cosmetic + traceability
+stuff)
+
+Message 223 - 2025-10-13 13:29
+From: Tom Callaway
+----------------------------------------
+I'll work on it
+
+Message 224 - 2025-10-13 13:35
+From: Pavol Brilla
+----------------------------------------
+awesome, thank you both!
+
+Message 225 - 2025-10-14 04:00
+From: Bot-B06KYLGU
+----------------------------------------
+Reminder : Please add your demos for tomorrow! :slightly_smiling_face:
+https://docs.google.com/document/d/1HDTZ-dyRO9ksmelWVilXylYmrq8Txu5jw2h0UnoQTwE/edit. Thanks, team!
+
+Message 226 - 2025-10-14 04:18
+From: U09F4VDKSCD
+----------------------------------------
+Hi all, I have questions related to the "Risk" work items in Polarion: • Is my assumption correct
+that we want to use those to traceably document the interdependency of the Risk Assessments? • What
+else can be represented by a "Risk" work item (e.g. I saw also a "Risk" for GCC compiler
+qualification)? • Is there a Document specifying the process we apply for creation and linking of
+the "Risks"? • Shouldn't we have an unambiguous relationship between the "Risk" work item and the RA
+it's representing? For some of them I found a hyperlink, but for most of them it's missing.
+
+Message 227 - 2025-10-14 06:22
+From: U09F4VDKSCD
+----------------------------------------
+Hi team, as mentioned yesterday in the standup, I have observed three issues that I need to solve
+before completing the import of currently known Technical FoAs for File System and Storage RA. I
+have commented these in VROOM-25700 (https://issues.redhat.com/browse/VROOM-25700).
+• ~While I believe that I have to check the third bullet point (*FoAs 32.1 and 32.2*) directly with
+the team that has worked on FoAs 22.1 and 22.2:~ When somebody has a couple of minutes, could you
+please • at least recommend how to proceed for *FoAs 17.1 and 17.2* (actually covered by FoAs from a
+different RA) and • maybe comment on the issue described for *FoA 26.1*? However, it might also make
+sense to have a short call to discuss that one... Thanks for your help!
+
+Message 228 - 2025-10-14 10:18
+From: U04QAEAG56V
+----------------------------------------
+@U09F4VDKSCD triggered a discussion on the `ar` tool usage and how this is presented in the compiler
+toolchain RA interaction diagram. We present one specific use case in that diagram that is of no
+relevance since we do not allow static linking (of components external to the safety application).
+Our RHEL derived use case for building binaries/dsos is not represented in the diagram.
+So in order to avoid confusion we should remove the `ar` part for now and later work on the planned
+improvements (https://issues.redhat.com/browse/VROOM-33274). Any concerns?
+
+Message 229 - 2025-10-14 10:21
+From: U04Q5LSQ0R5
+----------------------------------------
+IMHO we should keep as is and include details in upcoming cycle/Post GA. We can add a note if
+needed.
+
+Message 230 - 2025-10-14 13:56
+From: Tom Callaway
+----------------------------------------
+The glibc toolchain Test Sufficiency Technical Review is complete with 3 findings. VROOM-32051
+(https://issues.redhat.com/browse/VROOM-32051) Two findings are minor one will need the attention of
+a safety expert to determine if the missing hypotheses are needed for a tool qualification.
+
+Message 231 - 2025-10-15 02:41
+From: U04QAEAG56V
+----------------------------------------
+I'm not able to work today, hope to be back tomorrow
+
+Message 232 - 2025-10-15 03:31
+From: Bob Johnson
+----------------------------------------
+@U04QAEAG56V Don't worry, we will not go GA without you.
+
+Message 233 - 2025-10-15 04:51
+From: Michal Skrivanek
+----------------------------------------
+`s/without you//` ?
+
+Message 234 - 2025-10-15 10:25
+From: Tom Callaway
+----------------------------------------
+The systemd RA Technical Review is complete with 1 minor finding (unfrozen WI). VROOM-32040
+(https://issues.redhat.com/browse/VROOM-32040) Who can address this?
+
+Message 235 - 2025-10-15 11:43
+From: Pavol Brilla
+----------------------------------------
+@Tom Callaway Priyanka has a small pile of tech reviews, so I'm going to ask you to handle the CIA
+review when @Bob Johnson is ready please? https://issues.redhat.com/browse/VROOM-33668
+
+Message 236 - 2025-10-15 11:43
+From: Pavol Brilla
+----------------------------------------
+I think he's suggested you can start but you might want to understand what's still to do
+
+Message 237 - 2025-10-15 11:44
+From: Tom Callaway
+----------------------------------------
+Okay, thanks
+
+Message 238 - 2025-10-15 11:44
+From: Pavol Brilla
+----------------------------------------
+thank you sir
+
+Message 239 - 2025-10-15 12:08
+From: Tom Callaway
+----------------------------------------
+May I please have the DocID for "Review of RHIVOS Change Impact Analysis - Change of glibc toolchain
+versions"? I don't see it in the menu.
+
+Message 240 - 2025-10-15 13:57
+From: Pavol Brilla
+----------------------------------------
+:green_alert: Warning Warning Warning: AIDs are dangerously low! Reporting 0! Check systems
+immediately! :green_alert:
+
+Message 241 - 2025-10-16 03:26
+From: U04QAEAG56V
+----------------------------------------
+Do we have a template of the change impact analysis docs?
+
+  Thread Reply 242 - 2025-10-16 03:48
+  From: Bob Johnson
+  --------------------------------------
+We do not have an explicit template, but you can look at all of them and infer a common structure.
+
+  Thread Reply 243 - 2025-10-16 03:48
+  From: Bob Johnson
+  --------------------------------------
+For tools, you can probably just copy the whole initial part from the glibc toolchain change impact
+analysis.
+
+  Thread Reply 244 - 2025-10-16 03:55
+  From: U04QAEAG56V
+  --------------------------------------
+Will do, thanks!
+
+  Thread Reply 245 - 2025-10-16 04:07
+  From: Bob Johnson
+  --------------------------------------
+Just to set expectations right, I am totally not happy with the presentation of the actual relevant
+information, but I followed a high-level idea of "revisit all questions and all FoAs for the
+specific versions of interest" and that then caused the document to be as it is. The issue is though
+that the safety concerns are often "sub-concerns" of a higher-level concern, and even more so, the
+mitigation is essentially the same (run the test), with a specific minor property to check.
+Transferring that to the change impact analysis and with no automatic validators in place, it is
+basically asking that a specific property in the test run is true. I do not know yet how such
+situation is best resolved, though, with the various pros and cons. In the future, do we ask for
+multiple automatic validators on the same data or one validator to check all properties on the data
+set? Should we restructure the safety concerns table to make clear, that a higher-level safety
+concern, can be essentially broken down to these further safety concerns, and that the mitigation is
+one with the multiple aspects to take into account? Etc. etc. Anyway, for now, I understand the
+actual structure and I hope nobody else ever needs to wrap their head around this in the close
+future (so let us say next five years or so) and until then, we better understand what all this
+change impact analysis is actually all about.
+
+  Thread Reply 246 - 2025-10-16 04:14
+  From: Bob Johnson
+  --------------------------------------
+But I believe in the continuous certification framework! I.e., if doing this work continuously is
+just painful enough for long enough, we will eventually learn to do it differently.
+
+  Thread Reply 247 - 2025-10-16 05:10
+  From: U04QAEAG56V
+  --------------------------------------
+Thank you for your thoughts. As I am working through the document I can see what you are saying. For
+this round I will follow the structure and adapt it to fmf/tmt. I hope eventually we get to
+streamline this and automate most of it in a way that adds to safety.
+I'm not sure at all right now, what we actually need to do for tmt. It's different from the compiler
+toolchain in the regard that we re-run the testing also post-pasckage promotion, i.e. each package
+gets tested by a number of versions of tmt including the latest and greatest tmt-1.59.0 that has
+been pushed into the pipeline just today. Do we just want to present that the version that was used
+to create some evidence did correctly report the test results? Why would we ignore the fact we have
+much more evidence in-house that we don't necessarily share with the assessor proactively? Let's see
+what makes sense in the end
+
+Message 248 - 2025-10-16 05:13
+From: U04QAEAG56V
+----------------------------------------
+Can I please have a doc ID for "RHIVOS Change Impact Analysis - Change of test framework versions"
+
+  Thread Reply 249 - 2025-10-16 05:14
+  From: Fabrizio Tronci
+  --------------------------------------
+2689
+
+Message 250 - 2025-10-16 09:41
+From: U9AR7FQTA
+----------------------------------------
+@Fabrizio Tronci @John Smith and team! It looks like we're on the final stretch of this
+ultra-marathon. You're doing great! Please let Steve / me know if you need anything today.
+
+Message 251 - 2025-10-16 10:37
+From: U04QAEAG56V
+----------------------------------------
+[No text content]
+
+  Thread Reply 252 - 2025-10-16 11:57
+  From: Alex McLeod
+  --------------------------------------
+[No text content]
+
+Message 253 - 2025-10-16 13:52
+From: U04Q5LSQ0R5
+----------------------------------------
+Review of Top Level RA is done with 2 open findings
+https://docs.google.com/document/d/13LQl607X7VSyr38jNoJBqN17SZjx1qq9mp9qyOibg04/edit?tab=t.0 it
+would be great it anyone can help with these quick fixes. 1 related to freezing and another is about
+no prod. need linked to the newly added SC.
+
+Message 254 - 2025-10-16 14:13
+From: Tom Callaway
+----------------------------------------
+I can take it
+
+  Thread Reply 255 - 2025-10-16 14:21
+  From: Tom Callaway
+  --------------------------------------
+Done.  I baselined the document and updated the review document and ticket.
+
+Message 256 - 2025-10-17 09:33
+From: U9AR7FQTA
+----------------------------------------
+Hi all - we're canceling the technical round table today due to the team in crunch mode on the last
+few open items for our cert (mostly document reviews).
+
+Message 257 - 2025-10-17 09:34
+From: U9AR7FQTA
+----------------------------------------
+Let's get this done. Good job, team!
+
+Message 258 - 2025-10-17 09:58
+From: Tom Callaway
+----------------------------------------
+May I please get a DocID for "Review of RHIVOS Change Impact Analysis - Change of test framework
+versions"?
+
+  Thread Reply 259 - 2025-10-17 10:04
+  From: Fabrizio Tronci
+  --------------------------------------
+2690
+
+Message 260 - 2025-10-17 10:28
+From: U04QAEAG56V
+----------------------------------------
+I addressed comments from @Bob Johnson and @Tom Callaway in the test framework CIA doc. Did any of
+you do the informal review?
+
+  Thread Reply 261 - 2025-10-17 10:31
+  From: Tom Callaway
+  --------------------------------------
+I had started the Technical Review but saw that Lukas was commenting so assumed he was doing the
+informal review.
+
+  Thread Reply 262 - 2025-10-17 10:31
+  From: Bob Johnson
+  --------------------------------------
+I was just checking to see if there is a major inconsistency in the approach of the two documents.
+
+  Thread Reply 263 - 2025-10-17 10:32
+  From: U04QAEAG56V
+  --------------------------------------
+I guess Fabrizio would not object if someone takes over that review
+
+  Thread Reply 264 - 2025-10-17 10:39
+  From: Tom Callaway
+  --------------------------------------
+I can do it since I'll be reviewing it formally as well.
+
+  Thread Reply 265 - 2025-10-17 10:46
+  From: Tom Callaway
+  --------------------------------------
+I'm done with the informal review.  I left a couple of small comments for typos.
+
+  Thread Reply 266 - 2025-10-17 10:48
+  From: U04QAEAG56V
+  --------------------------------------
+Thanks, I addressed them
+
+  Thread Reply 267 - 2025-10-17 10:55
+  From: Tom Callaway
+  --------------------------------------
+I've done the technical review and there is one finding. I've assigned the ticket to you
+@U04QAEAG56V to address it.
+
+  Thread Reply 268 - 2025-10-17 11:01
+  From: U04QAEAG56V
+  --------------------------------------
+I wrote a sentence.. does it make sense, also from a language perspective?
+
+  Thread Reply 269 - 2025-10-17 11:02
+  From: Tom Callaway
+  --------------------------------------
+Yes
+
+  Thread Reply 270 - 2025-10-17 11:03
+  From: U04QAEAG56V
+  --------------------------------------
+And now it's a bit silly that we don't have individual versions
+
+  Thread Reply 271 - 2025-10-17 11:04
+  From: Tom Callaway
+  --------------------------------------
+Yeah, I was wondering how you were going to deal with this situation.
+
+  Thread Reply 272 - 2025-10-17 11:05
+  From: U04QAEAG56V
+  --------------------------------------
+I followed the other examples, but maybe that wasn't a good idea after all. It's less paper work in
+the beginning, but more long-term
+
+  Thread Reply 273 - 2025-10-17 11:09
+  From: Bob Johnson
+  --------------------------------------
+Do not worry long term. If we cannot automate gathering the necessary evidence for the change impact
+analysis for tools, we already doomed short term, for anything beyond GA. (Unless we decide to
+freeze all tools used, which QA would probably point out as being really stupid... so automation of
+gathering the evidence is the only way forward and then this CIA report is to be fully automatically
+generated.)
+
+  Thread Reply 274 - 2025-10-17 11:15
+  From: U04QAEAG56V
+  --------------------------------------
+Ok, let's see. I bumped the version in the main doc meanwhile
+
+Message 275 - 2025-10-17 11:03
+From: Tom Callaway
+----------------------------------------
+CIA TRs go to Matthew for approval like everything else, right?
+
+  Thread Reply 276 - 2025-10-17 11:04
+  From: Bob Johnson
+  --------------------------------------
+Yes, they are due to GA. So it might be that they will deeper in that stack of work.
+
+  Thread Reply 277 - 2025-10-17 11:05
+  From: Tom Callaway
+  --------------------------------------
+Ack, thanks
+
+  Thread Reply 278 - 2025-10-17 11:35
+  From: Fabrizio Tronci
+  --------------------------------------
+could you suspend flipping the approval cards to Matthew until the closure of the re-submission?
+that document goes in the GA delivery but not to exida
+
+  Thread Reply 279 - 2025-10-17 11:35
+  From: Fabrizio Tronci
+  --------------------------------------
+so just to avoid confusion
+
+  Thread Reply 280 - 2025-10-17 11:35
+  From: Tom Callaway
+  --------------------------------------
+Yes, so only 3.5 cards go to Matthew right now?
+
+  Thread Reply 281 - 2025-10-17 11:37
+  From: Fabrizio Tronci
+  --------------------------------------
+yes please, only 3.5 and release for production VROOM-30607
+(https://issues.redhat.com/browse/VROOM-30607).
+
+  Thread Reply 282 - 2025-10-17 11:37
+  From: Fabrizio Tronci
+  --------------------------------------
+the others can be approved after the resubmission 3.5
+
+  Thread Reply 283 - 2025-10-17 11:37
+  From: Tom Callaway
+  --------------------------------------
+I've assigned the CIA TR tickets back to myself for now
+
+Message 284 - 2025-10-17 16:47
+From: U9AR7FQTA
+----------------------------------------
+Great job team on closing out all the remaining reviews. The docs are in long term storage.
+Now we just have to wait for exida to close the remaining P1s (fingers crossed none bounce back) and
+give us the cert + report.
+
+Message 285 - 2025-10-17 16:48
+From: U9AR7FQTA
+----------------------------------------
+Safe travels to all who're traveling!
+
+Message 286 - 2025-10-21 04:08
+From: Amanda Sopkin
+----------------------------------------
+Hi folks, I'm back, I guess that most of you will be out for the F2F, I'll be excavating my inbox,
+ping me directly if I need to be aware of anything
+
+Message 287 - 2025-10-21 07:57
+From: Pavol Brilla
+----------------------------------------
+welcome back @Amanda Sopkin! I hope your assignments this sprint make sense - if you have any
+questions though please let me know :heart:
+
+Message 288 - 2025-10-21 10:10
+From: Pavol Brilla
+----------------------------------------
+!here FYI we are working to resolve the last remaining issue with exida and if they are happy with
+our response, we will be on track for Thursday release with a certificate in hand and on the exida
+site no later than tomorrow From: Amanda Carter Sender: Slack Conversation
+
+Message 289 - 2025-10-22 14:14
+From: Pavol Brilla
+----------------------------------------
+@Alex McLeod @U03KTGK0ACB woooah look at that announcement!
+
+Message 290 - 2025-10-22 14:16
+From: U03KTGK0ACB
+----------------------------------------
+All 6 of us group members :party-blob:
+
+Message 291 - 2025-10-22 14:16
+From: Pavol Brilla
+----------------------------------------
+it's pretty cool :smile: who did you add to the group?
+
+Message 292 - 2025-10-22 14:17
+From: Pavol Brilla
+----------------------------------------
+oh I found the list - nm
+
+Message 293 - 2025-10-22 14:17
+From: Pavol Brilla
+----------------------------------------
+would it be ok for me to add Matthew &amp; Fabrizio to see the publication events?
+
+  Thread Reply 294 - 2025-10-22 14:21
+  From: U03KTGK0ACB
+  --------------------------------------
+spaces.redhat.com/spaces/Automotive/pages/626721877/Working+with+Customer+Portal+Private+Groups
+(http://spaces.redhat.com/spaces/Automotive/pages/626721877/Working+with+Customer+Portal+Private+Groups)
+
+  Thread Reply 295 - 2025-10-22 14:22
+  From: Pavol Brilla
+  --------------------------------------
+:meow_love:
+
+  Thread Reply 296 - 2025-10-22 14:31
+  From: U03KTGK0ACB
+  --------------------------------------
+Thanks for the forward -- I didn't get the email myself. (I _wish_ there were just a *few* more
+formatting options...)
+
+  Thread Reply 297 - 2025-10-22 14:31
+  From: Pavol Brilla
+  --------------------------------------
+lol
+
+Message 298 - 2025-10-22 14:18
+From: Alex McLeod
+----------------------------------------
+Do please
+
+Message 299 - 2025-10-22 14:18
+From: U03KTGK0ACB
+----------------------------------------
+Sure -- this was from POC testing several months ago.
+
+Message 300 - 2025-10-22 14:18
+From: Pavol Brilla
+----------------------------------------
+sweet - very nice work!
+
+Message 301 - 2025-10-22 14:18
+From: Pavol Brilla
+----------------------------------------
+awesome to see this finally
+

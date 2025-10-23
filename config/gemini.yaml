@@ -11,6 +11,134 @@ generation_config:
   top_k: 40               # Top-k sampling parameter
   max_output_tokens: 2048 # Maximum length of generated response
 
+# Unified TODO Extraction Configuration
+# Used by Email, Jira, and Slack connectors to extract actionable tasks
+todo_extraction:
+  enabled: true
+  
+  # AI Model settings (shared across all sources)
+  model: "models/gemini-2.0-flash"
+  temperature: 0.3  # Lower temperature for more consistent extraction
+  max_output_tokens: 2000
+  
+  # Detection settings (shared)
+  detection:
+    confidence_threshold: 0.6
+    max_todos_per_item: 3
+  
+  # Source-specific settings
+  sources:
+    email:
+      enabled: true
+      priority_weight: 1.2  # Emails get 20% urgency boost
+      
+    jira:
+      enabled: true
+      priority_weight: 1.0
+      analyze_assigned_issues: true
+      analyze_comments: true  # Extract from @mentions in comments
+      analyze_descriptions: true
+      
+    slack:
+      enabled: true
+      priority_weight: 0.9  # Slack is more casual
+      analyze_direct_messages: true
+      analyze_mentions: true
+      analyze_thread_replies: true
+  
+  # Unified system prompt (works for all sources)
+  prompts:
+    system_prompt: |
+      You are an expert at analyzing professional communications (emails, Jira issues, Slack messages) 
+      and extracting actionable TODO items using natural language understanding.
+      
+      Intelligent criteria for identifying tasks:
+      
+      1. **Direct Instructions & Explicit Requests**: 
+         - Direct assignments, @mentions, clear commands
+         - Questions requiring response
+      
+      2. **Implicit Actions & Strong Verbs**:
+         - Action verbs: review, approve, finalize, send, update, test, document
+         - "We need to...", "Let's...", "Please..."
+      
+      3. **Context from Key People**:
+         - Prioritize managers, team leads, stakeholders
+         - Direct 1-on-1 communications
+      
+      4. **Deadlines and Urgency**:
+         - Due dates, sprint deadlines, release dates
+         - "ASAP", "urgent", "by EOD", "before meeting"
+      
+      5. **Decision & Approval Requests**:
+         - "needs your approval", "please review", "waiting on you"
+      
+      Output format: JSON array with description, urgency, deadline, context, confidence
+    
+    # Email-specific extraction prompt
+    email_prompt: |
+      Analyze this email for actionable TODOs.
+      
+      From: {email_from}
+      Subject: {email_subject}
+      Date: {email_date}
+      
+      {email_body}
+      
+      Extract actionable TODOs with description, urgency (critical/high/medium/low), 
+      deadline (YYYY-MM-DD or null), context, and confidence (0.0-1.0).
+      
+      Return JSON array or [] if no TODOs.
+    
+    # Jira-specific extraction prompt
+    jira_prompt: |
+      Analyze this Jira issue for actionable TODOs for the assignee/mentioned user.
+      
+      Issue: {issue_key} - {issue_summary}
+      Status: {issue_status}
+      Assigned: {assignee}
+      Priority: {priority}
+      
+      Description:
+      {description}
+      
+      Recent Comments:
+      {comments}
+      
+      Focus on:
+      - Action items in comments (especially @mentions)
+      - Blockers needing resolution
+      - Review/approval requests
+      - Testing or documentation needs
+      - Specific tasks within the issue
+      
+      Extract actionable TODOs with description, urgency, deadline, context, and confidence.
+      Return JSON array or [] if no TODOs.
+    
+    # Slack-specific extraction prompt  
+    slack_prompt: |
+      Analyze this Slack message/thread for actionable TODOs for the user.
+      
+      Channel: {channel}
+      From: {sender}
+      Date: {date}
+      
+      Message:
+      {message}
+      
+      Thread Context:
+      {thread_context}
+      
+      Focus on:
+      - Direct questions or requests to the user
+      - @mentions asking for action
+      - Commitments made by the user
+      - Follow-up requests
+      - Shared team tasks
+      
+      Extract actionable TODOs with description, urgency, deadline, context, and confidence.
+      Return JSON array or [] if no TODOs.
+
 # Email Workflow Prompts
 # These prompts are used by the daily team report workflow
 prompts:

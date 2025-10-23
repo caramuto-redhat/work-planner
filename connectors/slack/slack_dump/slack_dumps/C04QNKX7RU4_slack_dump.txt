@@ -1,0 +1,53 @@
+# Slack Channel Dump
+# Channel ID: C04QNKX7RU4
+# Generated: 2025-10-22T20:05:53.854924
+# Total Messages: 24
+
+[2025-09-24T11:29:13.178649] Luigi Pellecchia: Hi <!channel>,
+I made an analysis and published it to <https://issues.redhat.com/browse/VROOM-30930> as discussed during today meeting.
+We need to double check the fusa scope defined in the ctc.yaml (list of plans are available in the json file attached to the ticket) and modify the plans adding required tests as requested by the ticket.
+Who will take this one? Any volunteer?!
+[2025-09-26T11:00:42.609109] Rachel Sibley: Hi All back from the F2F please let me know if there is anything I can help follow up with !
+[2025-09-28T22:29:00.061489] U049ZDBUUMQ: Hi team,
+We have an urgent ticket <https://issues.redhat.com/browse/VROOM-30930> which must be finished today.
+Here are a bunch of MRs need review:
+<https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1105> Add and fix require-test for kernel plans
+<https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1106> Add require-test to podman plans
+<https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1107> Add require-test to qm plans
+<https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1108> Add require-test to image builder plans
+<https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1109> Add require-test to evidence,tmt plans
+<https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1111> Fix systemd requrie-test
+<https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1112> Fix smoke require-test
+
+Can the owner of each field please help review the corresponding MR?
+[2025-09-30T19:30:05.350539] Bot-B06SVP69: Hi BOA team a few reminders for sprint planning tomorrow !
+1. Please move your ticket to correct status and provide a recent update
+2. Please ensure you have a reviewer set for tickets in Review State
+3. Please consider to demo your progress from the past sprint, add it to the demo section in the <https://docs.google.com/document/d/13BM6pu6YwyYXjgO9UQUnPIGT7aqXBAdLwvwZ7OwFWtA/edit?tab=t.0|doc>
+[2025-10-01T11:54:26.435189] Rachel Sibley: Congratulations <@U04KNU6HGCU> on your promotion, well deserved !! :clap:
+[2025-10-02T09:22:42.526179] Rachel Sibley: Hi all! For the discussion we had about enumerating tests using `require-test` for QM tests, after checking with Matthew/Dennis it's not a fusa requirement to do this or move to a validator. However from a QM perspective I may be asked later, "how do you know you are running the right set of tests ?" I can confirm this if we continue to link our test case work items in our test specs, additionally we could add a RHIVOS checkbox to RHEL TC work items, I think Jenny was looking this. Then I can easily build reports like this one which will no longer be skewed. I know there were concerns about the maintenance in the tmt plans, so hopefully this is a happy medium since we're already doing this and best practice, cc <@U04KNU6HGCU> ?
+[2025-10-08T09:40:27.605579] Rachel Sibley: Hi <!subteam^S08C3DALZB5> I am taking unexpected leave the rest of the week for bereavement, Luigi will be my back up if you need anything.
+[2025-10-08T13:18:20.871219] Brian Grech: Hi All,
+Just looking ahead for RHIVOS-2; we have some complications for adding a couple of repos, one being EPEL - it appears the RPM is built with dependency requirement to redhat-release version
+
+Does anyone know the team responsible for this?
+[2025-10-09T08:14:05.400899] Pavol Brilla: <@U04Q4USRZTM> what is needed for TC to see RHIVOS-2 images? currently build images are still just manually promoted after reviewing and waiving smoke-tests, but toolchain webserver have those nightly images
+[2025-10-09T12:21:49.237999] Brian Grech: <!here> Team for RHIVOS-2, we will not be installing EPEL repo  and have been directed to request specific packages be added to the QA image (core).
+I ran a quick check against kernel repositories (internal and external) but that was only using fmf files. I know there could be conditions which test scripts are installing dependencies. Please evaluate your tests and add required packages to <https://issues.redhat.com/browse/VROOM-33604>
+[2025-10-09T12:23:23.712679] Jeff Bastian: @bgrech can you use CRB?  Most of the dependencies are there which is part of RHEL.
+[2025-10-09T12:24:29.120289] Jeff Bastian: Unfortunately, some Beaker templates -- e.g., "Erratify" (for Errata Tool) -- disable CRB by default.
+[2025-10-09T12:25:05.118769] Jeff Bastian: easy to fix, you just have to remember to do it
+[2025-10-09T12:29:09.439969] Jeff Bastian: so the problem is with the `redhat-release` rpm?  That's odd
+[2025-10-09T12:32:07.311569] Jeff Bastian: `tpm-tools` and `trousers` are in EPEL, but not RHIVOS?  something is fishy
+[2025-10-10T05:30:45.303429] Jan Onderka: Hello team, I have accidently closed the current sprint. Does have anybody privileges to reopen it? <https://issues.redhat.com/secure/RapidBoard.jspa?rapidView=16509&amp;view=reporting&amp;chart=sprintRetrospective&amp;sprint=77714#>
+[2025-10-14T19:30:04.301099] Bot-B06SVP69: Hi BOA team a few reminders for sprint planning tomorrow !
+1. Please move your ticket to correct status and provide a recent update
+2. Please ensure you have a reviewer set for tickets in Review State
+3. Please consider to demo your progress from the past sprint, add it to the demo section in the <https://docs.google.com/document/d/13BM6pu6YwyYXjgO9UQUnPIGT7aqXBAdLwvwZ7OwFWtA/edit?tab=t.0|doc>
+[2025-10-15T11:47:40.319319] Rachel Sibley: Hi <@U04PQB5SV41> <@UG0N57XEX> <@U04KNU6HGCU> regarding the email "tmt: restraint compatibility changes", any idea how many tests this may impact ? <@U04PQB5SV41> has kernel team moved to tmt yet, I'm assuming no ? If so we may need to enable that flag for kernel tests, in addition to replacing rhts-* / rstrnt-* commands with tmt compatible commands with coordination from RHEL. What are your thoughts ?
+[2025-10-21T08:14:43.182319] Jan Onderka: <@U04Q4USRZTM> <@U04KNU6HGCU> do you have any concerns related this MR? <https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/949> It is simple and I don't see any reason to postpone it any further
+[2025-10-22T03:21:38.108249] Jan Onderka: Hello team, I don't feel well today. I am taking 1 sick day. <@U04N2DV1W3Y> <@U04N9LTR47M> FYI
+[2025-10-22T09:02:33.702369] Rachel Sibley: <!subteam^S08C3DALZB5> reminder standup :wink:
+  ↳ [2025-10-22T12:09:57.902309] Rakesh Musalay: Sorry <@U04N2DV1W3Y> missed the standup, was not feeling great this morning. I was able to wrap up with a FoA task and other couple of tasks are in-review. Hoping to wrap them up too. Spoke to Francisco and will be working on some tickets related to adjusting the renesas tests to work on ridesx4 next. I've assigned it to myself and in my backlog
+  ↳ [2025-10-22T16:08:19.034049] Rachel Sibley: no problem <@U04N0SVB92Q> hope you feel better soon !
+[2025-10-22T17:53:24.983729] Rachel Sibley: hi <!subteam^S08C3DALZB5> if you don't currently have a ticket please pick one from <https://issues.redhat.com/browse/VROOM-32922>

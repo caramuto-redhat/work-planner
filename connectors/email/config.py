@@ -1,6 +1,6 @@
 """
 Email Configuration Manager for Work Planner MCP Server
-Loads and manages email configuration from config/mail_template.yaml
+Loads and manages email configuration from config/mail_template.yaml and config/email.yaml
 """
 
 import os
@@ -10,10 +10,12 @@ from typing import Dict, Any, Optional, List
 class EmailConfig:
     """Configuration manager for email settings"""
     
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: Optional[str] = None, email_config_path: Optional[str] = None):
         """Initialize email configuration"""
         self.config_path = config_path or os.path.join('config', 'mail_template.yaml')
+        self.email_config_path = email_config_path or os.path.join('config', 'email.yaml')
         self.config = self._load_config()
+        self.email_config = self._load_email_config()
     
     def _load_config(self) -> Dict[str, Any]:
         """Load configuration from YAML file"""
@@ -28,6 +30,52 @@ class EmailConfig:
         except Exception as e:
             print(f"Warning: Could not load email config from {self.config_path}: {e}")
             return self._get_default_config()
+    
+    def _load_email_config(self) -> Dict[str, Any]:
+        """Load email infrastructure configuration (IMAP/SMTP) from email.yaml"""
+        try:
+            if os.path.exists(self.email_config_path):
+                with open(self.email_config_path, 'r', encoding='utf-8') as f:
+                    config = yaml.safe_load(f)
+                return config or {}
+            else:
+                # Return default email config
+                return self._get_default_email_config()
+        except Exception as e:
+            print(f"Warning: Could not load email config from {self.email_config_path}: {e}")
+            return self._get_default_email_config()
+    
+    def _get_default_email_config(self) -> Dict[str, Any]:
+        """Get default email infrastructure configuration"""
+        return {
+            'imap': {
+                'enabled': True,
+                'server': 'imap.gmail.com',
+                'port': 993,
+                'security': 'ssl',
+                'folders': ['INBOX'],
+                'filtering': {
+                    'exclude_senders': ['noreply@', 'no-reply@', 'notifications@', 'automated@', 'donotreply@'],
+                    'exclude_subjects': ['[Newsletter]', 'Unsubscribe', 'Marketing'],
+                    'unread_only': False,
+                    'max_emails': 100
+                }
+            },
+            'smtp': {
+                'enabled': True,
+                'server': 'smtp.gmail.com',
+                'port': 587,
+                'security': 'tls',
+                'retry': {
+                    'max_attempts': 3,
+                    'delay_seconds': 30
+                }
+            },
+            'authentication': {
+                'connection_timeout': 30,
+                'read_timeout': 60
+            }
+        }
     
     def _get_default_config(self) -> Dict[str, Any]:
         """Get default email configuration"""
@@ -225,8 +273,32 @@ class EmailConfig:
         """Reload configuration from file"""
         try:
             self.config = self._load_config()
+            self.email_config = self._load_email_config()
             return self.validate_config()
         except Exception as e:
             print(f"Error reloading email config: {e}")
             return False
+    
+    def get_imap_config(self) -> Dict[str, Any]:
+        """Get IMAP configuration for reading emails"""
+        return self.email_config.get('imap', self._get_default_email_config()['imap'])
+    
+    def get_smtp_config(self) -> Dict[str, Any]:
+        """Get SMTP configuration for sending emails"""
+        # First check email.yaml, then fall back to provider config from mail_template.yaml
+        smtp_config = self.email_config.get('smtp', {})
+        if not smtp_config:
+            provider = self.get_provider_config()
+            smtp_config = {
+                'enabled': True,
+                'server': provider.get('smtp_server', 'smtp.gmail.com'),
+                'port': provider.get('smtp_port', 587),
+                'security': provider.get('security', 'tls')
+            }
+        return smtp_config
+    
+    def get_email_filtering_config(self) -> Dict[str, Any]:
+        """Get email filtering configuration for inbox reading"""
+        imap_config = self.get_imap_config()
+        return imap_config.get('filtering', {})
 

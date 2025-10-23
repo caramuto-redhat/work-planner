@@ -7,7 +7,7 @@ from utils.responses import create_error_response, create_success_response
 from utils.validators import validate_team_name
 from ..client import GeminiClient
 from ..config import GeminiConfig
-from .ai_summary_tool import ai_summary_tool
+# from .ai_summary_tool import ai_summary_tool  # Disabled - has broken imports
 import json
 import os
 

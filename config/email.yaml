@@ -1,0 +1,57 @@
+# Email Configuration
+# Handles both sending (SMTP) and reading (IMAP) for the Work Planner
+
+# IMAP Configuration for reading emails
+imap:
+  enabled: true
+  server: "imap.gmail.com"
+  port: 993
+  security: "ssl"  # Gmail IMAP uses SSL
+  
+  # Folders to check
+  folders:
+    - "INBOX"
+  
+  # Filtering options
+  filtering:
+    # Exclude automated emails
+    exclude_senders:
+      - "noreply@"
+      - "no-reply@"
+      - "notifications@"
+      - "automated@"
+      - "donotreply@"
+    
+    # Exclude newsletters and marketing
+    exclude_subjects:
+      - "[Newsletter]"
+      - "Unsubscribe"
+      - "Marketing"
+    
+    # Only check unread emails by default
+    unread_only: false
+    
+    # Maximum emails to fetch per request
+    max_emails: 100
+
+# SMTP Configuration for sending emails (existing)
+smtp:
+  enabled: true
+  server: "smtp.gmail.com"
+  port: 587
+  security: "tls"
+  
+  # Retry configuration
+  retry:
+    max_attempts: 3
+    delay_seconds: 30
+
+# Authentication
+# Uses environment variables:
+# - EMAIL_USERNAME (Gmail address)
+# - EMAIL_PASSWORD (Gmail App Password - works for both SMTP and IMAP)
+authentication:
+  # Timeout settings
+  connection_timeout: 30
+  read_timeout: 60
+

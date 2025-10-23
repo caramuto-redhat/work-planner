@@ -109,7 +109,14 @@ templates:
           <li><strong>Teams Covered:</strong> {teams_count}</li>
           <li><strong>Slack Mentions:</strong> {slack_mentions_count}</li>
           <li><strong>Jira Mentions:</strong> {jira_mentions_count}</li>
+          <li><strong>Email Action Items:</strong> {email_todos_count}</li>
         </ul>
+      </div>
+      
+      <h3>📧 Action Items from Emails</h3>
+      <p style="color: #666; font-size: 14px; margin: 10px 0;">Intelligent TODO extraction from inbox using Gemini AI natural language understanding</p>
+      <div style="background: #e8f4fd; border-left: 4px solid #0066cc; padding: 20px; border-radius: 5px; margin: 20px 0;">
+        {email_action_items}
       </div>
       
       <h3>🎯 Consolidated Action Items</h3>

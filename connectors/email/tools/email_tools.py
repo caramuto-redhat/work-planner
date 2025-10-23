@@ -7,6 +7,11 @@ import json
 from typing import Dict, Any, List, Optional
 from utils.responses import create_error_response, create_success_response
 from utils.validators import validate_team_name
+from .email_helpers import (
+    format_daily_summary_content,
+    format_alert_content,
+    generate_files_summary
+)
 from ..client import EmailClient
 from ..config import EmailConfig
 
@@ -122,7 +127,7 @@ def send_daily_summary_tool(client, config):
             
             # Prepare summary data
             summary_data = {
-                'content': _format_daily_summary_content(
+                'content': format_daily_summary_content(
                     slack_summary, jira_summary, action_items, blockers, metrics_data
                 ),
                 **(metrics_data or {})
@@ -176,7 +181,7 @@ def send_alert_tool(client, config):
         try:
             # Prepare alert content data
             alert_content = {
-                'content': _format_alert_content(severity, message, details, affected_team, resolution_steps),
+                'content': format_alert_content(severity, message, details, affected_team, resolution_steps),
                 'severity': severity,
                 'affected_team': affected_team or 'Multiple Teams'
             }
@@ -241,7 +246,7 @@ def send_data_collection_report_tool(client, config):
                 'slack_messages_count': slack_messages_count,
                 'jira_issues_count': jira_issues_count,
                 'jira_filter': jira_filter,
-                'files_summary': _generate_files_summary(attachment_list)
+                'files_summary': generate_files_summary(attachment_list)
             }
             
             # Send report
@@ -361,77 +366,3 @@ def get_email_config_tool(client, config):
             return create_error_response("Failed to get email configuration", str(e))
     
     return get_email_config
-
-
-# Helper functions for formatting content
-
-def _format_daily_summary_content(slack_summary, jira_summary, action_items, blockers, metrics):
-    """Format daily summary content sections"""
-    sections = []
-    
-    if metrics and isinstance(metrics, dict):
-        sections.append("<div class='metrics'>")
-        for key, value in metrics.items():
-            sections.append(f"<div class='metric'><div class='metric-value'>{value}</div><div class='metric-label'>{key}</div></div>")
-        sections.append("</div>")
-    
-    if slack_summary:
-        sections.append("<div class='section'><h2>💬 Slack Summary</h2>" + slack_summary + "</div>")
-    
-    if jira_summary:
-        sections.append("<div class='section'><h2>🎯 Jira Summary</h2>" + jira_summary + "</div>")
-    
-    if action_items:
-        sections.append("<div class='section'><h2>✅ Action Items</h2><div class='action-item'>" + action_items + "</div></div>")
-    
-    if blockers:
-        sections.append("<div class='section'><h2>🚨 Blockers & Issues</h2><div class='blocker'>" + blockers + "</div></div>")
-    
-    return "\n".join(sections) if sections else "<p>No activity data available for this period.</p>"
-
-
-def _format_alert_content(severity, message, details, affected_team, resolution_steps):
-    """Format alert content"""
-    content = []
-    
-    if severity:
-        severity_colors = {
-            'low': '#28a745',
-            'medium': '#ffc107', 
-            'high': '#fd7e14',
-            'critical': '#dc3545'
-        }
-        color = severity_colors.get(severity.lower(), '#6c757d')
-        content.append(f"<p><strong style='color: {color}'>Severity:</strong> {severity.upper()}</p>")
-    
-    if affected_team:
-        content.append(f"<p><strong>Affected Team:</strong> {affected_team}</p>")
-    
-    if message:
-        content.append(f"<div class='alert-content'><strong>Alert Message:</strong><br>{message}</div>")
-    
-    if details:
-        content.append(f"<div class='alert-content'><strong>Details:</strong><br>{details}</div>")
-    
-    if resolution_steps:
-        content.append(f"<div class='alert-content'><strong>Suggested Resolution:</strong><br>{resolution_steps}</div>")
-    
-    return "\n".join(content)
-
-
-def _generate_files_summary(attachment_paths):
-    """Generate summary of attached files"""
-    if not attachment_paths:
-        return "No attachments"
-    
-    import os
-    file_details = []
-    for path in attachment_paths:
-        if os.path.exists(path):
-            size = os.path.getsize(path)
-            size_mb = size / (1024 * 1024)
-            file_details.append(f"- {os.path.basename(path)} ({size_mb:.2f} MB)")
-        else:
-            file_details.append(f"- {os.path.basename(path)} (file not found)")
-    
-    return "\n".join(file_details)

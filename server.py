@@ -51,12 +51,17 @@ try:
         list_organizations_tool,
         dump_jira_team_data_tool,
         read_jira_team_data_tool,
-        register_jira_report_tools
+        register_jira_report_tools,
+        extract_jira_todos_tool
     )
+    from connectors.gemini.config import GeminiConfig
     
     # Create Jira client and config
     jira_config = JiraConfig.load("config/jira.yaml")
     jira_client = JiraClient(jira_config)
+    
+    # Load Gemini config for TODO extraction
+    gemini_config_dict = GeminiConfig.load("config/gemini.yaml")
     
     # Register Jira tools
     mcp.tool()(search_issues_tool(jira_client, jira_config))
@@ -67,11 +72,12 @@ try:
     mcp.tool()(list_organizations_tool(jira_client, jira_config))
     mcp.tool()(dump_jira_team_data_tool(jira_client, jira_config))
     mcp.tool()(read_jira_team_data_tool(jira_client, jira_config))
+    mcp.tool()(extract_jira_todos_tool(jira_client, jira_config, gemini_config_dict))  # NEW: TODO extraction
     
     # Register Jira report tools
     register_jira_report_tools(mcp)
     
-    print("✅ Registered Jira connector with 8 tools + 3 report tools")
+    print("✅ Registered Jira connector with 9 tools + 3 report tools")
 except Exception as e:
     print(f"❌ Failed to register Jira connector: {e}")
 
@@ -84,12 +90,15 @@ try:
         read_slack_data_tool,
         search_slack_data_tool,
         list_slack_channels_tool,
-        list_slack_dumps_tool
+        list_slack_dumps_tool,
+        extract_slack_todos_tool
     )
     
     # Create Slack client and config
     slack_config = SlackConfig.load("config/slack.yaml")
     slack_client = SlackClient(slack_config)
+    
+    # Gemini config already loaded above for Jira TODO extraction
     
     # Register Slack tools
     mcp.tool()(dump_slack_data_tool(slack_client, slack_config))
@@ -97,8 +106,9 @@ try:
     mcp.tool()(search_slack_data_tool(slack_client, slack_config))
     mcp.tool()(list_slack_channels_tool(slack_client, slack_config))
     mcp.tool()(list_slack_dumps_tool(slack_client, slack_config))
+    mcp.tool()(extract_slack_todos_tool(slack_client, slack_config, gemini_config_dict))  # NEW: TODO extraction
     
-    print("✅ Registered Slack connector with 5 unified tools")
+    print("✅ Registered Slack connector with 6 tools")
 except Exception as e:
     print(f"❌ Failed to register Slack connector: {e}")
 
@@ -110,10 +120,10 @@ try:
             custom_ai_analysis_tool,
             ai_summary_tool
         )
+        from connectors.gemini.tools.extract_all_todos_tool import extract_all_todos_tool
         
         # Create Gemini client and config
         from connectors.gemini.client import GeminiClient
-        from connectors.gemini.config import GeminiConfig
         
         gemini_config = GeminiConfig()
         gemini_client = GeminiClient(gemini_config.get_config())
@@ -123,6 +133,9 @@ try:
         mcp.tool()(generate_email_summary_tool(gemini_client, gemini_config.get_config()))
         mcp.tool()(custom_ai_analysis_tool(gemini_client, gemini_config.get_config()))
         mcp.tool()(ai_summary_tool(gemini_client, gemini_config.get_config()))
+        
+        # NEW: Unified TODO extraction (requires individual tools to be registered first)
+        # Will be registered after all connectors are initialized
         
         print("✅ Registered Gemini connector with 4 tools")
 except Exception as e:
@@ -137,22 +150,38 @@ try:
         send_email_tool,
         test_email_connection_tool,
         get_email_config_tool,
-        send_team_daily_report_tool
+        send_team_daily_report_tool,
+        extract_email_todos_tool
     )
     
     # Create Email client and config
     email_config = EmailConfig()
     email_client = EmailClient(email_config.get_config())
     
-    # Register Email tools (only working ones)
+    # Register Email tools
     mcp.tool()(send_email_tool(email_client, email_config.get_config()))
     mcp.tool()(test_email_connection_tool(email_client, email_config.get_config()))
     mcp.tool()(get_email_config_tool(email_client, email_config.get_config()))
-    mcp.tool()(send_team_daily_report_tool())  # NEW: GitHub Actions workflow wrapper
+    mcp.tool()(send_team_daily_report_tool())  # GitHub Actions workflow wrapper
+    mcp.tool()(extract_email_todos_tool(email_config, gemini_config_dict))  # NEW: TODO extraction
     
-    print("✅ Registered Email connector with 4 tools (send_email, test_email_connection, get_email_config, send_team_daily_report)")
+    print("✅ Registered Email connector with 5 tools")
 except Exception as e:
     print(f"❌ Failed to register Email connector: {e}")
+
+# Register unified TODO extraction tool (after all individual tools are registered)
+try:
+    # Get references to individual TODO extraction functions
+    email_todos_func = extract_email_todos_tool(email_config, gemini_config_dict)
+    jira_todos_func = extract_jira_todos_tool(jira_client, jira_config, gemini_config_dict)
+    slack_todos_func = extract_slack_todos_tool(slack_client, slack_config, gemini_config_dict)
+    
+    # Register unified tool
+    mcp.tool()(extract_all_todos_tool(email_todos_func, jira_todos_func, slack_todos_func))
+    
+    print("✅ Registered unified TODO extraction tool")
+except Exception as e:
+    print(f"⚠️  Failed to register unified TODO extraction tool: {e}")
 
 # Built-in tool listing
 @mcp.tool()
@@ -161,16 +190,24 @@ def list_available_tools() -> str:
     return create_success_response({
         "message": "Work Planner MCP Server is running",
         "tools": [
+            # Jira tools (9)
             "search_issues", "get_team_issues", "get_project_info", 
             "get_user_info", "list_teams", "list_organizations",
-            "dump_jira_team_data", "read_jira_team_data",
+            "dump_jira_team_data", "read_jira_team_data", "extract_jira_todos",
+            # Slack tools (6)
             "dump_slack_data", "read_slack_data", "search_slack_data",
-            "list_slack_channels", "list_slack_dumps",
+            "list_slack_channels", "list_slack_dumps", "extract_slack_todos",
+            # Gemini tools (4)
             "analyze_jira_data", "generate_email_summary", "custom_ai_analysis", "ai_summary",
-            "send_email", "test_email_connection", "get_email_config", "send_team_daily_report",
+            # Email tools (5)
+            "send_email", "test_email_connection", "get_email_config", 
+            "send_team_daily_report", "extract_email_todos",
+            # Unified TODO tool (1)
+            "extract_all_todos",
+            # System tools (1)
             "list_available_tools"
         ],
-        "total_tools": 21  # Removed 3 broken, added 1 new (send_team_daily_report)
+        "total_tools": 26  # 9 Jira + 6 Slack + 4 Gemini + 5 Email + 1 Unified TODO + 1 System
     })
 
 if __name__ == "__main__":

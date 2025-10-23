@@ -1309,6 +1309,8 @@ def send_paul_consolidated_todo_email(all_team_todos: Dict[str, Dict], gemini_cl
             'teams_count': len(all_team_todos),
             'slack_mentions_count': total_slack_mentions,
             'jira_mentions_count': total_jira_mentions,
+            'email_todos_count': 0,  # Default for GitHub Actions (email extraction not enabled)
+            'email_action_items': '<p style="color: #666; font-style: italic;">Email TODO extraction not enabled in GitHub Actions workflow.</p>',
             'consolidated_todos': consolidated_todos_html,
             'todos_by_team': todos_by_team_html
         }

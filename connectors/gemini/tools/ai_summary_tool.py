@@ -4,11 +4,14 @@ Performs scheduled AI analysis using Gemini AI based on schedule.yaml configurat
 """
 
 from utils.responses import create_error_response, create_success_response
-import os
-import yaml
-import json
+from .gemini_helpers import (
+    analyze_slack_data,
+    analyze_jira_data,
+    generate_email_summary,
+    send_summary_email
+)
 from datetime import datetime
-from typing import Dict, Any, List
+
 
 def ai_summary_tool(client, config):
     """Create ai_summary tool function"""
@@ -32,7 +35,7 @@ def ai_summary_tool(client, config):
             
             # Perform Slack analysis
             try:
-                slack_results = _analyze_slack_data(client, config, team)
+                slack_results = analyze_slack_data(client, config, team)
                 results["analysis_results"]["slack"] = slack_results
             except Exception as e:
                 error_msg = f"Slack analysis failed: {str(e)}"
@@ -40,7 +43,7 @@ def ai_summary_tool(client, config):
             
             # Perform Jira analysis
             try:
-                jira_results = _analyze_jira_data(client, config, team)
+                jira_results = analyze_jira_data(client, config, team)
                 results["analysis_results"]["jira"] = jira_results
             except Exception as e:
                 error_msg = f"Jira analysis failed: {str(e)}"
@@ -50,7 +53,7 @@ def ai_summary_tool(client, config):
             email_results = {}
             try:
                 if 'slack' in results["analysis_results"] or 'jira' in results["analysis_results"]:
-                    email_results = _generate_email_summary(client, config, results["analysis_results"])
+                    email_results = generate_email_summary(client, config, results["analysis_results"])
                     results["analysis_results"]["email"] = email_results
             except Exception as e:
                 error_msg = f"Email summary generation failed: {str(e)}"
@@ -60,7 +63,7 @@ def ai_summary_tool(client, config):
             email_sent = False
             if send_email and email_results:
                 try:
-                    email_sent = _send_summary_email(results["analysis_results"], team or "all_teams", email_results)
+                    email_sent = send_summary_email(results["analysis_results"], team or "all_teams", email_results)
                     results["email_sent"] = email_sent
                 except Exception as e:
                     error_msg = f"Failed to send email: {str(e)}"
@@ -73,287 +76,3 @@ def ai_summary_tool(client, config):
             return create_error_response("Failed to execute AI summary", str(e))
     
     return ai_summary
-
-
-def _analyze_slack_data(client, config, team: str = None) -> Dict[str, Any]:
-    """Analyze Slack data for a specific team or all teams"""
-    try:
-        # Load Gemini configuration
-        gemini_config = _load_gemini_config()
-        
-        # Read Slack data
-        slack_data = _read_slack_dump_data(team)
-        
-        # Perform analysis using default inline prompts (config prompts no longer used)
-        analysis_results = {}
-        
-        # Summary analysis
-        summary_prompt = f"""
-        Analyze the following Slack conversation data and provide a concise summary including:
-        1. Key discussion topics and decisions
-        2. Important announcements or updates
-        3. Action items and follow-up tasks
-        4. Team collaboration highlights
-        5. Any blockers or issues mentioned
-        
-        Slack Data: {slack_data}
-        """
-        summary_result = client.generate_content(summary_prompt)
-        if summary_result:
-            analysis_results['summary'] = summary_result
-        
-        # Highlights analysis
-        highlights_prompt = f"""
-        Extract the most important highlights from this Slack conversation data:
-        1. Major accomplishments or milestones
-        2. Critical decisions or changes
-        3. Important announcements
-        Present as bullet points.
-        
-        Slack Data: {slack_data}
-        """
-        highlights_result = client.generate_content(highlights_prompt)
-        if highlights_result:
-            analysis_results['highlights'] = highlights_result
-        
-        return {
-            "team": team or "all_teams",
-            "analysis_types_completed": list(analysis_results.keys()),
-            "results": analysis_results,
-            "timestamp": datetime.now().isoformat()
-        }
-        
-    except Exception as e:
-        raise Exception(f"Failed to analyze Slack data: {str(e)}")
-
-
-def _analyze_jira_data(client, config, team: str = None) -> Dict[str, Any]:
-    """Analyze Jira data for a specific team or all teams"""
-    try:
-        # Load Gemini configuration
-        gemini_config = _load_gemini_config()
-        
-        # Read Jira data
-        jira_data = _read_jira_dump_data(team)
-        
-        # Perform analysis using default inline prompts (config prompts no longer used)
-        analysis_results = {}
-        
-        # Summary analysis
-        summary_prompt = f"""
-        Analyze the following Jira issues data and provide a project status summary:
-        1. Overall project progress and health
-        2. Key accomplishments and completed work
-        3. Current priorities and focus areas
-        4. Resource allocation and team workload
-        
-        Jira Data: {jira_data}
-        """
-        summary_result = client.generate_content(summary_prompt)
-        if summary_result:
-            analysis_results['summary'] = summary_result
-        
-        # Progress analysis
-        progress_prompt = f"""
-        Summarize the progress and accomplishments from this Jira data:
-        1. Recently completed work
-        2. Work in progress
-        3. Team velocity and productivity
-        
-        Jira Data: {jira_data}
-        """
-        progress_result = client.generate_content(progress_prompt)
-        if progress_result:
-            analysis_results['progress'] = progress_result
-        
-        return {
-            "team": team or "all_teams",
-            "analysis_types_completed": list(analysis_results.keys()),
-            "results": analysis_results,
-            "timestamp": datetime.now().isoformat()
-        }
-        
-    except Exception as e:
-        raise Exception(f"Failed to analyze Jira data: {str(e)}")
-
-
-def _generate_email_summary(client, config, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
-    """Generate email summary combining Slack and Jira analysis results"""
-    try:
-        # Use inline default prompt (config prompts no longer used)
-        slack_summary = analysis_results.get('slack', {}).get('results', {}).get('summary', 'No Slack data available')
-        jira_summary = analysis_results.get('jira', {}).get('results', {}).get('summary', 'No Jira data available')
-        
-        # Create email summary prompt
-        email_prompt = f"""
-        Create a professional daily summary email combining Slack activity and Jira issues.
-        
-        Provide a structured summary with:
-        1. Key Highlights - Major accomplishments and updates
-        2. Project Status - Jira issues, progress, and priorities
-        3. Team Activity - Key discussions and collaboration from Slack
-        4. Action Items - Tasks and follow-up items
-        
-        Slack Activity: {slack_summary}
-        Jira Issues: {jira_summary}
-        """
-        
-        # Generate email summary
-        email_content = client.generate_content(email_prompt)
-        
-        return {
-            "email_content": email_content,
-            "analysis_based_on": list(analysis_results.keys()),
-            "timestamp": datetime.now().isoformat()
-        }
-        
-    except Exception as e:
-        raise Exception(f"Failed to generate email summary: {str(e)}")
-
-
-def _load_gemini_config() -> Dict[str, Any]:
-    """Load Gemini configuration from gemini.yaml"""
-    try:
-        config_path = os.path.join('config', 'gemini.yaml')
-        with open(config_path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f)
-    except Exception as e:
-        raise Exception(f"Failed to load Gemini configuration: {str(e)}")
-
-
-def _read_slack_dump_data(team: str = None) -> str:
-    """Read Slack dump data for analysis"""
-    try:
-        # Implementation would read from generated Slack dumps
-        # For now, return placeholder indicating data source
-        return f"Slack analysis data for team: {team or 'all_teams'} - Implementation needed to read actual dump files"
-    except Exception as e:
-        raise Exception(f"Failed to read Slack dump data: {str(e)}")
-
-
-def _send_summary_email(analysis_results: Dict[str, Any], team: str, email_results: Dict[str, Any]) -> bool:
-    """Send summary email using the email connector with Slack and Jira analysis content"""
-    try:
-        from connectors.email.client import EmailClient
-        from connectors.email.config import EmailConfig
-        from datetime import datetime
-        
-        email_config = EmailConfig()
-        email_client = EmailClient(email_config.get_config())
-        
-        # Extract content from analysis results
-        slack_analysis = ""
-        jira_analysis = ""
-        email_summary = ""
-        
-        # Extract Slack analysis content
-        if 'slack' in analysis_results:
-            slack_data = analysis_results['slack']
-            results = slack_data.get('results', {})
-            
-            slack_parts = []
-            if results.get('summary'):
-                slack_parts.append(f"<p><strong>Summary:</strong> {results['summary']}</p>")
-            if results.get('action_items'):
-                slack_parts.append(f"<p><strong>Action Items:</strong> {results['action_items']}</p>")
-            if results.get('blockers'):
-                slack_parts.append(f"<p><strong>Blockers:</strong> {results['blockers']}</p>")
-            
-            slack_analysis = "<br>".join(slack_parts) if slack_parts else "<p>No Slack analysis available</p>"
-        
-        # Extract Jira analysis content  
-        if 'jira' in analysis_results:
-            jira_data = analysis_results['jira']
-            results = jira_data.get('results', {})
-            
-            jira_parts = []
-            if results.get('summary'):
-                jira_parts.append(f"<p><strong>Summary:</strong> {results['summary']}</p>")
-            if results.get('blockers'):
-                jira_parts.append(f"<p><strong>Blockers:</strong> {results['blockers']}</p>")
-            if results.get('progress'):
-                jira_parts.append(f"<p><strong>Progress:</strong> {results['progress']}</p>")
-                
-            jira_analysis = "<br>".join(jira_parts) if jira_parts else "<p>No Jira analysis available</p>"
-        
-        # Extract final email summary
-        email_summary = email_results.get('email_content', f"Daily summary for team {team}")
-        
-        # Prepare content for email template
-        # NOTE: Email sending disabled - send_daily_summary uses non-existent 'daily_summary' template
-        # Use GitHub Actions workflow or send_email tool with 'team_daily_report_with_todo' template instead
-        summary_data = {
-            'slack_analysis': slack_analysis,
-            'jira_analysis': jira_analysis,
-            'email_summary': email_summary,
-            'generated_time': datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')
-        }
-        
-        # DISABLED: Send email using simplified configuration
-        # result = email_client.send_daily_summary(team, summary_data)
-        print(f"⚠️  Email sending disabled in ai_summary tool (template 'daily_summary' doesn't exist)")
-        print(f"ℹ️  Use GitHub Actions workflow for full email reports")
-        return False
-        
-    except Exception as e:
-        print(f"❌ Error sending summary email: {str(e)}")
-    return False
-
-
-def _read_jira_dump_data(team: str = None) -> str:
-    """Read Jira dump data for analysis"""
-    try:
-        if not team:
-            return "[JIRA DATA] Multiple team dumps available; use dump_jira_team_data tool first"
-        
-        # Try to read actual Jira dump files if they exist
-        dump_dir = "jira_dumps"
-        tickets_filter = "All In Progress"  # Default filter from schedule.yaml
-        
-        # Try JSON format first (preferred for structured data)
-        json_filename = f"{team}_{tickets_filter.lower().replace(' ', '_')}_jira_dump.json"
-        json_filepath = os.path.join(dump_dir, json_filename)
-        
-        if os.path.exists(json_filepath):
-            with open(json_filepath, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            
-            # Format for AI analysis
-            issues_text = f"[JIRA DATA] Team: {team}\n"
-            issues_text += f"Filter: {tickets_filter}\n"
-            issues_text += f"Total Issues: {data.get('total_issues', 0)}\n"
-            issues_text += f"Generated: {data.get('generated', 'Unknown')}\n\n"
-            
-            for issue in data.get('issues', []):
-                issues_text += f"Issue: {issue.get('key', 'N/A')}\n"
-                issues_text += f"Title: {issue.get('summary', 'No summary')}\n"
-                issues_text += f"Status: { issue.get('status', 'Unknown')}\n"
-                issues_text += f"Type: {issue.get('type', 'Unknown')}\n"
-                issues_text += f"Priority: {issue.get('priority', 'Unknown')}\n"
-                issues_text += f"Assignee: {issue.get('assignee', {}).get('name', 'Unassigned')}\n"
-                issues_text += f"Reporter: {issue.get('reporter', {}).get('name', 'Unknown')}\n"
-                issues_text += f"Created: {issue.get('created', 'Unknown')}\n"
-                issues_text += f"Updated: {issue.get('updated', 'Unknown')}\n"
-                issues_text += f"Description: {issue.get('description', 'No description')[:200]}{'...' if len(issue.get('description', '')) > 200 else ''}\n\n"
-            
-            return issues_text
-        
-        # Try text format as fallback
-        txt_filename = f"{team}_{tickets_filter.lower().replace(' ', '_')}_jira_dump.txt"
-        txt_filepath = os.path.join(dump_dir, txt_filename)
-        
-        if os.path.exists(txt_filepath):
-            with open(txt_filepath, 'r', encoding='utf-8') as f:
-                content = f.read()
-            return f"[JIRA DATA] Team: {team}\n\n" + content
-        
-        # No dump file found
-        return f"[JIRA DATA] No dump file found for team '{team}'. Please use dump_jira_team_data tool first to collect current data."
-        
-    except Exception as e:
-        return f"[JIRA DATA] Error reading dump for team '{team}': {str(e)}. Use dump_jira_team_data tool first."
-        # Implementation would read from generated Jira dumps
-        # For now, return placeholder indicating data source
-        return f"Jira analysis data for team: {team or 'all_teams'} - Implementation needed to read actual issue dumps"
-    except Exception as e:
-        raise Exception(f"Failed to read Jira dump data: {str(e)}")

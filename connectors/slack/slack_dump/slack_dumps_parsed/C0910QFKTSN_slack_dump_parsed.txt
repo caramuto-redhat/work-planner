@@ -1,440 +1,24 @@
 Slack Channel Dump
-Channel: toolchain-AI
+Channel: #toolchain-AI
 Channel ID: C0910QFKTSN
-Generated: 2025-10-10 18:36:37
-Total Messages: 55
+Generated: 2025-10-22 19:41:52
+Total Messages: 6
 ================================================================================
 
-Message 1 - 2025-06-11 14:05
-From: Juanje Ojeda
-----------------------------------------
-@Juanje Ojeda has joined the channel
-
-Message 2 - 2025-06-11 14:05
-From: Avihai Efrat
-----------------------------------------
-@Avihai Efrat has joined the channel
-
-Message 3 - 2025-06-11 14:05
-From: Kanitha Chim
-----------------------------------------
-@Kanitha Chim has joined the channel
-
-Message 4 - 2025-06-11 14:05
-From: Sameera Kalgudi
-----------------------------------------
-@Sameera Kalgudi has joined the channel
-
-Message 5 - 2025-06-11 14:05
-From: Ozan Unsal
-----------------------------------------
-@Ozan Unsal has joined the channel
-
-Message 6 - 2025-06-11 14:05
-From: Eitan Raviv
-----------------------------------------
-@Eitan Raviv has joined the channel
-
-Message 7 - 2025-06-11 14:06
-From: Kanitha Chim
-----------------------------------------
-ia lol?
-
-Message 8 - 2025-06-11 14:06
-From: Juanje Ojeda
-----------------------------------------
-set the channel description: Place for sharing tips, tricks and resources related to AI and how to
-use it for improving our work in Auto Toolchain
-
-Message 9 - 2025-06-11 14:06
-From: Juanje Ojeda
-----------------------------------------
-Ouch
-
-Message 10 - 2025-06-11 14:07
-From: Juanje Ojeda
-----------------------------------------
-I put it in spanish :sweat_smile:  I'll change it
-
-Message 11 - 2025-06-11 14:07
-From: Juanje Ojeda
-----------------------------------------
-has renamed the channel from "wg-team-auto-toolchain-ia" to "wg-team-auto-toolchain-ai"
-
-Message 12 - 2025-06-11 17:04
-From: Eitan Raviv
-----------------------------------------
-Thanks for setting this up @Juanje Ojeda
-
-Message 13 - 2025-06-13 11:15
-From: Kanitha Chim
-----------------------------------------
-https://docling-project.github.io/docling/#features
-
-Message 14 - 2025-06-26 19:10
-From: Juanje Ojeda
-----------------------------------------
-From: Anthropic Title: Mastering Claude Code in 30 minutes Free and open source, Gemini CLI brings
-Gemini directly into developers’ terminals — with unmatched access for individuals. Title: Gemini
-CLI: your open-source AI agent I don't know if you watched the video that Petr shared about Cloud
-Code (https://www.youtube.com/watch?v=6eBSHbLKuN0&amp;t=6s) (which he used for his project), but
-it's very interesting. The problem is that you need a pro account for anthropic. Very recently,
-Google released a similar tool (but open source): Gemini cli
-(https://github.com/google-gemini/gemini-cli) Here is the blog post talking about it:
-https://blog.google/technology/developers/introducing-gemini-cli-open-source-ai-agent/ It's
-basically the same tool (same options and ui), but working with gemini instead of claude, Well, and
-it's free, no need for a paid account. But it doesn't work (yet) with our RH account, but it works
-with your personal one. Although, I'm not sure about if we can use it for internal stuff. They say
-that those tools don't share the local stuff, but I don't really see how they can read and modify
-your code without sending it to the remote LLM server... Very interesting tools for coding, working
-with agents and MCPs.
-
-Message 15 - 2025-06-26 19:14
-From: Juanje Ojeda
-----------------------------------------
-From: Developers Digest Title: Gemini CLI in 6 Minutes: Google's Free and Open-Source Coding
-Assistant Here is a short video explaining a bit what gemini-cli is, how it compare with its
-competitors (claude-code) and showing it working a bit: https://www.youtube.com/watch?v=T76NbeTdDFA
-
-Message 16 - 2025-06-27 09:34
-From: Ozan Unsal
-----------------------------------------
-GitLab CI pipelines Title: Pipeline #1889153567 · Red Hat / Edge / ci-cd / Pipe X /
-pipelines-as-code · GitLab I was playning with gemini-cli and created a small project
-(https://github.com/ozanunsal/pipelinebot) for checking our product build pipeline status. Finds the
-failed jobs, if it is failed in testing-farm, it traces testing-farm logs for the error log. Then it
-finds the possible cause of error and suggests how to fix. Here is an example of a failed pipeline
-(https://gitlab.com/redhat/edge/ci-cd/pipe-x/pipelines-as-code/-/pipelines/1889153567);
-```(venv) ounsal@ounsal-thinkpadp16vgen1:~/repo/playground/pipeline-bot$ pipelinebot --project
-35939621 --pipeline 1889153567 INFO:pipelinebot.gitlab_api:Fetching jobs for pipeline 1889153567
-INFO:pipelinebot.gitlab_api:Retrieved 20 jobs from pipeline 1889153567
-INFO:pipelinebot.summarizer:Found 2 failed jobs to process INFO:pipelinebot.summarizer:Processing
-job 1/2: smoke-tests-fusa-minimal: [x86_64] INFO:pipelinebot.gitlab_api:Fetching log for job
-10465690769 INFO:pipelinebot.gitlab_api:Retrieved log for job 10465690769 (5462 characters)
-INFO:pipelinebot.summarizer:Processing Testing Farm job: smoke-tests-fusa-minimal: [x86_64]
-INFO:pipelinebot.summarizer:Processing job 2/2: smoke-tests-fusa-minimal: [aarch64]
-INFO:pipelinebot.gitlab_api:Fetching log for job 10465689664 INFO:pipelinebot.gitlab_api:Retrieved
-log for job 10465689664 (5463 characters) INFO:pipelinebot.summarizer:Processing Testing Farm job:
-smoke-tests-fusa-minimal: [aarch64]
-================================================================================ 🚀 PIPELINE FAILURE
-ANALYSIS REPORT ================================================================================ Job
-1: smoke-tests-fusa-minimal: [x86_64] Reason: The boot validation process failed because the
-configuration for the 'qm' container has an incorrect checksum. This indicates that the container's
-configuration has been modified and no longer matches the expected state. Possible Fixes: 1. If the
-configuration change to the 'qm' container was intentional, update the expected checksum in the boot
-check configuration to the new value:
-`d73b490587fe25586d8a83dfee22179b4fe7b17f32d7e85a6ca1c7d68526c972`. 2. If the change was
-unintentional, revert the 'qm' container's configuration to its original state so that it matches
-the expected checksum (`28ea142bf3a1720172251131e30f463305515a26ac76009f64f6b9a71af333b6`).
-Job 2: smoke-tests-fusa-minimal: [aarch64] Reason: The `auto-boot-check.service` failed due to a
-configuration checksum mismatch for the 'qm' container. This indicates that the container's
-configuration has been modified and no longer matches the expected state. Possible Fixes: 1. If the
-changes to the 'qm' container are intentional, update the expected checksum in the boot check
-configuration file located at `/usr/lib/boot-check.d/qm.conf`. 2. If the container configuration
-change was unintentional, revert the 'qm' container to its original state or rebuild the image to
-ensure its checksum matches the expected value.``` When I actually checked the cause of failure, I
-can say that gemini made a really good process.
-I repeated it with a successful pipeline. To see whether I am having false-negative results and it
-also worked. ```(venv) ounsal@ounsal-thinkpadp16vgen1:~/repo/playground/pipeline-bot$ pipelinebot
---project 35939621 --pipeline 1891039231 INFO:pipelinebot.gitlab_api:Fetching jobs for pipeline
-1891039231 INFO:pipelinebot.gitlab_api:Retrieved 20 jobs from pipeline 1891039231
-================================================================================ 🚀 PIPELINE FAILURE
-ANALYSIS REPORT ================================================================================ All
-jobs passed! 🎉``` We can get benefit from this project for checking the status of our pipelines. I
-have an issue with gemini when I containerized this project. It gives an authentication timeout but
-I'll work on it. Besides that I was trying different pipelines for detecting different error but I
-guess we have some quota and gemini becomes exhausted :cry: .
-
-Message 17 - 2025-07-01 12:48
-From: Ozan Unsal
-----------------------------------------
-We can request gemini API_KEY for red hat accounts now
-https://docs.google.com/document/d/1N-1CgMtU-R5eHJ5BOyLIe4jEj0rmvdmCz4i8u5YfiIE/edit?tab=t.0#heading=h.ltpr634bumh3
-
-Message 18 - 2025-07-01 13:26
-From: Paul Caramuto
-----------------------------------------
-@Paul Caramuto has joined the channel
-
-Message 19 - 2025-07-01 14:17
-From: Juanje Ojeda
-----------------------------------------
-Here is the konflux user support chatbot project:
-https://gitlab.cee.redhat.com/sp-ai/user-support-bot Very interesting.
-
-Message 20 - 2025-07-01 14:26
-From: Juanje Ojeda
-----------------------------------------
-It's basically an app in Python that take documentation into an embedding database and run a LLM
-with a RAG (to access to the doc at that database). They probably deploy it in OpenShift and they'll
-connect the bot account in slack with that service. So, the chatbot can answer questions using the
-ingested docs. The code looks good, and it's simple but all that you need for that. nice project for
-learning, but also for creating our own (or just use it, there nothing specific to konflux there).
-
-Message 21 - 2025-07-02 16:43
-From: Paul Caramuto
-----------------------------------------
-I've been asking/investigating how to dump data from slack channels to NotebookLM, and the most
-difficult and lengthy process is getting the auth token approved to run the API
-
-Message 22 - 2025-07-02 16:47
-From: Paul Caramuto
-----------------------------------------
-we can use the native slack API "retrieving" function, but we still have to get a PIA approval which
-can take a long time
-
-Message 23 - 2025-07-02 16:48
-From: Paul Caramuto
-----------------------------------------
-Justin Pierce already went through that process and got it approved, you can find more info here
-(https://source.redhat.com/groups/public/openshift/openshift_blog/building_a_custom_ai_advisor_from_slack_history)
-(the catch, you need to ask him to run it)
-
-Message 24 - 2025-07-08 00:17
-From: Juanje Ojeda
-----------------------------------------
-Get started with the Model Context Protocol (MCP) Title: Introduction - Model Context Protocol Your
-open source AI agent, automating engineering tasks seamlessly. Title: codename goose | codename
-goose Enable multi-modal functionality by pairing LLMs to complete your tasks Title: Lead/Worker
-Multi-Model Setup | codename goose Hi. I've been playing around with local AI agents and MCP servers
-(https://modelcontextprotocol.io/introduction) lately and I found this one:
-https://block.github.io/goose/ It's open source and it can work with many LLMs, including local
-ones. It's similar to Gemini-cli or Claude-code, but it's not tied to just one LLM, and it has other
-interesting characteristics, like sessions, projects, and more. It looks very easy to extend and it
-has this interesting feature for using different models in turns in the same session:
-https://block.github.io/goose/docs/tutorials/lead-worker
-I have't used it much yet. Just tried a bit. The UI is not so nice as claude-code or gemni-cli, but
-it has potential. We'll see.
-
-Message 25 - 2025-07-08 00:28
-From: Juanje Ojeda
-----------------------------------------
-The AI coding agent built for the terminal. Title: opencode Another open source AI agent I came
-across recently is https://opencode.ai/ I heard good things, but i haven't tried it yet. It can run
-multiple agents in parallel in the same session, which looks useful (or messy :thinking_face: ) and
-suppose to be very fast.
-
-Message 26 - 2025-07-09 13:13
-From: Avihai Efrat
-----------------------------------------
-Hi there :redhat_cowboy: Coming out of short Q3 innovation days at the ISR office about AI and MCP
-and wanted to shre: 1. AI/Agents/MCP intresting slides.
-(https://docs.google.com/presentation/d/1VRO2xxv3BPra4ixy7kDm5p4FVGYoqqfTns6GJ6mP30Y/edit?slide=id.g36b7eb1a849_0_3295#slide=id.g36b7eb1a849_0_3295)
-2. Very interesting MCP registry (https://github.com/redhat-ai-tools)with all kinds of goodies(as
-Slack MCP, Jira MCP etc ...) that would make your work easier by leveraging on them or adding your
-own MCP project there.
-
-Message 27 - 2025-07-09 15:28
-From: Avihai Efrat
-----------------------------------------
-Finnaly got a successful connection with Jira with the following JIRA MCP config at Cursor! Check
-out the cool results in the pic :star-struck:
-```"jira": { "type": "stdio", "command": "podman", "args": [ "run", "-i", "--rm", "-e", "JIRA_URL",
-"-e", "JIRA_PERSONAL_TOKEN", "ghcr.io/sooperset/mcp-atlassian:latest
-(http://ghcr.io/sooperset/mcp-atlassian:latest)" ], "env": { "JIRA_PERSONAL_TOKEN": "&lt;your
-token&gt;", "JIRA_URL": "https://issues.redhat.com" } ```
-
-Message 28 - 2025-07-09 15:56
-From: Juanje Ojeda
-----------------------------------------
-Nice :heart_eyes:
-
-Message 29 - 2025-07-19 02:23
-From: Inho Cho
-----------------------------------------
-@Inho Cho has joined the channel
-
-Message 30 - 2025-07-21 18:13
-From: Avihai Efrat
-----------------------------------------
-!channel - anyone think they have an associate who had a great example of AI usage in Q2? Mike it
-looking for a lit of highlights for recognition? From: Shawn Davis Sender: Slack Conversation Hi
-!here, Posting this here if you have a Q2 great example of AI usage in a form of Demo or blog.
-Please post it here and I’ll forward it to Shawn D. For some broad core platform level recognitions
-:trophy:
-
-Message 31 - 2025-07-24 13:39
-From: Kanitha Chim
-----------------------------------------
-Hey all, if you could share in this sheet the tool you have used that would be nice
-https://docs.google.com/spreadsheets/d/1Vdrb50eSiNLwM83qG8dj8eVwanLDB1CFbwZ3BveOa8g/edit?gid=0#gid=0
-
-Message 32 - 2025-07-28 04:10
-From: Kartik Shah
-----------------------------------------
-@Kartik Shah has joined the channel
-
-Message 33 - 2025-08-11 16:29
-From: Avihai Efrat
-----------------------------------------
-:mega:. Are you interested in writing an MCP server? or hooking up your AI agent to an MCP server?
-Come and join us at today's 10am Data and AI Open Forum to learn about Red Hat's approved MCP
-template and innersource place to share your MCP server! From: Tiffany Jacob Sender: Thread in Slack
-Conversation Hi hi folks! :face_with_cowboy_hat: Sharing very cool slides about writing MCp servers
-easily slides and recording made last week
-
-Message 34 - 2025-08-11 19:20
-From: Lei Wang
-----------------------------------------
-@Lei Wang has joined the channel
-
-Message 35 - 2025-08-11 19:29
-From: Nisha Saini
-----------------------------------------
-@Nisha Saini has joined the channel
-
-Message 36 - 2025-08-18 15:16
-From: Juanje Ojeda
-----------------------------------------
-Share your videos with friends, family, and the world Title: IA concepts In case anyone is
-interested on understanding a bit better some of the basic concepts about generative AI, how LLMs
-work, RAG, agents and other AI related topics, I curated a YouTuve list with good quality (and
-short) explanations. FYI, the videos have a logical and incremental order, so I recommend to follow
-it, but you can do as you wish :sweat_smile:
-https://youtube.com/playlist?list=PLfZui7DiPOPgU34wnruAMXcR_EzsnFSiB&amp;si=KYPwcBurIuDoXVID
-
-Message 37 - 2025-08-19 11:51
-From: Juanje Ojeda
-----------------------------------------
-*Agile AI Assistant - Next Phase*
-Back in June, we launched the initial version of the *Agile AI Assistant*. Our goal was to integrate
-internal Red Hat agile practices and make them accessible through a combination of the AI Combinator
-and Shadowbot. However, due to team reorganizations and reprioritizations, we've pivoted to using
-*NotebookLM* for the MVP instead. Our first results, based on a small selection of sources, were
-promising but not overwhelming. Now, we're expanding the knowledge base for the next phase. We've
-added all articles from the *Agile and Tooling Knowledge Hub*, the *2020 Scrum Guide*, and the *Open
-Decision Framework*.
-You can access the Agile AI Assistant here: https://red.ht/45ErTEN
-Please give it a try and share your thoughts! What's working well? What's missing? What could be
-improved? Your feedback is crucial as we move forward.
-*Agile AI Assistant Confluence space:*
-https://spaces.redhat.com/spaces/AAA/pages/614009143/Agile+AI+Assistant *Slack conversations:*
-#C0845CDHS1X| From: Jimmy Sjolund Sender: Thread in Slack Conversation Interesting :thinking_face:
-
-Message 38 - 2025-08-19 12:40
-From: Kanitha Chim
-----------------------------------------
-I added a small project [1] to use Gemini to review gitlab MR. Just sharing here in case anyone
-wants to enable it in your repo. [1]
-https://gitlab.cee.redhat.com/automotive/toolshed/automate-code-review
-
-Message 39 - 2025-08-25 11:57
-From: Michael Ho
-----------------------------------------
-@Michael Ho has joined the channel
-
-Message 40 - 2025-09-01 12:58
-From: Michael Ho
-----------------------------------------
-From: Yifan - Beyond the Hype Title: I Reverse-Engineered Claude Code: Learn These Agent Tricks I
-showed @Juanje Ojeda this video (https://www.youtube.com/watch?v=i0P56Pm1Q3U) and he asked I bring
-it up here to share further :meow_smilesweat: Didi shared this to us in a FoA meeting and it is very
-illuminating how Claude Code works and why simple llm prompting with local llms isn't equivalent
-
-Message 41 - 2025-09-01 13:58
-From: Juanje Ojeda
-----------------------------------------
-Following the "behind the curtin" trend, here is a code example I did to understand how the "tool
-calling" (which later was used for the MCPs) actually works "under de hood":
-https://github.com/juanje/llm-tool-calling/blob/main/pseudo_tool_calling.py
-That's with a old model that doesn't support "tool calling", to see what exactly the LLM (and the ai
-app) does. Then, they started to train models with thousands of examples for this, so now the models
-"understand" what to do when you pass a JSON schema for using a function or a tool. So, now you can
-do it "natively" like this:
-https://github.com/juanje/llm-tool-calling/blob/main/real_tool_calling.py Here is the high level
-explanation and shorter version of the code: https://github.com/juanje/llm-tool-calling
-
-Message 42 - 2025-09-01 14:05
-From: Juanje Ojeda
-----------------------------------------
-*For learning* Here you have a simple chatbot done with LangChain (a very good and standard lib for
-creating chatbots and agents) and Ollama (to work with local models). There you can learn how to
-talk with the LLMs and do basic ai app stuff: https://github.com/juanje/simple-chatbot And this is
-the same chartbot but with a simple (pssudo)RAG, so you can talk with a knowledge database. It's not
-using a tipical vector database, but a simple json file as a "database" for the retrieval part, to
-simplify things and focos on how the RAG actually works instead of focusing on the infra part or the
-extracting/embedding part. https://github.com/juanje/simple-chatbot-miniRAG
-
-Message 43 - 2025-09-02 00:57
-From: Luigi Pellecchia
-----------------------------------------
-@Luigi Pellecchia has joined the channel
-
-Message 44 - 2025-09-02 06:12
-From: Luigi Pellecchia
-----------------------------------------
-Hi and thanks for adding me to this channel! We are working on a Test Console ChatBot, early stages,
-and we are investigating a few things: https://issues.redhat.com/browse/VROOM-32061 The goal is to
-have a chat bot able to interact with Test Console data, retrieving information and creating
-requests in our system. Due to that we have some questions such as: • what is the best interface to
-share with the ai in terms of tools? direct db access, api, python module, ad hoc • where to store
-the conversation history (in browser, db, not needed) • we need RAG? (it is enough to describe the
-tools or we need additional context?) • which LLM is better for our us case? (Gemini? we don't need
-to ask about the universe! An LLM deployed with Ollama?) Any insight will be useful!
-
-Message 45 - 2025-09-08 15:40
-From: Rakesh Musalay
-----------------------------------------
-@Rakesh Musalay has joined the channel
-
-Message 46 - 2025-09-08 23:24
-From: Juanje Ojeda
-----------------------------------------
-Generate context with up-to-date documentation for LLMs and AI code editors Title: Context7 -
-Up-to-date documentation for LLMs and AI code editors I recommend anyone that's using Cursor,
-claude-code or any other AI tool for coding to us https://context7.com/ The LLM often have old
-knowledge about the libraries, APIs, etc and they can make the wrong assumptions, put the wrong
-versions or use deprecated functions. Context7 is an MCP server that give to the IDE the tools for
-checking the latest documentation for most of the libs you'll ever use. As a tip, add also to your
-cursor rules or your CLAUDE.md files to check with context7 before creating a new project, add a new
-library or while debugging errors. The results are normally much better.
-
-Message 47 - 2025-09-09 06:41
-From: Maya Peretz
-----------------------------------------
-@Maya Peretz has joined the channel
-
-Message 48 - 2025-09-10 13:36
-From: Yosi Ben Shimon
-----------------------------------------
-@Yosi Ben Shimon has joined the channel
-
-Message 49 - 2025-09-10 13:36
-From: Avihai Efrat
-----------------------------------------
-@Yosi Ben Shimon FYI for AI links are here ^€
-
-Message 50 - 2025-09-13 18:07
-From: Juanje Ojeda
-----------------------------------------
-From: Tech With Tim Title: How to Build a Local AI Agent With Python (Ollama, LangChain &amp; RAG)
-Here you have a nice didactic video for building a super-simple chatbot in Python with langchain +
-ollama. And then adding a simple RAG using chroma for the vector database. It's super simple, but
-enough to see how that actually works at a basic level: https://www.youtube.com/watch?v=E4l91XKQSgw
-
-Message 51 - 2025-09-13 18:10
-From: Juanje Ojeda
-----------------------------------------
-From: 3Blue1Brown Title: Transformers, the tech behind LLMs | Deep Learning Chapter 5 And for ppl
-more advance or that like to understand what the LLMs and the transformers really are, this is a
-masterpiece that explains many machine learning concepts, what are transformers and LLM, and how
-they work. Super interesting, but maybe not for everyone :sweat_smile:
-https://www.youtube.com/watch?v=wjZofJX0v4M
-
-Message 52 - 2025-09-29 09:48
+Message 1 - 2025-09-29 06:48
 From: Avihai Efrat
 ----------------------------------------
 Happy Monday AI enthusiasts:zap: Sharing a very cool vid (~1H) but totally worth it about Agentic AI
 I watch yesturday(also shared in mail "Red Hat 101: Agentic AI now available on demand") :
 https://source.redhat.com/about_red_hat/red_hat_101/red_hat_101/red_hat_101_agentic_ai
 
-Message 53 - 2025-10-07 17:31
+Message 2 - 2025-10-07 14:31
 From: Juanje Ojeda
 ----------------------------------------
 From: IBM Technology Title: A2A Protocol (Agent2Agent) Explained: How AI Agents Collaborate
 Interesting :thinking_face: https://www.youtube.com/watch?v=Tud9HLTk8hg
 
-Message 54 - 2025-10-07 17:32
+Message 3 - 2025-10-07 14:32
 From: Juanje Ojeda
 ----------------------------------------
 The Agent2Agent protocol is an open standard that allows different AI agents to securely
@@ -443,7 +27,7 @@ communicate, collaborate, and solve complex problems together. Title: A2A Protoc
 Foundation designed to enable seamless communication and collaboration between AI agents.
 https://a2a-protocol.org/latest/
 
-Message 55 - 2025-10-09 18:29
+Message 4 - 2025-10-09 15:29
 From: Juanje Ojeda
 ----------------------------------------
 Built to make you extraordinarily productive, Cursor is the best way to code with AI. Title:
@@ -453,4 +37,25 @@ as Cursor to create a detailed plan before starting to work, this is similar, bu
 integrated. It ask you some questions to clarify the goal and constraints and the create a detailer
 plan and ToDo. It saves the plan in markdown for future reference or changing stuff. Then you hit
 "build" and it start building the project/feature. https://cursor.com/blog/plan-mode
+
+Message 5 - 2025-10-13 13:22
+From: Juanje Ojeda
+----------------------------------------
+From: Tech With Tim Title: How to Build an Advanced AI Agent with Search (LangGraph, Python, Bright
+Data &amp; More) This is a nice step-by-step tutorial for building a multi-agent app in Python with
+LangGraph: https://www.youtube.com/watch?v=cUC-hyjpNxk
+
+Message 6 - 2025-10-20 10:33
+From: Juanje Ojeda
+----------------------------------------
+AI-powered code review tool for local changes, GitLab and GitHub. Analyzes local changes or
+pull/merge requests and provides intelligent feedback to improve code quality. Title: Red Hat / Edge
+/ ci-cd / AI Code Review · GitLab AI-powered code review tool with local Git, remote MR/PR analysis,
+and CI integration (GitLab or GitHub) Title: ai-code-review-cli FYI, I published the pip package for
+my project ai-code-review (https://gitlab.com/redhat/edge/ci-cd/ai-code-review):
+https://pypi.org/project/ai-code-review-cli/ `ai-code-review` was already taken :confused: I also
+changed the README to make it more end-user focused. So ppl can use it right away, even locally
+(with pipx or using the container) And I added a webpage to explain simply the project and its
+features: https://ai-code-review-fd7894.gitlab.io/
+I hope you like it. And any feedback is welcome :slightly_smiling_face:
 

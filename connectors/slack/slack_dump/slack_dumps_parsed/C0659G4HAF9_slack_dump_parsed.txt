@@ -1,0 +1,754 @@
+Slack Channel Dump
+Channel: #team-auto-follow-on-activities
+Channel ID: C0659G4HAF9
+Generated: 2025-10-22 20:05:41
+Total Messages: 115
+================================================================================
+
+Message 1 - 2025-09-23 03:18
+From: U04SNH8Q39P
+----------------------------------------
+Hi, May I ask you to for review of
+https://gitlab.cee.redhat.com/automotive/contcert/contcert-validator-config/-/merge_requests/590 ?
+It is simple patch to remove validator.
+
+Message 2 - 2025-09-23 05:20
+From: Michael Ho
+----------------------------------------
+Hi team, our colleague, Lumir, from over in the Python in RHEL team wanted to test run a RHEL
+workflow presentation about his packages tomorrow with me before a bigger presentation in the RHEL
+space. I invited the team to join if anyone would like to hear about how they're developing their
+package in the RHEL space. Although Python is not in our scope, maybe this helps broaden some
+insight into the RHEL development workflow :meow_smile: You'll have an invite in your emails titled
+"Workflow sharing session [dry run]".
+
+Message 3 - 2025-09-23 11:11
+From: U016DB0CPT8
+----------------------------------------
+Hi All
+
+Message 4 - 2025-09-23 11:12
+From: U016DB0CPT8
+----------------------------------------
+Red Hat 101: Agentic AI live session is going on and it's very interesting, in case anyone missed.
+
+Message 5 - 2025-09-23 11:12
+From: U016DB0CPT8
+----------------------------------------
+
+https://www.google.com/url?q=https://redhat.brandlive.com/Red-Hat-101-Agentic-AI/en&amp;[…]alendar&amp;ust=1759067469507809&amp;usg=AOvVaw3CygKPNU4YlauQ8ioHawOm
+(https://www.google.com/url?q=https://redhat.brandlive.com/Red-Hat-101-Agentic-AI/en&amp;sa=D&amp;source=calendar&amp;ust=1759067469507809&amp;usg=AOvVaw3CygKPNU4YlauQ8ioHawOm)
+
+Message 6 - 2025-09-26 00:08
+From: Advait Shailesh Gupte
+----------------------------------------
+Polarion upgrade time has been changed to 4 PM EST tomorrow Friday, Sept 26. Change was made so that
+I can have Siemen's tech support on call and ready to help me debug. From: Brian Murray Sender:
+Slack Conversation FYI https://redhat-internal.slack.com/archives/C05HQU64709/p1758832044569259
+
+Message 7 - 2025-09-28 23:40
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 8 - 2025-09-29 00:17
+From: Nisha Saini
+----------------------------------------
+Hi All, The validator fails to clone https://pkgs.devel.redhat.com/cgit/tests/distribution/ since
+27th Sept. I also tried to manually clone on my local but I am also getting error. Any suggestions
+who will have more info regarding this project?
+
+Message 9 - 2025-09-29 08:53
+From: Fabrizio Tronci
+----------------------------------------
+hi all, does anyone of you know why this manual validator VROOM-31966
+(https://issues.redhat.com/browse/VROOM-31966) for the glibc compiler is not shown in the report?
+
+Message 10 - 2025-09-29 08:56
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 11 - 2025-09-30 03:00
+From: Bot-B06RQ11G
+----------------------------------------
+Reminder : Please make sure that you put your items in review or review other items
+(https://issues.redhat.com/secure/RapidBoard.jspa?rapidView=18548) well before the Sprint closes
+this week. Thanks, team!
+
+Message 12 - 2025-09-30 04:00
+From: Bot-B06J5130
+----------------------------------------
+Reminder : Please add your demos for tomorrow! :slightly_smiling_face:
+https://docs.google.com/document/d/1HDTZ-dyRO9ksmelWVilXylYmrq8Txu5jw2h0UnoQTwE/edit. Thanks, team!
+
+Message 13 - 2025-09-30 04:59
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 14 - 2025-09-30 05:08
+From: U04P6AQ9V5X
+----------------------------------------
+Hi all, Who can help to review and approve this deployment MR
+(https://gitlab.cee.redhat.com/automotive/contcert/contcert-validator-config/-/merge_requests/591)?
+Thanks in advance:pray: (Today is the last day before Chinese holiday, so urgent)
+
+Message 15 - 2025-09-30 05:10
+From: U04P6AQ9V5X
+----------------------------------------
+[No text content]
+
+Message 16 - 2025-09-30 05:59
+From: U04P6AQ9V5X
+----------------------------------------
+Thanks @Nisha Saini @Iker Galardi Who can help to merge it? @Michael Ho Could you help to merge the
+above MR? :pray::pray:
+
+Message 17 - 2025-09-30 06:04
+From: Michael Ho
+----------------------------------------
+I'll merge it but the comment is in a weird place due to the prod_ready flag (actually I think this
+is prod_ready, as it's relevant for GA submission)
+
+Message 18 - 2025-09-30 06:04
+From: Michael Ho
+----------------------------------------
+But lets merge and fix in post
+
+Message 19 - 2025-09-30 06:05
+From: Michael Ho
+----------------------------------------
+Merged
+
+Message 20 - 2025-09-30 06:07
+From: U04P6AQ9V5X
+----------------------------------------
+Thanks:meow_heart1:  The implement validator is for rhiovs 2.0. right?
+
+Message 21 - 2025-09-30 06:31
+From: Michael Ho
+----------------------------------------
+I thought it's 1.0, but not sure, @Iker Galardi?
+
+Message 22 - 2025-09-30 07:11
+From: John Dennis
+----------------------------------------
+It is for 2.0 :pray::skin-tone-2:
+
+Message 23 - 2025-09-30 08:31
+From: Iker Galardi
+----------------------------------------
+@Michael Ho it is non-blocking. This validator will fail in pre-prod run and will only fix when all
+the tests downstream in QE repo replaces dmesg uses with journal plugin. Actually it's way beyond
+that. Unless all the tests that refer the top level fmf in the QE repo switch to journal the
+validator will keep failing
+
+Message 24 - 2025-09-30 08:32
+From: Iker Galardi
+----------------------------------------
+IMO it will take a considerable time till that happens. Just some background
+
+Message 25 - 2025-09-30 08:34
+From: Iker Galardi
+----------------------------------------
+We have a justification for it, based on the workaround ticket outcome
+https://issues.redhat.com/browse/VROOM-30919
+
+Message 26 - 2025-09-30 08:46
+From: Michael Ho
+----------------------------------------
+Thanks for explaining!
+
+Message 27 - 2025-09-30 09:20
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 28 - 2025-09-30 09:31
+From: Ryan Smith
+----------------------------------------
+Hi everyone, just a heads up to those doing validator triage and what not -
+`glibc-revdep-preload-modules` ran yesterday and completed with a `Failure` result. All I can share
+from it, though, are the logs from Splunk because somehow the outputs are gone. We're still
+investigating this, so more to come.
+
+Message 29 - 2025-09-30 15:20
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 30 - 2025-10-01 09:24
+From: Ozan Unsal
+----------------------------------------
+:rotating_light: *Heads up: Migration Notice: Renaming in-vehicle-os-9 to in-vehicle-os*
+:rotating_light:
+As part of the enablement work for RHIVOS-2, we will be updating the S3 bucket path currently used
+in the Toolchain portal: https://rhivos.auto-toolchain.redhat.com/
+*What is changing?* • The existing directory *`in-vehicle-os-9`* will be renamed to
+*`in-vehicle-os`*. ◦ Before: https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/ ◦ *After*:
+https://rhivos.auto-toolchain.redhat.com/*in-vehicle-os/* • This change is needed to ensure that
+RHIVOS-2 builds can be populated in the same directory alongside RHIVOS-1 builds. • All services and
+components that reference *`in-vehicle-os-9`* must be updated to reference *`in-vehicle-os`* to
+avoid broken dependencies. *Impact:* • If your repositories or scripts hardcode the path
+*`in-vehicle-os-9`*, you will need to update them. • Starting *early next week*, we are going to
+support both *`in-vehicle-os-9`* and *`in-vehicle-os`* but later *`in-vehicle-os-9`* will be
+deprecated and no longer maintained. *Action Required:* • Please review your repositories and adjust
+any references to use *`in-vehicle-os`* instead of *`in-vehicle-os-9`* before the deprecation date.
+*Why this change?* This update standardizes the naming convention and ensures RHIVOS-2 builds are
+aligned under a unified *`in-vehicle-os`* directory with RHIVOS-1. Thank you for making the
+necessary adjustments. If you have any questions or concerns, please reach out via this thread or in
+the #C04JDFLHJN6| channel.
+
+Message 31 - 2025-10-01 12:45
+From: Lei Wang
+----------------------------------------
+*Here’s more to celebrate!* :smile: Congratulations to *@John Dennis* and *@U04NNFWH45S* on their
+well-deserved promotions to *Senior* and *Principal Software Engineer*!!
+:partying_face::tada::beers: We’re lucky to have you on the FuSA/FoA team—thank you for all the
+amazing work, professionalism, and positive energy you bring!!:meow_love::car::red-hat: From: Lei
+Wang Sender: Slack Conversation !channel Also sharing the good news here
+https://redhat-internal.slack.com/archives/C04QDH5FZFG/p1759333240674249 Big congrats @John Dennis
+@U04NNFWH45S!! :clinking_glasses::party-blob::meow_love:
+
+Message 32 - 2025-10-01 12:56
+From: Lei Wang
+----------------------------------------
+*Today also marks @Michael Ho's 4-year anniversary!* You've been a true asset to our program and the
+company. Congratulations, and we wish you many more years of success here in Red
+Hat!!!:confetti_ball::car::red-hat::clinking_glasses: From: Lei Wang Sender: Slack Conversation
+!channel Apologies for the celebration overload... but here’s one more for @Michael Ho!!
+:smile::partying_face: https://redhat-internal.slack.com/archives/C04QDH5FZFG/p1759333976374579
+
+Message 33 - 2025-10-02 01:05
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 34 - 2025-10-02 07:00
+From: Michael Ho
+----------------------------------------
+Why Retrieval-Augmented Generation Won’t Survive the Context Revolution and the End of Chunking,
+Embeddings, and Rerankers as We Know Them. Title: The RAG Obituary: Killed by Agents, Buried by
+Context Windows @Iker Galardi and others, I think this is a great read and lines up with what I've
+been mentioning about how impressed I am with Claude Code and why RAG might not be the only solution
+to managing data for LLMs: https://www.nicolasbustamante.com/p/the-rag-obituary-killed-by-agents
+
+Message 35 - 2025-10-02 09:08
+From: U04SNH8Q39P
+----------------------------------------
+Hi, there is new problem with our infrastructure. http://download.eng.bos.redhat.com is not
+available and it has impact not only on validator daily run
+(https://rhivos-dashboard.auto-toolchain.redhat.com/reports/1.0.0_GA/2025-10-02_07_19_18/report-1.0.0_GA-2025-10-02_07_19_18.html)
+where a lot of results are missing or failing, but also on merge request workflow, because unit
+tests (https://gitlab.cee.redhat.com/automotive/contcert/foa-validators/code-review/-/jobs/41248314)
+depend on that. See: https://issues.redhat.com/browse/RHELBLD-17379. Please if you have better idea
+where to problem report or who might be good person to contact, please speak up.
+
+Message 36 - 2025-10-02 10:16
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 37 - 2025-10-03 07:06
+From: U04SNH8Q39P
+----------------------------------------
+!here Yesterday we updated foa-lib to resolve issue with broken URL. The patch was released in
+foa-lib v0.20.0 . I believe that the release wasn't accompanied by auto update of repositories. May
+I ask you for help? Without propagating this patch, our validators runs will continue to fail and we
+cannot update production run.
+
+Message 38 - 2025-10-03 08:41
+From: U04SNH8Q39P
+----------------------------------------
+Hi, I am looking for someone who can prepare evidence for manual validator: VROOM-33433
+(https://issues.redhat.com/browse/VROOM-33433) Validator Failure: gcc-testsuite-in-build-logs
+(gcc-11.5.0-5.el9)
+
+Message 39 - 2025-10-06 11:54
+From: Michael Ho
+----------------------------------------
+If anyone sees some issues related to the deprecation of
+https://rhivos.auto-toolchain.redhat.com/in-vehicle-os-9/ in lieu of
+https://rhivos.auto-toolchain.redhat.com/in-vehicle-os, give me a ping. Our toolchain friends are
+using a HTTP Redirect to handle the deprecation which can cause issues with scripts invoking curl.
+
+Message 40 - 2025-10-06 17:40
+From: Lei Wang
+----------------------------------------
+Hi !channel Some of you may have heard that Jenny Severance is retiring. Here's a card that has been
+created to collect our wishes for her, in case you'd like to sign it. : )
+https://www.groupgreeting.com/sign/ef61ab3cec46f9a
+
+Message 41 - 2025-10-07 05:28
+From: Iker Galardi
+----------------------------------------
+@Michael Ho we are running tests on RHIVOS RC3 images for our GA release, or has it changed?
+
+Message 42 - 2025-10-07 05:29
+From: Michael Ho
+----------------------------------------
+RHIVOS-1.0.0-RC3 is RHIVOS-1.0.0 (afaik it's a copy+paste job). So yes, afaik.
+
+Message 43 - 2025-10-07 05:32
+From: Iker Galardi
+----------------------------------------
+Thanks for confirming. I was digging into one the tmt validator failure which makes TF call and was
+timing out due to TF stuck and it seems there is some problem with that image since it was old and
+could't be found
+
+Message 44 - 2025-10-07 05:33
+From: Michael Ho
+----------------------------------------
+Try RHIVOS-1.0.0
+
+Message 45 - 2025-10-07 05:33
+From: Michael Ho
+----------------------------------------
+But this also might be due to the url changes going on. See #C08CRGE1LKZ|.
+
+Message 46 - 2025-10-07 05:34
+From: Iker Galardi
+----------------------------------------
+That's the one I am using , but that image is old and TF is not picking that image since it's > 125
+days. Looks like this was the problem for weekend CTC failures, atleast for the tests run on VM
+
+Message 47 - 2025-10-07 05:43
+From: Michael Ho
+----------------------------------------
+Time to ask #C04JDFLHJN6|
+
+Message 48 - 2025-10-07 19:16
+From: Michael Ho
+----------------------------------------
+&gt; We’ve detected that your account is regularly making authenticated requests to the GitLab.com
+(http://GitLab.com) API in excess of our published rate limit of 2000 requests per minute
+(https://gslink.gitlab.com/ls/click?upn=u001.Z-2FLxiSxBJrdCYEDao1-2B4O0w6VWorXbTPAGlGVekwo7j17yUOiZR-2B-2BrruSHoz2cvmVFwQW-2FxObSat0LEL3mihFxqeCKGBCDeg95f07CqF-2BEI-3DJFYY_3Va5eXzMcsAFZ7WxyK6EESay-2BFwdAmv0ezWJ-2F3JaFTjyIAedBOiOgtD7isaOtmuA2PNkJlPwE0avzy39M9A8LNLVBB1s0khXJg6s4s8ukUSPOvloFNqw-2B9ZSga2357uXVczjVioUmnmalvQQA8FMcw-2BnyEFGMV3kbPGoAQkXcgiOu6nkKv-2BZXV7rd-2FplnHaa-2Bp-2FT6H48Bic6kmAz3QNuxzrWTUM431Dr-2BPeiWnVwvNPmrFFTeNu1uQ6PhTdn88HlyXynKu-2BjQnzhH52czt18Bv3SeKwpWWZ0NL1mcgoiJoWMAqzn2UKlQ3Js0iYRTPDIdIC6kOUYKho-2BDgCIMuW-2FaqHhUV9mXUhQCD2hEysrshzRCMtKxWLSYPc5xkjyC7PKoKLrmRuUoX3PnL-2BS8MvK-2BFn7OcMOG8nu7tAaaUf9IdT7pR0SgA9Qt9MUtrUDbCiKmnbRlrTF3T1cn-2BpOIDvKZGpPuirMQc2xCOWo0yLT7yrcpMRIQBroMWzMjaZLkf2O).
+Our logs show that over a week’s time, your account is making up to 100,000 requests in excess of
+the rate limit. &gt; As a temporary grace period, we are currently allowing your account to make up
+to 8000 requests per minute. However, this grace period will end on *November 17, 2025*, when we
+will begin enforcing our published rate limit of 2000 requests per minute. Hey, we have a serious
+issue with our GitLab API usage. @U04NNFWH45S We may need to consider suspending the daily pre-prod
+runs until we reduce our API rate to avoid the incident getting bigger.
+
+Message 49 - 2025-10-08 05:42
+From: U04NNFWH45S
+----------------------------------------
+Hi @Nisha Saini @Iker Galardi, Fabrizio is asking why we do need VROOM-32899
+(https://issues.redhat.com/browse/VROOM-32899) and what impact on the validator results it will have
+once implement. The validator is currently passing
+(https://rhivos-dashboard-prod.auto-toolchain.redhat.com/contcert/results/rhivos-1.0.0.20250930/kernel-automotive/kernel-automotive-5.14.0-570.518.16.1.16.el9_6iv/20250930T150112/tmt-tool-result-not-overridden)
+in the production report, so the question is why we need this improvement.
+
+Message 50 - 2025-10-08 09:12
+From: Tomas Golembiovsky
+----------------------------------------
+Speaking of Mr. Cache-lib, I came up with this proposal yesterday. It is about ready for review and
+suggestions from the team:
+https://docs.google.com/document/d/1P3LqqKo3kwoDK-pXNnJ0M-fJ5Onz1dw7EnbuumzuzFY/edit?usp=sharing
+
+Message 51 - 2025-10-09 03:54
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 52 - 2025-10-10 00:55
+From: U04P6AQ9V5X
+----------------------------------------
+Hi good morning everyone! @Michael Ho @Iker Galardi I've looked at the related validator failure
+(VROOM-33457 (https://issues.redhat.com/browse/VROOM-33457)) for my deployment ticket
+(https://issues.redhat.com/browse/VROOM-30938). It is closed since the validator is not marked as
+prod ready. (see, here
+(https://issues.redhat.com/browse/VROOM-33457?focusedId=28188923&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-28188923))
+And another MR (https://gitlab.cee.redhat.com/automotive/tests/all/-/merge_requests/1104) which is
+directly related to journald check plugin validator is still in process that is gonna replace dmesg
+with journal for top-level main.fmf in All-packages repos. What I want to ask is should we close the
+validator deployment ticket? Or still leave it there until all the problems are gone? Thx!
+
+Message 53 - 2025-10-10 08:21
+From: U04QAEAG56V
+----------------------------------------
+Hi there, how do the LTP related validators work? I.e. how do they execute tests and how do they
+determine the test result?
+
+Message 54 - 2025-10-10 12:25
+From: Michael Ho
+----------------------------------------
+I cleaned up the foa-lib readme and put some basic api documentation in place as a starting point to
+improve its architecture/layout:
+https://gitlab.cee.redhat.com/automotive/contcert/ancillary-libraries/foa-lib
+
+Message 55 - 2025-10-13 05:22
+From: Iker Galardi
+----------------------------------------
+Can I get some reviews here
+(https://gitlab.cee.redhat.com/automotive/contcert/foa-validators/product-build-analysis/-/merge_requests/49)
+please.
+
+Message 56 - 2025-10-13 08:11
+From: Tomas Golembiovsky
+----------------------------------------
+:rotating_light: *RERC Outage notice:* Our internal PyPi repository will be down on Friday, Oct 17.
+See notice on outage-lists (https://groups.google.com/a/redhat.com/g/outage-list/c/cm6xBpGCkEI) or
+SPRE-1992 (https://issues.redhat.com/browse/SPRE-1992) for details.
+
+Message 57 - 2025-10-14 03:00
+From: Bot-B06RQ11G
+----------------------------------------
+Reminder : Please make sure that you put your items in review or review other items
+(https://issues.redhat.com/secure/RapidBoard.jspa?rapidView=18548) well before the Sprint closes
+this week. Thanks, team!
+
+Message 58 - 2025-10-14 04:00
+From: Bot-B06J5130
+----------------------------------------
+Reminder : Please add your demos for tomorrow! :slightly_smiling_face:
+https://docs.google.com/document/d/1HDTZ-dyRO9ksmelWVilXylYmrq8Txu5jw2h0UnoQTwE/edit. Thanks, team!
+
+Message 59 - 2025-10-14 10:20
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 60 - 2025-10-16 09:35
+From: Lei Wang
+----------------------------------------
+*!channel October 11 marked @Advait Shailesh Gupte's 4-year anniversary with Red Hat. Please join me
+in congratulating him on this important milestone. Happy anniversary, Advait!*:tada::partying_face:
+:meow_dance: Thank you for all your hard work and great contributions to the program and our FuSa
+effort, and for always looking ahead to contribute to upcoming initiatives and priorities. We’re
+lucky to have you on our team! Wishing you many more years of success here at Red Hat!!
+:cheers::car::red-hat: _(Apologies for the belated note — I missed the notification earlier due to
+PTO and some changes in my subscription list that disrupted my inbox..)_
+
+  Thread Reply 61 - 2025-10-16 16:19
+  From: Advait Shailesh Gupte
+  --------------------------------------
+Thank you for the reminder, Lei! And thanks for the emojis, everyone. The time flies by
+:meow_smilesweat:
+
+Message 62 - 2025-10-16 16:03
+From: USLACKBOT
+----------------------------------------
+[No text content]
+
+Message 63 - 2025-10-17 07:23
+From: Iker Galardi
+----------------------------------------
+Happy Friday. I created a proposal/outline
+(https://docs.google.com/document/d/17BWjD-UDSp5T0BzYLzRxZWOxDRVETjemgY6Jaw0Rr2w/edit?tab=t.0) for
+the template based documentation creation which I presented in our last team meeting. I am proposing
+this as one of the ways we can overcome our documentation tech debt. This will also make sure that
+we apply syntactic and semantic uniformity across validators.
+
+  Thread Reply 64 - 2025-10-20 04:11
+  From: U03NPDKU3S8
+  --------------------------------------
+Hi, can you please clarify what problem you are trying to solve?
+I skimmed through the google doc and the MR and can't fully understand.
+Specifically: • Does the MR automatically handle/verify/whatever docstrings of functions other than
+initial_mode/continues_mode/entrypoint? • Specifically e.g. `packages_not_in_core_rpm_list`, there?
+• If yes, how/where? • If not, is there a need to fix docstrings for
+initial_mode/continues_mode/entrypoint? What is it? Thanks
+
+  Thread Reply 65 - 2025-10-20 04:29
+  From: Iker Galardi
+  --------------------------------------
+The MR has a tool which can be used to create docstring for all the validators in the repository, by
+providing metadata(metadata.json). This metadata can be created by the AI agent parsing the code or
+manually feed. The tool follows a template which can be defined for the docstring to be created.
+
+  Thread Reply 66 - 2025-10-20 04:33
+  From: Iker Galardi
+  --------------------------------------
+We have a tech debt to create docstring for the validators and we also need have it uniform across
+the validators. I have tried to capture these in the doc. @U03NPDKU3S8 could you comment on the docs
+as well, the areas which are not clear or in the MR
+
+  Thread Reply 67 - 2025-10-20 04:35
+  From: U03NPDKU3S8
+  --------------------------------------
+&gt; We have a tech debt to create docstring for the validators Do we? Do we consider detailed
+docstrings mandatory for all functions, including init/cont-mode/entrypoint?
+
+  Thread Reply 68 - 2025-10-20 04:36
+  From: Iker Galardi
+  --------------------------------------
+I believe we should create documentation for our code. But if we don't this tool will help to create
+it automatically :wink:
+
+  Thread Reply 69 - 2025-10-20 04:38
+  From: Iker Galardi
+  --------------------------------------
+&gt; I believe we should create documentation for our code We do have some complex KPIs, in some of
+the valdiators where the documentation would help
+
+  Thread Reply 70 - 2025-10-20 04:38
+  From: U03NPDKU3S8
+  --------------------------------------
+I think that this is useless, if it only copies content from elsewhere (the template, or the
+existing validator doc, or whatever).
+
+  Thread Reply 71 - 2025-10-20 04:40
+  From: Iker Galardi
+  --------------------------------------
+The idea is to fully automate the docstring creation, does that sound useless to you?
+
+  Thread Reply 72 - 2025-10-20 04:40
+  From: U03NPDKU3S8
+  --------------------------------------
+Only for these 3 functions? Why do they need a docstring?
+
+  Thread Reply 73 - 2025-10-20 04:40
+  From: U03NPDKU3S8
+  --------------------------------------
+I might be missing something
+
+  Thread Reply 74 - 2025-10-20 04:41
+  From: Iker Galardi
+  --------------------------------------
+Not only for these 3 but for all of the validator code. The tool is not complete and I bet you
+haven't gone through the proposal doc completely :slightly_smiling_face:
+
+  Thread Reply 75 - 2025-10-20 04:44
+  From: U03NPDKU3S8
+  --------------------------------------
+I wrote: &gt; I skimmed through the google doc
+
+  Thread Reply 76 - 2025-10-20 04:44
+  From: U03NPDKU3S8
+  --------------------------------------
+But then I looked at the MR and saw only these 3. So I am asking here...
+
+  Thread Reply 77 - 2025-10-20 04:45
+  From: Iker Galardi
+  --------------------------------------
+So the complete idea in a nutshell is Doc agent-&gt;creates metadata-&gt;User creates
+template-&gt;Tool creates final Docstring and updates validator code
+
+  Thread Reply 78 - 2025-10-20 04:45
+  From: U03NPDKU3S8
+  --------------------------------------
+What is the problem we solve?
+
+  Thread Reply 79 - 2025-10-20 04:46
+  From: Iker Galardi
+  --------------------------------------
+We get automated documentation creation
+
+  Thread Reply 80 - 2025-10-20 04:46
+  From: Iker Galardi
+  --------------------------------------
+I mean there is a complete epic as a tech debt
+
+  Thread Reply 81 - 2025-10-20 04:47
+  From: Iker Galardi
+  --------------------------------------
+We can also use this in our CI later to add documentation for the code
+
+  Thread Reply 82 - 2025-10-20 04:47
+  From: U03NPDKU3S8
+  --------------------------------------
+Please link it in the MR, thanks
+
+  Thread Reply 83 - 2025-10-20 04:51
+  From: Iker Galardi
+  --------------------------------------
+Thanks, I will , but please let me know your feedback on the MR or in the proposal. I want to have
+the discussion if this is useful for our team and if it needs further refinement.
+
+  Thread Reply 84 - 2025-10-20 04:51
+  From: U03NPDKU3S8
+  --------------------------------------
+I can't review the MR if I do not understand the requirements.
+
+  Thread Reply 85 - 2025-10-20 04:52
+  From: U03NPDKU3S8
+  --------------------------------------
+If all the MR is about is: Automate generation of docstrings for these 3, based on a template, then
+I'd say: Why do they need a docstring?
+
+  Thread Reply 86 - 2025-10-20 04:53
+  From: Iker Galardi
+  --------------------------------------
+The idea is to • To control the semantic and structure of the documentation • Generate the docstring
+automatically
+
+  Thread Reply 87 - 2025-10-20 04:55
+  From: Iker Galardi
+  --------------------------------------
+&gt; Automate generation of docstrings for these 3, based on a template, For all the sources of the
+validator(this is configurable as well in case we wish to control)
+
+  Thread Reply 88 - 2025-10-20 04:55
+  From: U03NPDKU3S8
+  --------------------------------------
+&gt; To control the semantic Automatically? As in, have tooling that would tell you: Your docstring
+says that your function does something, but the code actually does something else? &gt; and
+structure Ok for me to require a specific structure. &gt; of the documentation
+
+  Thread Reply 89 - 2025-10-20 04:58
+  From: Iker Galardi
+  --------------------------------------
+> As in, have tooling that would tell you: Your docstring says that your function does something,
+but the code actually does something else? This gets synced by metadata. In the doc I have explained
+that the metadata gets extracted by the agent(LLM). Actually your statement is more true in case we
+manage it manually, where we might document something but forget to update it when we changed the
+module source
+
+Message 90 - 2025-10-20 03:59
+From: U04SNH8Q39P
+----------------------------------------
+Hi, I have a problem to log to VPN. Anyone is having the same problems? I have tried `Red Hat global
+VPN` and `Red Hat global VPN (alternate TCP)` .
+
+  Thread Reply 91 - 2025-10-20 04:00
+  From: Iker Galardi
+  --------------------------------------
+Works fine for me
+
+  Thread Reply 92 - 2025-10-20 04:02
+  From: U03NPDKU3S8
+  --------------------------------------
+works for me as well. Do you get any error? Did you try specific servers? I use TLV2.
+
+  Thread Reply 93 - 2025-10-20 04:25
+  From: U04NNFWH45S
+  --------------------------------------
+Works fine for me
+
+  Thread Reply 94 - 2025-10-20 04:35
+  From: U04SNH8Q39P
+  --------------------------------------
+Thank you, still not working on my side. Good news is that my kerberos authentication works for
+workday.
+
+  Thread Reply 95 - 2025-10-20 05:03
+  From: U04SNH8Q39P
+  --------------------------------------
+Finally, reboot of router resolved my problem.
+
+  Thread Reply 96 - 2025-10-20 05:03
+  From: U03NPDKU3S8
+  --------------------------------------
+Congrats! :smile:
+
+  Thread Reply 97 - 2025-10-21 06:16
+  From: U04SNH8Q39P
+  --------------------------------------
+Today my hardware token died, therefore my previous temporal problems with VPN where probably a
+symptoms of it.
+
+  Thread Reply 98 - 2025-10-21 08:01
+  From: U04SNH8Q39P
+  --------------------------------------
+But not sure it might be a coincident
+
+  Thread Reply 99 - 2025-10-21 08:18
+  From: U03NPDKU3S8
+  --------------------------------------
+Which one? Gemalto? Mine died several years ago...
+
+  Thread Reply 100 - 2025-10-21 08:20
+  From: U04SNH8Q39P
+  --------------------------------------
+No idea, the tag is completely wiped out.
+
+  Thread Reply 101 - 2025-10-21 08:20
+  From: U03NPDKU3S8
+  --------------------------------------
+:smile:
+
+Message 102 - 2025-10-20 04:16
+From: Iker Galardi
+----------------------------------------
+Is quay.io (http://quay.io) down? The CI job
+(https://gitlab.cee.redhat.com/automotive/contcert/foa-validators/product-build-analysis/-/jobs/41983144)
+receives 502 error
+
+Message 103 - 2025-10-20 04:18
+From: Iker Galardi
+----------------------------------------
+status.redhat.com (http://status.redhat.com) suggests it is operational :thinking_face:
+
+  Thread Reply 104 - 2025-10-20 04:40
+  From: Asaf Rachmani
+  --------------------------------------
+Hi, quay.io (http://quay.io) is down... :disappointed: From: Gregory Shilin Sender: Thread in Slack
+Conversation https://redhat-internal.slack.com/archives/C7WH69HCY/p1760943817863079
+
+  Thread Reply 105 - 2025-10-20 05:20
+  From: Asaf Rachmani
+  --------------------------------------
+Welcome to Red Hat's home for real-time and historical data on system performance. Title: Red Hat
+Status http://status.redhat.com/ is updated now :slightly_smiling_face:
+
+  Thread Reply 106 - 2025-10-20 06:28
+  From: Jochen Breuer
+  --------------------------------------
+Looks like there are massive AWS problems. Quite a few things running there are either very slow or
+down.
+
+Message 107 - 2025-10-21 08:25
+From: Iker Galardi
+----------------------------------------
+Hey team, I will miss our team meeting today as I have a doctor appointment at that time. I had some
+topics but will discuss in the next meet. If possible please record
+
+Message 108 - 2025-10-21 09:43
+From: Lei Wang
+----------------------------------------
+!channel Hi Team, the RHAS is open for participation till this *FRIDAY*. Please try to take 10-20
+mins to share your valuable experiences and insights if you haven't responded to it yet. Thank you!
+:smile: Here's a source page capturing how our inputs helped shape and drive company wide actions
+FYI https://source.redhat.com/groups/public/red_hat_employee_listening/2024_results_and_action_plans
+
+  Thread Reply 109 - 2025-10-21 09:49
+  From: Tomas Golembiovsky
+  --------------------------------------
+I think there was an email yesterday that the deadline is extended to Friday because of outages on
+Qualtrics side.
+
+  Thread Reply 110 - 2025-10-21 09:50
+  From: U04QNBZUT2R
+  --------------------------------------
+Hello Red Hatters,
+The platform for Red Hat Associate Survey (RHAS), Qualtrics, is currently experiencing an outage.
+Since this is a known issue, please refrain from submitting support tickets through ServiceNow.
+As a result of the outage, the deadline to complete RHAS has been extended until the end of the day
+on Friday, Oct. 24.
+Thank you for your patience,
+Paul Schmidt
+Details:
+Outage started: Oct. 20, 2025
+Impacted users: All Red Hatters
+
+  Thread Reply 111 - 2025-10-21 09:51
+  From: Tomas Golembiovsky
+  --------------------------------------
+Yes
+
+  Thread Reply 112 - 2025-10-21 09:51
+  From: Tomas Golembiovsky
+  --------------------------------------
+https://groups.google.com/a/redhat.com/g/announce-list/c/wgVPHnKdXgg
+
+  Thread Reply 113 - 2025-10-21 09:54
+  From: Lei Wang
+  --------------------------------------
+Great, we have a bit more time now for those who haven't got a chance to respond. Thanks for sharing
+@Tomas Golembiovsky @U04QNBZUT2R!
+
+Message 114 - 2025-10-21 10:22
+From: Lei Wang
+----------------------------------------
+!here FYI we are working to resolve the last remaining issue with exida and if they are happy with
+our response, we will be on track for Thursday release with a certificate in hand and on the exida
+site no later than tomorrow From: Amanda Carter Sender: Slack Conversation Latest update on our
+RHIVOS 1.0 GA release - https://redhat-internal.slack.com/archives/C083Q6UPZ17/p1761052223901939
+
+Message 115 - 2025-10-21 10:32
+From: Lei Wang
+----------------------------------------
+Bumping this thread in case anyone would like to sign but missed it
+
